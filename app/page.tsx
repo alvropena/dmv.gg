@@ -8,6 +8,28 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, Trophy, RotateCcw } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
+// Custom hook to detect mobile screens
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Initial check
+    checkIsMobile();
+
+    // Add event listener
+    window.addEventListener('resize', checkIsMobile);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
+
+  return isMobile;
+};
+
 // Sample questions with text and images
 const sampleQuestions = [
   {
@@ -66,6 +88,7 @@ const sampleQuestions = [
 ];
 
 export default function Home() {
+  const isMobile = useIsMobile();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
@@ -278,21 +301,23 @@ export default function Home() {
               disabled={selectedOption === null}
               className="w-full"
             >
-              Check Answer (Space)
+              Check Answer{!isMobile && " (Space)"}
             </Button>
           ) : (
             <Button onClick={goToNextQuestion} className="w-full">
-              Next Question (Space)
+              Next Question{!isMobile && " (Space)"}
             </Button>
           )}
         </div>
 
-        <div className="mt-6 text-center text-sm text-muted-foreground">
-          <p>
-            Keyboard shortcuts: Press 1-4 to select an option, Space to
-            check/continue
-          </p>
-        </div>
+        {!isMobile && (
+          <div className="mt-6 text-center text-sm text-muted-foreground">
+            <p>
+              Keyboard shortcuts: Press 1-4 to select an option, Space to
+              check/continue
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
