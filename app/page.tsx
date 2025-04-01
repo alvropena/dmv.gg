@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, Trophy, RotateCcw } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { questions } from "./data/questions";
 
 // Custom hook to detect mobile screens
 const useIsMobile = () => {
@@ -30,63 +31,6 @@ const useIsMobile = () => {
   return isMobile;
 };
 
-// Sample questions with text and images
-const sampleQuestions = [
-  {
-    id: 1,
-    type: "text",
-    question: "What does a red traffic light mean?",
-    options: [
-      "Slow down and proceed with caution",
-      "Stop completely until the light turns green",
-      "Stop only if other vehicles are approaching",
-      "Yield to oncoming traffic",
-    ],
-    correctAnswer: 1,
-  },
-  {
-    id: 2,
-    type: "text",
-    question:
-      "What is the speed limit in a residential area unless otherwise posted?",
-    options: ["15 mph", "25 mph", "35 mph", "45 mph"],
-    correctAnswer: 1,
-  },
-  {
-    id: 3,
-    type: "image",
-    question: "What does this sign mean?",
-    imageUrl: "/placeholder.svg?height=200&width=200",
-    options: ["Stop", "Yield", "No entry", "Railroad crossing"],
-    correctAnswer: 0,
-  },
-  {
-    id: 4,
-    type: "text",
-    question: "When driving in fog, you should use your:",
-    options: [
-      "High beam headlights",
-      "Low beam headlights",
-      "Parking lights only",
-      "Hazard lights only",
-    ],
-    correctAnswer: 1,
-  },
-  {
-    id: 5,
-    type: "image",
-    question: "What does this road marking indicate?",
-    imageUrl: "/placeholder.svg?height=200&width=200",
-    options: [
-      "You can pass other vehicles",
-      "No passing zone",
-      "Two-way traffic ahead",
-      "Merge left",
-    ],
-    correctAnswer: 1,
-  },
-];
-
 export default function Home() {
   const isMobile = useIsMobile();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -97,7 +41,7 @@ export default function Home() {
   const [streak, setStreak] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
 
-  const currentQuestion = sampleQuestions[currentQuestionIndex];
+  const currentQuestion = questions[currentQuestionIndex];
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -158,7 +102,7 @@ export default function Home() {
   };
 
   const goToNextQuestion = () => {
-    if (currentQuestionIndex < sampleQuestions.length - 1) {
+    if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
       setSelectedOption(null);
       setIsAnswerRevealed(false);
@@ -177,7 +121,7 @@ export default function Home() {
     setIsComplete(false);
   };
 
-  const progressPercentage = (questionsAnswered / sampleQuestions.length) * 100;
+  const progressPercentage = (questionsAnswered / questions.length) * 100;
 
   if (isComplete) {
     return (
@@ -194,11 +138,11 @@ export default function Home() {
               <Trophy className="h-16 w-16 text-yellow-500 mb-4" />
               <h2 className="text-2xl font-bold mb-4">Quiz Complete!</h2>
               <p className="text-xl mb-6">
-                Your score: {score} / {sampleQuestions.length}
+                Your score: {score} / {questions.length}
               </p>
               <Progress value={progressPercentage} className="w-full mb-6" />
               <p className="mb-6">
-                {score === sampleQuestions.length
+                {score === questions.length
                   ? "Perfect score! You're ready for the DMV test!"
                   : "Keep practicing to improve your score!"}
               </p>
@@ -225,7 +169,7 @@ export default function Home() {
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-sm">
-              Question {currentQuestionIndex + 1}/{sampleQuestions.length}
+              Question {currentQuestionIndex + 1}/{questions.length}
             </Badge>
             <Badge variant="outline" className="text-sm">
               Score: {score}
