@@ -158,12 +158,12 @@ export default function Home() {
 
   if (isComplete) {
     return (
-      <div className="w-full px-4 mt-8">
+      <div className="w-full h-fit px-4">
         <div className="max-w-3xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
+          <div className="flex justify-between items-center mb-4">
             <h1 className="text-3xl font-bold bg-blue-600 text-white px-4 py-2 rounded">DMV</h1>
             <Avatar className="h-12 w-12">
-              <AvatarFallback className="bg-blue-100 text-blue-600 text-lg font-semibold">DMV</AvatarFallback>
+              <AvatarFallback className="text-lg font-semibold">AP</AvatarFallback>
             </Avatar>
           </div>
           <Card className="max-w-3xl mx-auto">
@@ -191,12 +191,12 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full px-4 mt-8">
+    <div className="w-full h-fit px-4">
       <div className="max-w-3xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mb-4">
           <h1 className="text-3xl font-bold bg-blue-600 text-white px-4 py-2 rounded">DMV</h1>
           <Avatar className="h-12 w-12">
-            <AvatarFallback className="bg-blue-100 text-blue-600 text-lg font-semibold">DMV</AvatarFallback>
+            <AvatarFallback className="text-lg font-semibold">AP</AvatarFallback>
           </Avatar>
         </div>
         <div className="flex justify-between items-center mb-4">
