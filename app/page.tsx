@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, Trophy, RotateCcw } from "lucide-react";
+import { CheckCircle, XCircle, Trophy, RotateCcw, LogIn, UserPlus } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { questions } from "./data/questions";
 
@@ -22,10 +22,10 @@ const useIsMobile = () => {
     checkIsMobile();
 
     // Add event listener
-    window.addEventListener('resize', checkIsMobile);
+    window.addEventListener("resize", checkIsMobile);
 
     // Cleanup
-    return () => window.removeEventListener('resize', checkIsMobile);
+    return () => window.removeEventListener("resize", checkIsMobile);
   }, []);
 
   return isMobile;
@@ -128,10 +128,19 @@ export default function Home() {
       <div className="w-full h-fit px-4">
         <div className="max-w-3xl mx-auto">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-3xl font-bold bg-blue-600 text-white px-4 py-2 rounded">DMV</h1>
-            <Avatar className="h-12 w-12">
-              <AvatarFallback className="text-lg font-semibold">AP</AvatarFallback>
-            </Avatar>
+            <h1 className="text-xl font-bold bg-blue-600 text-white px-3 py-1.5 rounded">
+              DMV
+            </h1>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" className="flex items-center gap-2">
+                <LogIn className="h-4 w-4" />
+                Log In
+              </Button>
+              <Button className="flex items-center gap-2">
+                <UserPlus className="h-4 w-4" />
+                Register
+              </Button>
+            </div>
           </div>
           <Card className="max-w-3xl mx-auto">
             <CardContent className="p-6 flex flex-col items-center">
@@ -161,10 +170,19 @@ export default function Home() {
     <div className="w-full h-fit px-4">
       <div className="max-w-3xl mx-auto">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl font-bold bg-blue-600 text-white px-4 py-2 rounded">DMV</h1>
-          <Avatar className="h-12 w-12">
-            <AvatarFallback className="text-lg font-semibold">AP</AvatarFallback>
-          </Avatar>
+          <h1 className="text-xl font-bold bg-blue-600 text-white px-3 py-1.5 rounded">
+            DMV
+          </h1>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" className="flex items-center gap-2">
+              <LogIn className="h-4 w-4" />
+              Log In
+            </Button>
+            <Button className="flex items-center gap-2">
+              <UserPlus className="h-4 w-4" />
+              Register
+            </Button>
+          </div>
         </div>
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
