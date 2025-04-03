@@ -2,12 +2,31 @@ import { stripe } from '@/lib/stripe';
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
-export async function POST() {
+const PRICE_IDS = {
+  weekly: process.env.STRIPE_PRICE_ID_WEEKLY,
+  monthly: process.env.STRIPE_PRICE_ID_MONTHLY,
+  lifetime: process.env.STRIPE_PRICE_ID_LIFETIME,
+} as const;
+
+type PlanType = keyof typeof PRICE_IDS;
+
+export async function POST(req: Request) {
   try {
     const { userId } = await auth();
+    const { plan } = await req.json();
 
     if (!userId) {
       return new NextResponse('Unauthorized', { status: 401 });
+    }
+
+    if (!plan || !(plan in PRICE_IDS)) {
+      return new NextResponse('Invalid plan type. Must be one of: weekly, monthly, lifetime', { status: 400 });
+    }
+
+    const priceId = PRICE_IDS[plan as PlanType];
+
+    if (!priceId) {
+      return new NextResponse(`Price ID not found for plan: ${plan}`, { status: 400 });
     }
 
     if (!process.env.NEXT_PUBLIC_APP_URL) {
@@ -15,11 +34,11 @@ export async function POST() {
     }
 
     const checkoutSession = await stripe.checkout.sessions.create({
-      mode: 'subscription',
+      mode: plan === 'lifetime' ? 'payment' : 'subscription',
       payment_method_types: ['card'],
       line_items: [
         {
-          price: process.env.STRIPE_PRICE_ID,
+          price: priceId,
           quantity: 1,
         },
       ],
@@ -28,6 +47,11 @@ export async function POST() {
       metadata: {
         userId,
       },
+      subscription_data: plan !== 'lifetime' ? {
+        metadata: {
+          userId,
+        },
+      } : undefined,
     });
 
     return NextResponse.json({ url: checkoutSession.url });
