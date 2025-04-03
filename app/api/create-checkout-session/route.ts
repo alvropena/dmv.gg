@@ -43,8 +43,8 @@ export async function POST(req: Request) {
         },
       ],
       expand: ['line_items'],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=false`,
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/?success=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/?success=false`,
       metadata: {
         userId,
         priceId,

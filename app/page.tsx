@@ -1,13 +1,16 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, Trophy, RotateCcw, LogIn } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { CheckCircle, XCircle, Trophy, RotateCcw, ArrowRight, BookOpen, Lock } from "lucide-react";
 import { questions } from "./data/questions";
+import { useUser } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
+import { useAuthContext } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 // Custom hook to detect mobile screens
 const useIsMobile = () => {
@@ -40,6 +43,10 @@ export default function Home() {
   const [questionsAnswered, setQuestionsAnswered] = useState(0);
   const [streak, setStreak] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  
+  const { user, isLoaded } = useUser();
+  const router = useRouter();
+  const { dbUser, isLoading } = useAuthContext();
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -121,8 +128,110 @@ export default function Home() {
     setIsComplete(false);
   };
 
+  const handleLearnClick = () => {
+    if (!dbUser?.hasActiveSubscription) {
+      toast.error('Please upgrade to access the learning materials');
+      return;
+    }
+    router.push('/study');
+  };
+
+  if (!isLoaded || isLoading) {
+    return <div>Loading...</div>;
+  }
+
   const progressPercentage = (questionsAnswered / questions.length) * 100;
 
+  // Render dashboard if user is authenticated
+  if (user) {
+    // Get user's first name or full name
+    const firstName = user.firstName || user.fullName?.split(' ')[0] || 'there';
+
+    return (
+      <div className="w-full max-w-3xl mx-auto px-4">
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-2xl">Welcome back, {firstName}!</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-6">
+              Glad to see you again. Ready to continue your DMV test practice?
+            </p>
+            <div className="flex items-center gap-4 mt-6 flex-wrap">
+              <Button onClick={() => resetQuiz()} className="flex items-center gap-2">
+                Practice Test <ArrowRight className="h-4 w-4" />
+              </Button>
+              <Button 
+                onClick={handleLearnClick}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                {!dbUser?.hasActiveSubscription && <Lock className="h-4 w-4 mr-1" />}
+                <BookOpen className="h-4 w-4" />
+                Learn DMV Rules
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold mb-4">Your Progress</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center">
+                  <Trophy className="h-8 w-8 text-yellow-500 mb-2" />
+                  <h3 className="font-semibold text-xl">0</h3>
+                  <p className="text-muted-foreground text-sm">Tests Completed</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center">
+                  <h3 className="font-semibold text-xl">0%</h3>
+                  <p className="text-muted-foreground text-sm">Average Score</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center">
+                  <h3 className="font-semibold text-xl">0</h3>
+                  <p className="text-muted-foreground text-sm">Streak</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+        
+        {/* Quiz UI for authenticated users */}
+        {isComplete ? (
+          <Card className="max-w-3xl mx-auto">
+            <CardContent className="p-6 flex flex-col items-center">
+              <Trophy className="h-16 w-16 text-yellow-500 mb-4" />
+              <h2 className="text-2xl font-bold mb-4">Quiz Complete!</h2>
+              <p className="text-xl mb-6">
+                Your score: {score} / {questions.length}
+              </p>
+              <Progress value={progressPercentage} className="w-full mb-6" />
+              <p className="mb-6">
+                {score === questions.length
+                  ? "Perfect score! You're ready for the DMV test!"
+                  : "Keep practicing to improve your score!"}
+              </p>
+              <Button onClick={resetQuiz} className="flex items-center gap-2">
+                <RotateCcw className="h-4 w-4" />
+                Try Again
+              </Button>
+            </CardContent>
+          </Card>
+        ) : null}
+      </div>
+    );
+  }
+
+  // If not authenticated, render the landing page with quiz
   if (isComplete) {
     return (
       <div className="w-full">

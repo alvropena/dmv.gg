@@ -4,7 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Header } from "@/components/Header";
 import { Providers } from "@/components/Providers";
-
+import { Footer } from "@/components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -26,6 +26,7 @@ export default function RootLayout({
             <main className="min-h-screen py-8">
               {children}
             </main>
+            <Footer />
           </Providers>
         </body>
       </html>
