@@ -3,7 +3,7 @@
 import { UserProfile, useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Trophy, ArrowRight } from 'lucide-react';
+import { Trophy, ArrowRight, BookOpen } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
@@ -33,9 +33,17 @@ export default function DashboardPage() {
           <p className="text-muted-foreground mb-6">
             Glad to see you again. Ready to continue your DMV test practice?
           </p>
-          <div className="flex items-center gap-4 mt-6">
+          <div className="flex items-center gap-4 mt-6 flex-wrap">
             <Button onClick={() => router.push('/')} className="flex items-center gap-2">
-              Continue Practice <ArrowRight className="h-4 w-4" />
+              Practice Test <ArrowRight className="h-4 w-4" />
+            </Button>
+            <Button 
+              onClick={() => router.push('/learn')} 
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <BookOpen className="h-4 w-4" />
+              Learn DMV Rules
             </Button>
           </div>
         </CardContent>
