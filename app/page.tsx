@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, Trophy, RotateCcw, LogIn, UserPlus } from "lucide-react";
+import { CheckCircle, XCircle, Trophy, RotateCcw, LogIn } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { questions } from "./data/questions";
 
@@ -125,23 +125,8 @@ export default function Home() {
 
   if (isComplete) {
     return (
-      <div className="w-full h-fit px-4">
-        <div className="max-w-3xl mx-auto">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-xl font-bold bg-blue-600 text-white px-3 py-1.5 rounded">
-              DMV
-            </h1>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" className="flex items-center gap-2">
-                <LogIn className="h-4 w-4" />
-                Log In
-              </Button>
-              <Button className="flex items-center gap-2">
-                <UserPlus className="h-4 w-4" />
-                Register
-              </Button>
-            </div>
-          </div>
+      <div className="w-full">
+        <div className="max-w-3xl mx-auto px-4">
           <Card className="max-w-3xl mx-auto">
             <CardContent className="p-6 flex flex-col items-center">
               <Trophy className="h-16 w-16 text-yellow-500 mb-4" />
@@ -167,23 +152,17 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full h-fit px-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-xl font-bold bg-blue-600 text-white px-3 py-1.5 rounded">
-            DMV
+    <div className="w-full">
+      <div className="max-w-3xl mx-auto px-4">
+        <div className="text-center mb-16">
+          <h1 className="text-7xl font-bold mb-6">
+            Master Your DMV Knowledge Test
           </h1>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" className="flex items-center gap-2">
-              <LogIn className="h-4 w-4" />
-              Log In
-            </Button>
-            <Button className="flex items-center gap-2">
-              <UserPlus className="h-4 w-4" />
-              Register
-            </Button>
-          </div>
+          <h2 className="text-3xl text-muted-foreground max-w-2xl mx-auto">
+            Practice with real questions, track your progress, and ace your test with confidence
+          </h2>
         </div>
+
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-sm">
