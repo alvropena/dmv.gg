@@ -15,29 +15,25 @@ datasource db {
 
 model User {
   id        Int           @id @default(autoincrement())
-  clerkId   String        @unique @map("clerk_id")
+  clerkId   String        @unique
   email     String        @unique
-  firstName String?       @map("first_name")
-  lastName  String?       @map("last_name")
-  createdAt DateTime      @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt DateTime      @default(now()) @map("updated_at") @db.Timestamptz
+  firstName String?
+  lastName  String?
+  createdAt DateTime      @default(now()) @db.Timestamptz
+  updatedAt DateTime      @default(now()) @db.Timestamptz
   subscription Subscription?
-
-  @@map("User")
 }
 
 model Subscription {
   id                  Int       @id @default(autoincrement())
-  userId              Int       @unique @map("user_id")
-  stripeCustomerId    String?   @unique @map("stripe_customer_id")
-  stripeSubscriptionId String?  @unique @map("stripe_subscription_id")
+  userId              Int       @unique
+  stripeCustomerId    String?   @unique
+  stripeSubscriptionId String?  @unique
   status              String
-  planType            String    @map("plan_type")
-  currentPeriodStart  DateTime? @map("current_period_start") @db.Timestamptz
-  currentPeriodEnd    DateTime? @map("current_period_end") @db.Timestamptz
-  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt           DateTime  @default(now()) @map("updated_at") @db.Timestamptz
+  planType            String
+  currentPeriodStart  DateTime? @db.Timestamptz
+  currentPeriodEnd    DateTime? @db.Timestamptz
+  createdAt           DateTime  @default(now()) @db.Timestamptz
+  updatedAt           DateTime  @default(now()) @db.Timestamptz
   user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("Subscription")
 }
