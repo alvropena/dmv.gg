@@ -153,28 +153,28 @@ export default function Home() {
 
   return (
     <div className="w-full">
-      <div className="max-w-3xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <h1 className="text-7xl font-bold mb-6">
-            Master Your DMV Knowledge Test
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center mb-8">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6">
+            Ace Your DMV Knowledge Test
           </h1>
-          <h2 className="text-3xl text-muted-foreground max-w-2xl mx-auto">
-            Practice with real questions, track your progress, and ace your test with confidence
+          <h2 className="text-xl md:text-3xl text-muted-foreground max-w-xl mx-auto px-4">
+            Practice with real questions, track your progress, and ace your test 💯
           </h2>
         </div>
 
         <div className="flex justify-between items-center mb-4">
+          <Badge variant="outline" className="text-sm">
+            Question {currentQuestionIndex + 1}/{questions.length}
+          </Badge>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-sm">
-              Question {currentQuestionIndex + 1}/{questions.length}
-            </Badge>
             <Badge variant="outline" className="text-sm">
               Score: {score}
             </Badge>
+            {streak >= 3 && (
+              <Badge className="bg-orange-500">🔥 Streak: {streak}</Badge>
+            )}
           </div>
-          {streak >= 3 && (
-            <Badge className="bg-orange-500">🔥 Streak: {streak}</Badge>
-          )}
         </div>
 
         <Progress value={progressPercentage} className="mb-6" />

@@ -30,7 +30,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Header />
-            <main className="flex-1 py-16">
+            <main className="flex-1 py-16 px-4 md:px-6">
               {children}
             </main>
             <Footer />
