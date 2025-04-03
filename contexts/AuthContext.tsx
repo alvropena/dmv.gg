@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const response = await fetch('/api/auth');
         const data = await response.json();
-        setDbUser(data);
+        setDbUser(data.user);
       } catch (error) {
         console.error('Error fetching user:', error);
       } finally {

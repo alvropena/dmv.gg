@@ -21,7 +21,7 @@ export async function GET() {
             clerkId: userId,
         },
         include: {
-            subscription: true
+            subscriptions: true
         }
     });
 
@@ -34,7 +34,7 @@ export async function GET() {
                 lastName: user.lastName || null,
             },
             include: {
-                subscription: true
+                subscriptions: true
             }
         });
     }

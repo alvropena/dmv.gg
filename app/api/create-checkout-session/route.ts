@@ -42,10 +42,12 @@ export async function POST(req: Request) {
           quantity: 1,
         },
       ],
+      expand: ['line_items'],
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=false`,
       metadata: {
         userId,
+        priceId,
       },
       subscription_data: plan !== 'lifetime' ? {
         metadata: {
