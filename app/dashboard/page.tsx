@@ -1,6 +1,6 @@
 'use client';
 
-import { UserProfile, useUser } from '@clerk/nextjs';
+import { useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Trophy, ArrowRight, BookOpen, Lock } from 'lucide-react';

@@ -2,13 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useAuth, useUser } from '@clerk/nextjs';
-import { User } from '@prisma/client';
-
-type AuthContextType = {
-  dbUser: User | null;
-  isLoading: boolean;
-  hasActiveSubscription: boolean;
-};
+import { User, AuthContextType } from '@/types';
 
 const AuthContext = createContext<AuthContextType>({
   dbUser: null,
@@ -32,7 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       try {
-        const response = await fetch('/api/user');
+        const response = await fetch('/api/auth');
         const data = await response.json();
         setDbUser(data);
       } catch (error) {
