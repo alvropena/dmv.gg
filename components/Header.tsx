@@ -10,11 +10,12 @@ import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+import { useAuthContext } from '@/contexts/AuthContext'
 
 export function Header() {
   const router = useRouter();
   const { isSignedIn } = useAuth();
+  const { dbUser, isLoading } = useAuthContext();
 
   const handleLogoClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -27,6 +28,25 @@ export function Header() {
 
   const handleGetStarted = () => {
     router.push('/sign-in');
+  };
+
+  const handleUpgrade = async () => {
+    try {
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -48,6 +68,11 @@ export function Header() {
               </Button>
             </SignedOut>
             <SignedIn>
+              {!dbUser?.hasActiveSubscription && (
+                <Button onClick={handleUpgrade} variant="outline" className="mr-2">
+                  Upgrade
+                </Button>
+              )}
               <UserButton afterSignOutUrl="/" />
             </SignedIn>
           </div>

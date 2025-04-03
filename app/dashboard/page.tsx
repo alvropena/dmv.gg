@@ -3,12 +3,15 @@
 import { UserProfile, useUser } from '@clerk/nextjs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Trophy, ArrowRight, BookOpen } from 'lucide-react';
+import { Trophy, ArrowRight, BookOpen, Lock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useAuthContext } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 export default function DashboardPage() {
   const { user, isLoaded } = useUser();
   const router = useRouter();
+  const { dbUser } = useAuthContext();
 
   if (!isLoaded) {
     return <div>Loading...</div>;
@@ -22,6 +25,14 @@ export default function DashboardPage() {
 
   // Get user's first name or full name
   const firstName = user.firstName || user.fullName?.split(' ')[0] || 'there';
+
+  const handleLearnClick = () => {
+    if (!dbUser?.hasActiveSubscription) {
+      toast.error('Please upgrade to access the learning materials');
+      return;
+    }
+    router.push('/learn');
+  };
 
   return (
     <div className="w-full max-w-3xl mx-auto px-4">
@@ -38,10 +49,11 @@ export default function DashboardPage() {
               Practice Test <ArrowRight className="h-4 w-4" />
             </Button>
             <Button 
-              onClick={() => router.push('/learn')} 
+              onClick={handleLearnClick}
               variant="outline"
               className="flex items-center gap-2"
             >
+              {!dbUser?.hasActiveSubscription && <Lock className="h-4 w-4 mr-1" />}
               <BookOpen className="h-4 w-4" />
               Learn DMV Rules
             </Button>

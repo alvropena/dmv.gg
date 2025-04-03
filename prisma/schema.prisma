@@ -21,19 +21,21 @@ model User {
   lastName  String?
   createdAt DateTime      @default(now()) @db.Timestamptz
   updatedAt DateTime      @default(now()) @db.Timestamptz
-  subscription Subscription?
+  subscriptions Subscription[]
 }
 
 model Subscription {
-  id                  Int       @id @default(autoincrement())
-  userId              Int       @unique
-  stripeCustomerId    String?   @unique
-  stripeSubscriptionId String?  @unique
-  status              String
-  planType            String
-  currentPeriodStart  DateTime? @db.Timestamptz
-  currentPeriodEnd    DateTime? @db.Timestamptz
-  createdAt           DateTime  @default(now()) @db.Timestamptz
-  updatedAt           DateTime  @default(now()) @db.Timestamptz
-  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id              String    @id @default(cuid())
+  userId          Int
+  user            User      @relation(fields: [userId], references: [id])
+  stripeCustomerId String?
+  stripePriceId   String?
+  stripeSubscriptionId String?
+  status          String    // 'active', 'canceled', 'past_due', etc.
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([userId])
 }

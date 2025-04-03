@@ -1,42 +1,34 @@
-import { type Metadata } from 'next'
-import { ClerkProvider } from '@clerk/nextjs'
-import { GeistSans, GeistMono } from 'geist/font'
-import { ThemeProvider } from '@/components/ThemeProvider'
-import { Header } from '@/components/Header'
-import { Footer } from '@/components/Footer'
-import './globals.css'
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
+import { Header } from "@/components/Header";
+import { Providers } from "@/components/Providers";
 
-const geistSans = GeistSans
-const geistMono = GeistMono
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'DMV.gg - Knowledge Test',
-  description: 'A simple quiz to help you prepare for the DMV knowledge test.',
-}
+  title: "DMV.gg - Practice Your DMV Test",
+  description: "Practice your DMV test with our comprehensive question bank",
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
+        <body className={inter.className}>
+          <Providers>
             <Header />
-            <main className="flex-1 py-16 px-4 md:px-6">
+            <main className="min-h-screen py-8">
               {children}
             </main>
-            <Footer />
-          </ThemeProvider>
+          </Providers>
         </body>
       </html>
     </ClerkProvider>
-  )
+  );
 }
