@@ -12,6 +12,20 @@ export function Footer() {
           <div className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} Excellence LatAm.
           </div>
+          <div className="text-sm text-muted-foreground gap-4 flex">
+            <Link
+              href="/privacy-policy"
+              className="hover:text-foreground transition-colors"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/terms-of-service"
+              className="hover:text-foreground transition-colors"
+            >
+              Terms of Service
+            </Link>
+          </div>
 
           <div className="flex items-center gap-4">
             <Link
