@@ -1,10 +1,6 @@
 "use client";
 
 import { SignIn } from "@clerk/nextjs";
-import {
-  Dialog,
-  DialogContent,
-} from "@/components/ui/dialog";
 
 interface SignInDialogProps {
   isOpen: boolean;
@@ -12,11 +8,11 @@ interface SignInDialogProps {
 }
 
 export function SignInDialog({ isOpen, onClose }: SignInDialogProps) {
+  if (!isOpen) return null;
+
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md p-0" showCloseButton={true}>
-        <SignIn redirectUrl="/" />
-      </DialogContent>
-    </Dialog>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+      <SignIn redirectUrl="/" routing="hash" />
+    </div>
   );
-} 
+}
