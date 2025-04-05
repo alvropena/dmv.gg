@@ -64,6 +64,30 @@ export default function Home() {
 
 	const currentQuestion = questions[currentQuestionIndex];
 
+	const checkAnswer = useCallback(() => {
+		if (selectedOption !== null && !isAnswerRevealed) {
+			setIsAnswerRevealed(true);
+			setQuestionsAnswered((prev) => prev + 1);
+
+			if (selectedOption === currentQuestion.correctAnswer) {
+				setDemoScore((prev) => prev + 1);
+				setStreak((prev) => prev + 1);
+			} else {
+				setStreak(0);
+			}
+		}
+	}, [selectedOption, isAnswerRevealed, currentQuestion.correctAnswer]);
+
+	const goToNextQuestion = useCallback(() => {
+		if (currentQuestionIndex < questions.length - 1) {
+			setCurrentQuestionIndex((prev) => prev + 1);
+			setSelectedOption(null);
+			setIsAnswerRevealed(false);
+		} else {
+			setIsDemoComplete(true);
+		}
+	}, [currentQuestionIndex]);
+
 	const handleKeyDown = useCallback(
 		(e: KeyboardEvent) => {
 			// Number keys 1-4 for selecting options (0-3 in array)
@@ -84,7 +108,13 @@ export default function Home() {
 				}
 			}
 		},
-		[currentQuestion, selectedOption, isAnswerRevealed],
+		[
+			currentQuestion,
+			selectedOption,
+			isAnswerRevealed,
+			checkAnswer,
+			goToNextQuestion,
+		],
 	);
 
 	useEffect(() => {
@@ -97,30 +127,6 @@ export default function Home() {
 	const selectOption = (index: number) => {
 		if (!isAnswerRevealed) {
 			setSelectedOption(index);
-		}
-	};
-
-	const checkAnswer = () => {
-		if (selectedOption !== null && !isAnswerRevealed) {
-			setIsAnswerRevealed(true);
-			setQuestionsAnswered((prev) => prev + 1);
-
-			if (selectedOption === currentQuestion.correctAnswer) {
-				setDemoScore((prev) => prev + 1);
-				setStreak((prev) => prev + 1);
-			} else {
-				setStreak(0);
-			}
-		}
-	};
-
-	const goToNextQuestion = () => {
-		if (currentQuestionIndex < questions.length - 1) {
-			setCurrentQuestionIndex((prev) => prev + 1);
-			setSelectedOption(null);
-			setIsAnswerRevealed(false);
-		} else {
-			setIsDemoComplete(true);
 		}
 	};
 

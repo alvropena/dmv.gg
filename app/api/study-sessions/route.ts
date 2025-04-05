@@ -4,26 +4,26 @@ import { db } from '@/lib/db';
 import { Question } from '@/types';
 
 // Create a new study session
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     // Get the user from the database
     const dbUser = await db.user.findUnique({
       where: { clerkId: userId }
     });
-    
+
     if (!dbUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
-    
+
     // Get all questions to prepare for the session
     const questions = await db.question.findMany();
-    
+
     // Create a new study session
     const session = await db.studySession.create({
       data: {
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
         status: 'in_progress',
       },
     });
-    
+
     // Create initial session answers for each question (unanswered)
     await Promise.all(
       questions.map((question: Question) =>
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
         })
       )
     );
-    
+
     return NextResponse.json({ session });
   } catch (error) {
     console.error('Error creating study session:', error);
@@ -56,23 +56,23 @@ export async function POST(request: NextRequest) {
 }
 
 // Get all study sessions for the current user
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     // Get the user from the database
     const dbUser = await db.user.findUnique({
       where: { clerkId: userId }
     });
-    
+
     if (!dbUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
-    
+
     // Get all study sessions for the user
     const sessions = await db.studySession.findMany({
       where: { userId: dbUser.id },
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
         },
       },
     });
-    
+
     return NextResponse.json({ sessions });
   } catch (error) {
     console.error('Error fetching study sessions:', error);

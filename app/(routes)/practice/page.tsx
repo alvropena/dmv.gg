@@ -204,6 +204,24 @@ export default function PracticeTestPage() {
 		}
 	}, [currentQuestionIndex, questions.length, completeSession]);
 
+	// Add a new function to handle checking answers
+	const handleCheckAnswer = useCallback(() => {
+		if (!selectedOption || isAnswerRevealed || !currentQuestion) return;
+
+		setIsAnswerRevealed(true);
+
+		// Save answer to session
+		if (sessionId && currentQuestion.id) {
+			saveAnswer(currentQuestion.id, selectedOption);
+		}
+	}, [
+		selectedOption,
+		isAnswerRevealed,
+		currentQuestion,
+		sessionId,
+		saveAnswer,
+	]);
+
 	const handleKeyDown = useCallback(
 		(e: KeyboardEvent) => {
 			// Numeric keys 1-3 for selecting options
@@ -237,6 +255,7 @@ export default function PracticeTestPage() {
 			goToNextQuestion,
 			currentQuestionIndex,
 			questions,
+			handleCheckAnswer,
 		],
 	);
 
@@ -250,18 +269,6 @@ export default function PracticeTestPage() {
 	const selectOption = (option: string) => {
 		if (!isAnswerRevealed) {
 			setSelectedOption(option);
-		}
-	};
-
-	// Add a new function to handle checking answers
-	const handleCheckAnswer = () => {
-		if (!selectedOption || isAnswerRevealed || !currentQuestion) return;
-
-		setIsAnswerRevealed(true);
-
-		// Save answer to session
-		if (sessionId && currentQuestion.id) {
-			saveAnswer(currentQuestion.id, selectedOption);
 		}
 	};
 
