@@ -20,6 +20,8 @@ A modern, interactive DMV practice test application built with Next.js and Tailw
 npx prisma migrate reset --force
 ```
 
+Suggestion: Use TablePlus for visualization.
+
 ### 2. Stripe Setup
 
 ```bash

@@ -19,6 +19,7 @@ model User {
   email     String        @unique
   firstName String?
   lastName  String?
+  birthday  DateTime?     @db.Date
   createdAt DateTime      @default(now()) @db.Timestamptz
   updatedAt DateTime      @default(now()) @db.Timestamptz
   subscriptions Subscription[]
