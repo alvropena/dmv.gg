@@ -181,7 +181,7 @@ export default function Home() {
   // Check if user has birthday set
   useEffect(() => {
     const checkUserBirthday = async () => {
-      if (!user || !hasActiveSubscription) return;
+      if (!user) return;
 
       try {
         const response = await fetch("/api/user/birthday");
@@ -196,7 +196,7 @@ export default function Home() {
     };
 
     checkUserBirthday();
-  }, [user, hasActiveSubscription]);
+  }, [user]);
 
   // Handle saving birthday
   const handleSaveBirthday = async (birthday: Date) => {
@@ -286,7 +286,6 @@ export default function Home() {
         />
         {pricingDialog}
         <Footer />
-        <SupportButton />
       </>
     );
   }
@@ -348,7 +347,6 @@ export default function Home() {
       </div>
       {pricingDialog}
       <Footer />
-      <SupportButton />
     </div>
   );
 }

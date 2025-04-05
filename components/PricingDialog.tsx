@@ -1,9 +1,11 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check } from "lucide-react";
+import { Check, Play } from "lucide-react";
 import { useEffect, useState } from "react";
 import { formatCurrency } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { Card } from "@/components/ui/card";
 
 interface Price {
   id: string;
@@ -34,6 +36,7 @@ export function PricingDialog({
   const [selectedPlan, setSelectedPlan] = useState<
     "weekly" | "monthly" | "lifetime" | null
   >(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const fetchPrices = async () => {
@@ -134,10 +137,130 @@ export function PricingDialog({
     );
   };
 
+  const renderMobileContent = () => {
+    return (
+      <DialogContent className="p-0 overflow-hidden max-w-sm w-[90%] mx-auto rounded-md">
+        <div className="flex flex-col h-full">        
+          {/* Content section */}
+          <div className="p-6 pb-2 flex flex-col">
+            <h2 className="text-xl font-bold mb-1">Begin your DMV journey</h2>
+            <p className="text-gray-600 text-sm mb-4">Unlock the test preparation you need</p>
+            
+            {/* Features list */}
+            <div className="space-y-2 mb-4">
+              {selectedPlan && prices.length > 0 && 
+                prices
+                  .find(p => getPlanType(p) === selectedPlan)
+                  ?.features
+                  ?.map((feature, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                      <span className="text-sm">{feature}</span>
+                    </div>
+                  ))
+              }
+            </div>
+            
+            {/* Plan selection */}
+            <div className="grid grid-cols-3 gap-2 mb-4">
+              {prices.filter(p => getPlanType(p) === "weekly").length > 0 && (
+                <Card 
+                  className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-md ${
+                    selectedPlan === "weekly" ? "border-primary border-2" : ""
+                  }`}
+                  onClick={() => {
+                    setSelectedPlan("weekly");
+                  }}
+                >
+                  <div className="text-xs text-center">Weekly</div>
+                  {prices.find(p => getPlanType(p) === "weekly") && (
+                    <div className="font-bold text-sm text-center">
+                      {formatCurrency(
+                        prices.find(p => getPlanType(p) === "weekly")?.unitAmount || 0, 
+                        prices.find(p => getPlanType(p) === "weekly")?.currency || "usd"
+                      )}/wk
+                    </div>
+                  )}
+                </Card>
+              )}
+              
+              <Card 
+                className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-md ${
+                  selectedPlan === "monthly" ? "border-primary border-2" : ""
+                }`}
+                onClick={() => {
+                  setSelectedPlan("monthly");
+                }}
+              >
+                <div className="text-xs text-center">Monthly</div>
+                {prices.find(p => getPlanType(p) === "monthly") && (
+                  <div className="font-bold text-sm text-center">
+                    {formatCurrency(
+                      prices.find(p => getPlanType(p) === "monthly")?.unitAmount || 0, 
+                      prices.find(p => getPlanType(p) === "monthly")?.currency || "usd"
+                    )}/mo
+                  </div>
+                )}
+              </Card>
+              
+              <Card 
+                className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-md ${
+                  selectedPlan === "lifetime" ? "border-primary border-2" : ""
+                }`}
+                onClick={() => {
+                  setSelectedPlan("lifetime");
+                }}
+              >
+                <div className="text-xs text-center">Lifetime</div>
+                {prices.find(p => getPlanType(p) === "lifetime") && (
+                  <div className="font-bold text-sm text-center">
+                    {formatCurrency(
+                      prices.find(p => getPlanType(p) === "lifetime")?.unitAmount || 0, 
+                      prices.find(p => getPlanType(p) === "lifetime")?.currency || "usd"
+                    )}
+                  </div>
+                )}
+              </Card>
+            </div>
+            
+            {/* Continue button */}
+            <Button 
+              className="w-full mb-2"
+              onClick={() => {
+                if (selectedPlan) {
+                  onPlanSelect(selectedPlan);
+                }
+              }}
+            >
+              Continue
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    );
+  };
+
+  const renderDesktopContent = () => {
+    return (
+      <DialogContent className="sm:max-w-[900px]">
+        <div className="flex flex-col items-center mb-8">
+          <h2 className="text-2xl font-bold">Choose Your Plan</h2>
+          <p className="text-muted-foreground">
+            Select the plan that works best for you. Cancel anytime.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {prices.map(renderPriceCard)}
+        </div>
+      </DialogContent>
+    );
+  };
+
   if (loading) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-[900px]">
+        <DialogContent className={isMobile ? "max-w-sm mx-auto" : "sm:max-w-[900px]"}>
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
           </div>
@@ -149,7 +272,7 @@ export function PricingDialog({
   if (error) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-[900px]">
+        <DialogContent className={isMobile ? "max-w-sm mx-auto" : "sm:max-w-[900px]"}>
           <div className="flex flex-col items-center h-64 justify-center">
             <p className="text-red-500">Error: {error}</p>
             <Button onClick={() => window.location.reload()} className="mt-4">
@@ -163,18 +286,7 @@ export function PricingDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[900px]">
-        <div className="flex flex-col items-center mb-8">
-          <h2 className="text-2xl font-bold">Choose Your Plan</h2>
-          <p className="text-muted-foreground">
-            Select the plan that works best for you. Cancel anytime.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {prices.map(renderPriceCard)}
-        </div>
-      </DialogContent>
+      {isMobile ? renderMobileContent() : renderDesktopContent()}
     </Dialog>
   );
 }

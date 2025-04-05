@@ -2,19 +2,22 @@
 
 import { SignedIn, SignedOut, UserButton, useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Crown, Info } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { PricingDialog } from "@/components/PricingDialog";
+import { SubscriptionDetailsDialog } from "@/components/SubscriptionDetailsDialog";
 import Link from "next/link";
+
 
 export function Header() {
   const router = useRouter();
   const { isSignedIn } = useAuth();
   const { hasActiveSubscription } = useAuthContext();
   const [isPricingOpen, setIsPricingOpen] = useState(false);
+  const [isSubscriptionDetailsOpen, setIsSubscriptionDetailsOpen] = useState(false);
 
   const handleLogoClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -75,11 +78,20 @@ export function Header() {
                 </Button>
               </SignedOut>
               <SignedIn>
-                {!hasActiveSubscription && (
+                {hasActiveSubscription ? (
+                  <Button
+                    variant="outline"
+                    className="mr-2 h-[34px] flex items-center gap-1"
+                    onClick={() => setIsSubscriptionDetailsOpen(true)}
+                  >
+                    <Crown className="h-4 w-4" />
+                    <span>Premium</span>
+                  </Button>
+                ) : (
                   <Button
                     onClick={handleUpgrade}
-                    className="mr-2"
-                    variant="secondary"
+                    className="mr-2 h-[34px]"
+                    variant="outline"
                   >
                     <Sparkles className="h-4 w-4" />
                     Upgrade
@@ -100,6 +112,11 @@ export function Header() {
           handlePlanSelect(plan);
           setIsPricingOpen(false);
         }}
+      />
+
+      <SubscriptionDetailsDialog
+        isOpen={isSubscriptionDetailsOpen}
+        onClose={() => setIsSubscriptionDetailsOpen(false)}
       />
     </>
   );

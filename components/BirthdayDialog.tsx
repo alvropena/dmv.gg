@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 import {
 	Dialog,
 	DialogContent,
@@ -79,14 +80,19 @@ export function BirthdayDialog({ isOpen, onSave }: BirthdayDialogProps) {
 
 	return (
 		<Dialog open={isOpen}>
-			<DialogContent className="sm:max-w-md">
+			<DialogContent 
+				className="sm:max-w-[400px] w-[90%] mx-auto rounded-md" 
+				showCloseButton={false}
+				onPointerDownOutside={(e) => e.preventDefault()}
+				onFocusOutside={(e) => e.preventDefault()}
+			>
 				<DialogHeader>
 					<DialogTitle>Complete your profile</DialogTitle>
 					<DialogDescription>
 						Please enter your date of birth to continue.
 					</DialogDescription>
 				</DialogHeader>
-				<div className="flex flex-col py-4">
+				<div className="flex flex-col">
 					<div className="grid grid-cols-3 w-full gap-2">
 						{/* Month Select */}
 						<div>
@@ -143,7 +149,7 @@ export function BirthdayDialog({ isOpen, onSave }: BirthdayDialogProps) {
 						disabled={!isSelectionComplete || isSubmitting}
 						className="w-full sm:w-auto"
 					>
-						{isSubmitting ? "Saving..." : "Save"}
+						{isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
 					</Button>
 				</DialogFooter>
 			</DialogContent>
