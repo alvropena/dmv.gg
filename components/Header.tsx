@@ -58,7 +58,7 @@ export function Header() {
 	return (
 		<>
 			<header className="sticky top-0 w-full z-50 backdrop-blur-md bg-background/80">
-				<div className="max-w-6xl mx-auto px-4">
+				<div className="container mx-auto px-4">
 					<div className="flex justify-between items-center h-16">
 						<Link href="/" onClick={handleLogoClick}>
 							<h1 className="text-xl font-bold bg-blue-600 text-white px-3 py-1 rounded">
@@ -97,7 +97,7 @@ export function Header() {
 						</div>
 					</div>
 				</div>
-				<div className="max-w-6xl mx-auto border-b border-slate-200 dark:border-slate-800" />
+				<div className="container mx-auto border-b border-slate-200 dark:border-slate-800" />
 			</header>
 
 			<PricingDialog

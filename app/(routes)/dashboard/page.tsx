@@ -1,176 +1,276 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { NavigationTabs } from "@/components/dashboard/NavigationTabs";
+import { OverviewTab } from "@/components/dashboard/OverviewTab";
+import { UsersTab } from "@/components/dashboard/UsersTab";
+import { ContentTab } from "@/components/dashboard/ContentTab";
+import { ReportsTab } from "@/components/dashboard/ReportsTab";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+	Users,
+	ChevronUp,
+	ChevronDown,
+	FileText,
+	CheckCircle,
+	MessageSquare,
+} from "lucide-react";
+import {
+	getStatusIcon,
+	getDifficultyBadge,
+	getCategoryBadge,
+} from "@/components/dashboard/utils";
 
-export default function CreateQuestionPage() {
-  const router = useRouter();
-  const [formData, setFormData] = useState({
-    title: '',
-    optionA: '',
-    optionB: '',
-    optionC: '',
-    optionD: '',
-    correctAnswer: '',
-    explanation: ''
-  });
+export default function DashboardPage() {
+	const [activeTab, setActiveTab] = useState("overview");
+	const [formData, setFormData] = useState({
+		title: "",
+		optionA: "",
+		optionB: "",
+		optionC: "",
+		optionD: "",
+		correctAnswer: "",
+		explanation: "",
+	});
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      // Remove optionD if it's empty
-      const submitData = {
-        ...formData,
-        optionD: formData.optionD.trim() || undefined
-      };
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		console.log("Form submitted:", formData);
 
-      const response = await fetch('/api/questions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(submitData),
-      });
+		// Reset form after submission
+		setFormData({
+			title: "",
+			optionA: "",
+			optionB: "",
+			optionC: "",
+			optionD: "",
+			correctAnswer: "",
+			explanation: "",
+		});
 
-      if (response.ok) {
-        // Reset form and show success message or redirect
-        setFormData({
-          title: '',
-          optionA: '',
-          optionB: '',
-          optionC: '',
-          optionD: '',
-          correctAnswer: '',
-          explanation: ''
-        });
-        router.push('/dashboard'); // Or wherever you want to redirect after success
-      } else {
-        console.error('Failed to create question');
-      }
-    } catch (error) {
-      console.error('Error creating question:', error);
-    }
-  };
+		// Here you would typically send the data to your API
+		// fetch('/api/questions', {
+		//   method: 'POST',
+		//   headers: { 'Content-Type': 'application/json' },
+		//   body: JSON.stringify(formData),
+		// });
+	};
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+	const handleChange = (
+		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+	) => {
+		const { name, value } = e.target;
+		setFormData((prev) => ({
+			...prev,
+			[name]: value,
+		}));
+	};
 
-  return (
-    <div className="container mx-auto max-w-2xl py-8">
-      <Card>
-        <CardContent className="pt-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <h1 className="text-2xl font-bold mb-6">Create Quiz Question</h1>
-            </div>
+	const handleTabChange = (tab: string) => {
+		setActiveTab(tab);
+	};
 
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
-                <Input
-                  id="title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  placeholder="Enter the question"
-                  required
-                />
-              </div>
+	const usersData = [
+		{
+			name: "John Smith",
+			email: "john.smith@example.com",
+			status: "Active",
+			role: "Student",
+			joined: "Apr 2, 2025",
+			tests: 12,
+			avgScore: "78%",
+		},
+		{
+			name: "Sarah Johnson",
+			email: "sarah.j@example.com",
+			status: "Active",
+			role: "Student",
+			joined: "Mar 28, 2025",
+			tests: 8,
+			avgScore: "92%",
+		},
+		{
+			name: "Michael Brown",
+			email: "michael.b@example.com",
+			status: "Inactive",
+			role: "Student",
+			joined: "Feb 15, 2025",
+			tests: 3,
+			avgScore: "65%",
+		},
+		{
+			name: "Emily Davis",
+			email: "emily.d@example.com",
+			status: "Active",
+			role: "Admin",
+			joined: "Jan 10, 2025",
+			tests: 0,
+			avgScore: "N/A",
+		},
+		{
+			name: "Robert Wilson",
+			email: "robert.w@example.com",
+			status: "Suspended",
+			role: "Student",
+			joined: "Mar 5, 2025",
+			tests: 5,
+			avgScore: "71%",
+		},
+	];
 
-              <div className="space-y-2">
-                <Label htmlFor="optionA">Option A</Label>
-                <Input
-                  id="optionA"
-                  name="optionA"
-                  value={formData.optionA}
-                  onChange={handleChange}
-                  placeholder="Enter option A"
-                  required
-                />
-              </div>
+	const contentData = [
+		{
+			id: "Q-1001",
+			question: "What does a red octagonal sign indicate?",
+			category: "Road Signs",
+			difficulty: "Easy",
+			status: "Active",
+			successRate: "92%",
+			flags: 0,
+		},
+		{
+			id: "Q-1002",
+			question: "When approaching a school crossing, what should you do?",
+			category: "Safety",
+			difficulty: "Medium",
+			status: "Active",
+			successRate: "85%",
+			flags: 0,
+		},
+		{
+			id: "Q-1003",
+			question: "What is the minimum safe following distance?",
+			category: "Rules",
+			difficulty: "Medium",
+			status: "Active",
+			successRate: "78%",
+			flags: 0,
+		},
+		{
+			id: "Q-1004",
+			question: "What does a flashing yellow traffic light indicate?",
+			category: "Traffic Signals",
+			difficulty: "Easy",
+			status: "Active",
+			successRate: "88%",
+			flags: 0,
+		},
+		{
+			id: "Q-1005",
+			question: "When may you legally drive across a double line?",
+			category: "Road Markings",
+			difficulty: "Hard",
+			status: "Flagged",
+			successRate: "45%",
+			flags: 3,
+		},
+	];
 
-              <div className="space-y-2">
-                <Label htmlFor="optionB">Option B</Label>
-                <Input
-                  id="optionB"
-                  name="optionB"
-                  value={formData.optionB}
-                  onChange={handleChange}
-                  placeholder="Enter option B"
-                  required
-                />
-              </div>
+	return (
+		<div className="container mx-auto p-6">
+			<DashboardHeader
+				title="Admin Dashboard"
+				subtitle="Manage users, content, and view analytics"
+			/>
 
-              <div className="space-y-2">
-                <Label htmlFor="optionC">Option C</Label>
-                <Input
-                  id="optionC"
-                  name="optionC"
-                  value={formData.optionC}
-                  onChange={handleChange}
-                  placeholder="Enter option C"
-                  required
-                />
-              </div>
+			{/* Stats Cards - Always Visible */}
+			<div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+				{/* Total Users Card */}
+				<Card>
+					<CardContent className="pt-4">
+						<div className="flex justify-between items-center mb-1">
+							<h3 className="text-sm text-gray-500">Total Users</h3>
+							<Users className="text-gray-500 h-4 w-4" />
+						</div>
+						<div className="flex items-center">
+							<p className="text-3xl font-bold">5,231</p>
+							<span className="ml-2 text-green-500 flex items-center text-xs">
+								<ChevronUp size={16} />
+								+12%
+							</span>
+						</div>
+					</CardContent>
+				</Card>
 
-              <div className="space-y-2">
-                <Label htmlFor="optionD">Option D (Optional)</Label>
-                <Input
-                  id="optionD"
-                  name="optionD"
-                  value={formData.optionD}
-                  onChange={handleChange}
-                  placeholder="Enter option D (optional)"
-                />
-              </div>
+				{/* Active Tests Card */}
+				<Card>
+					<CardContent className="pt-4">
+						<div className="flex justify-between items-center mb-1">
+							<h3 className="text-sm text-gray-500">Active Tests</h3>
+							<FileText className="text-gray-500 h-4 w-4" />
+						</div>
+						<div className="flex items-center">
+							<p className="text-3xl font-bold">842</p>
+							<span className="ml-2 text-green-500 flex items-center text-xs">
+								<ChevronUp size={16} />
+								+5%
+							</span>
+						</div>
+					</CardContent>
+				</Card>
 
-              <div className="space-y-2">
-                <Label htmlFor="correctAnswer">Correct Answer</Label>
-                <Input
-                  id="correctAnswer"
-                  name="correctAnswer"
-                  value={formData.correctAnswer}
-                  onChange={handleChange}
-                  placeholder="Enter the correct answer (A, B, C, or D)"
-                  required
-                  pattern="[ABCDabcd]"
-                  maxLength={1}
-                />
-              </div>
+				{/* Pass Rate Card */}
+				<Card>
+					<CardContent className="pt-4">
+						<div className="flex justify-between items-center mb-1">
+							<h3 className="text-sm text-gray-500">Pass Rate</h3>
+							<CheckCircle className="text-gray-500 h-4 w-4" />
+						</div>
+						<div className="flex items-center">
+							<p className="text-3xl font-bold">76%</p>
+							<span className="ml-2 text-red-500 flex items-center text-xs">
+								<ChevronDown size={16} />
+								-2%
+							</span>
+						</div>
+					</CardContent>
+				</Card>
 
-              <div className="space-y-2">
-                <Label htmlFor="explanation">Explanation</Label>
-                <Textarea
-                  id="explanation"
-                  name="explanation"
-                  value={formData.explanation}
-                  onChange={handleChange}
-                  placeholder="Explain why this answer is correct"
-                  required
-                  rows={4}
-                />
-              </div>
-            </div>
+				{/* Support Tickets Card */}
+				<Card>
+					<CardContent className="pt-4">
+						<div className="flex justify-between items-center mb-1">
+							<h3 className="text-sm text-gray-500">Support Tickets</h3>
+							<MessageSquare className="text-gray-500 h-4 w-4" />
+						</div>
+						<div className="flex items-center">
+							<p className="text-3xl font-bold">18</p>
+							<span className="ml-2 text-green-500 flex items-center text-xs">
+								<ChevronUp size={16} />
+								+3
+							</span>
+						</div>
+					</CardContent>
+				</Card>
+			</div>
 
-            <Button type="submit" className="w-full">
-              Submit
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-  );
+			<NavigationTabs activeTab={activeTab} onTabChange={handleTabChange} />
+
+			<div className="mt-6">
+				{activeTab === "overview" && (
+					<OverviewTab
+						formData={formData}
+						handleChange={handleChange}
+						handleSubmit={handleSubmit}
+					/>
+				)}
+
+				{activeTab === "users" && (
+					<UsersTab usersData={usersData} getStatusIcon={getStatusIcon} />
+				)}
+
+				{activeTab === "content" && (
+					<ContentTab
+						contentData={contentData}
+						getStatusIcon={getStatusIcon}
+						getCategoryBadge={getCategoryBadge}
+						getDifficultyBadge={getDifficultyBadge}
+					/>
+				)}
+
+				{activeTab === "reports" && <ReportsTab />}
+			</div>
+		</div>
+	);
 }
