@@ -23,7 +23,7 @@ model User {
   createdAt DateTime      @default(now()) @db.Timestamptz
   updatedAt DateTime      @default(now()) @db.Timestamptz
   subscriptions Subscription[]
-  studySessions StudySession[]
+  tests Test[]
 }
 
 model Subscription {
@@ -54,25 +54,31 @@ model Question {
   createdAt   DateTime   @default(now()) @db.Timestamptz
   updatedAt   DateTime   @updatedAt @db.Timestamptz
   
-  // Relation to study session answers
-  answers     SessionAnswer[]
+  // Relation to test answers
+  answers     TestAnswer[]
+  
+  // Relation to tests that include this question
+  tests    TestQuestion[]
 
   @@index([id])
 }
 
-model StudySession {
+model Test {
   id          String    @id @default(uuid())
   userId      String
   user        User      @relation(fields: [userId], references: [id])
   startedAt   DateTime  @default(now()) @db.Timestamptz
   completedAt DateTime? @db.Timestamptz
-  durationSeconds Int?  // Duration of the session in seconds
+  durationSeconds Int?  // Duration of the test in seconds
   score       Int       @default(0)
   totalQuestions Int    @default(0)
   status      String    @default("in_progress") // "in_progress", "completed", "abandoned"
   
-  // Relation to session answers
-  answers     SessionAnswer[]
+  // Relation to test answers
+  answers     TestAnswer[]
+
+  // Relation to questions included in this test
+  questions   TestQuestion[]
   
   createdAt   DateTime  @default(now()) @db.Timestamptz
   updatedAt   DateTime  @updatedAt @db.Timestamptz
@@ -80,9 +86,24 @@ model StudySession {
   @@index([userId])
 }
 
-model SessionAnswer {
-  sessionId   String
-  session     StudySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+model TestQuestion {
+  testId      String
+  test        Test @relation(fields: [testId], references: [id], onDelete: Cascade)
+  questionId  String
+  question    Question  @relation(fields: [questionId], references: [id])
+  order       Int       // Position of the question in the test
+  
+  createdAt   DateTime  @default(now()) @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @db.Timestamptz
+
+  @@id([testId, questionId])
+  @@index([testId])
+  @@index([questionId])
+}
+
+model TestAnswer {
+  testId      String
+  test        Test @relation(fields: [testId], references: [id], onDelete: Cascade)
   questionId  String
   question    Question  @relation(fields: [questionId], references: [id])
   selectedAnswer String? @db.VarChar(1)  // 'A', 'B', or 'C' or null if not answered
@@ -92,7 +113,7 @@ model SessionAnswer {
   createdAt   DateTime  @default(now()) @db.Timestamptz
   updatedAt   DateTime  @updatedAt @db.Timestamptz
 
-  @@id([sessionId, questionId])
-  @@index([sessionId])
+  @@id([testId, questionId])
+  @@index([testId])
   @@index([questionId])
 }

@@ -18,6 +18,7 @@ import { UserProfileCard } from "./components/UserProfileCard";
 import { UserWelcomeCard } from "./components/UserWelcomeCard";
 import { StudyTips } from "./components/StudyTips";
 import { UserActivitySection } from "./components/UserActivitySection";
+import { SupportButton } from "./components/SupportButton";
 // Custom hook to detect mobile screens
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -269,6 +270,7 @@ export default function Home() {
           isOpen={isBirthdayDialogOpen}
           onSave={handleSaveBirthday}
         />
+        <SupportButton />
       </>
     );
   }
@@ -285,6 +287,7 @@ export default function Home() {
         />
         {pricingDialog}
         <Footer />
+        <SupportButton />
       </>
     );
   }
@@ -346,6 +349,7 @@ export default function Home() {
       </div>
       {pricingDialog}
       <Footer />
+      <SupportButton />
     </div>
   );
 }

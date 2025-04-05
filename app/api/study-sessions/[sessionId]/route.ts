@@ -67,22 +67,36 @@ export async function GET(
 ) {
   try {
     const { userId } = await auth();
-    
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     const { sessionId } = params;
-    
-    // Check if the session belongs to the user
-    const session = await db.studySession.findFirst({
+
+    // Get the user from the database
+    const dbUser = await db.user.findUnique({
+      where: { clerkId: userId }
+    });
+
+    if (!dbUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Get the session with answers and questions
+    const session = await db.studySession.findUnique({
       where: {
         id: sessionId,
-        user: {
-          clerkId: userId,
-        },
+        userId: dbUser.id, // Ensure the session belongs to the user
       },
       include: {
+        questions: {
+          include: {
+            question: true,
+          },
+          orderBy: {
+            order: 'asc',
+          },
+        },
         answers: {
           include: {
             question: true,
@@ -90,21 +104,22 @@ export async function GET(
         },
       },
     });
-    
+
     if (!session) {
-      return NextResponse.json(
-        { error: 'Session not found or unauthorized' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
-    
-    return NextResponse.json({ session });
+
+    // Extract the ordered list of questions from the session
+    const orderedQuestions = session.questions.map(sq => sq.question);
+
+    return NextResponse.json({ 
+      session,
+      questions: orderedQuestions,
+    });
+
   } catch (error) {
     console.error('Error fetching session:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch session' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch session' }, { status: 500 });
   }
 }
 

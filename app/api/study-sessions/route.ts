@@ -3,6 +3,19 @@ import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 import { Question } from '@/types';
 
+// Maximum number of questions per test
+const MAX_QUESTIONS_PER_TEST = 46;
+
+// Helper function to shuffle an array (Fisher-Yates algorithm)
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 // Create a new study session
 export async function POST() {
   try {
@@ -21,21 +34,38 @@ export async function POST() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Get all questions to prepare for the session
-    const questions = await db.question.findMany();
-
+    // Get all questions 
+    const allQuestions = await db.question.findMany();
+    
+    // Shuffle and select a random subset (up to MAX_QUESTIONS_PER_TEST)
+    const shuffledQuestions = shuffleArray(allQuestions);
+    const selectedQuestions = shuffledQuestions.slice(0, MAX_QUESTIONS_PER_TEST);
+    
     // Create a new study session
     const session = await db.studySession.create({
       data: {
         userId: dbUser.id,
-        totalQuestions: questions.length,
+        totalQuestions: selectedQuestions.length,
         status: 'in_progress',
       },
     });
 
-    // Create initial session answers for each question (unanswered)
+    // Create SessionQuestion entries for the selected questions
     await Promise.all(
-      questions.map((question: Question) =>
+      selectedQuestions.map((question, index) =>
+        db.sessionQuestion.create({
+          data: {
+            sessionId: session.id,
+            questionId: question.id,
+            order: index,
+          },
+        })
+      )
+    );
+
+    // Create initial session answers for the selected questions
+    await Promise.all(
+      selectedQuestions.map((question) =>
         db.sessionAnswer.create({
           data: {
             sessionId: session.id,

@@ -83,16 +83,22 @@ export default function PracticeTestPage() {
 		createStudySession();
 	}, [hasActiveSubscription, user]); // No sessionId dependency to prevent re-runs
 
-	// Fetch existing session details if we have a sessionId
+	// Fetch existing session details and questions if we have a sessionId
 	useEffect(() => {
-		const fetchExistingSession = async () => {
+		const fetchSessionData = async () => {
 			if (!sessionId || !hasActiveSubscription || !user) return;
 
+			setIsLoadingQuestions(true);
 			try {
 				const response = await fetch(`/api/study-sessions/${sessionId}`);
 				if (!response.ok) throw new Error("Failed to fetch session");
 
-				const { session } = await response.json();
+				const { session, questions } = await response.json();
+
+				// Set the questions for the test
+				if (questions && Array.isArray(questions)) {
+					setQuestions(questions);
+				}
 
 				// If this is a session being restored, set the start time
 				if (session.startedAt) {
@@ -103,31 +109,34 @@ export default function PracticeTestPage() {
 				if (session.status === "completed") {
 					setShowCongratulations(true);
 				}
-			} catch (error) {
-				console.error("Error fetching session:", error);
-			}
-		};
 
-		fetchExistingSession();
-	}, [sessionId, hasActiveSubscription, user]);
+				// Restore the user's progress in the session
+				if (session.answers && Array.isArray(session.answers)) {
+					// Count how many questions have been answered
+					const answeredCount = session.answers.filter(
+						(answer: any) => answer.selectedAnswer !== null
+					).length;
+					setQuestionsAnswered(answeredCount);
 
-	useEffect(() => {
-		// Fetch questions from API
-		const fetchQuestions = async () => {
-			try {
-				const response = await fetch("/api/questions");
-				if (!response.ok) throw new Error("Failed to fetch questions");
-				const data = await response.json();
-				setQuestions(data);
+					// Find the last unanswered question to set the currentQuestionIndex
+					if (answeredCount < session.totalQuestions) {
+						const nextUnansweredIndex = session.answers.findIndex(
+							(answer: any) => answer.selectedAnswer === null
+						);
+						if (nextUnansweredIndex !== -1) {
+							setCurrentQuestionIndex(nextUnansweredIndex);
+						}
+					}
+				}
 			} catch (error) {
-				console.error("Error fetching questions:", error);
+				console.error("Error fetching session data:", error);
 			} finally {
 				setIsLoadingQuestions(false);
 			}
 		};
 
-		fetchQuestions();
-	}, []);
+		fetchSessionData();
+	}, [sessionId, hasActiveSubscription, user]);
 
 	useEffect(() => {
 		// Redirect if not subscribed
@@ -206,7 +215,10 @@ export default function PracticeTestPage() {
 
 	// Add a new function to handle checking answers
 	const handleCheckAnswer = useCallback(() => {
-		if (!selectedOption || isAnswerRevealed || !currentQuestion) return;
+		if (!selectedOption || isAnswerRevealed || questions.length === 0) return;
+
+		const currentQuestion = questions[currentQuestionIndex];
+		if (!currentQuestion) return;
 
 		setIsAnswerRevealed(true);
 
@@ -217,8 +229,9 @@ export default function PracticeTestPage() {
 	}, [
 		selectedOption,
 		isAnswerRevealed,
-		currentQuestion,
 		sessionId,
+		questions,
+		currentQuestionIndex,
 		saveAnswer,
 	]);
 

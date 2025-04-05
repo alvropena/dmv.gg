@@ -1,11 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
 	Dialog,
 	DialogContent,
@@ -15,10 +11,12 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 
 interface BirthdayDialogProps {
 	isOpen: boolean;
@@ -26,14 +24,23 @@ interface BirthdayDialogProps {
 }
 
 export function BirthdayDialog({ isOpen, onSave }: BirthdayDialogProps) {
-	const [date, setDate] = useState<Date | undefined>(undefined);
+	const [day, setDay] = useState<string | undefined>(undefined);
+	const [month, setMonth] = useState<string | undefined>(undefined);
+	const [year, setYear] = useState<string | undefined>(undefined);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const handleSave = async () => {
-		if (!date) return;
+		if (!day || !month || !year) return;
 
 		try {
 			setIsSubmitting(true);
+			// Convert selections to a Date object
+			// Note: month is 0-indexed in JavaScript Date
+			const date = new Date(
+				parseInt(year),
+				parseInt(month) - 1,
+				parseInt(day)
+			);
 			await onSave(date);
 		} catch (error) {
 			console.error("Error saving birthday:", error);
@@ -42,9 +49,33 @@ export function BirthdayDialog({ isOpen, onSave }: BirthdayDialogProps) {
 		}
 	};
 
-	// Calculate the maximum date (18 years ago from today)
-	const maxDate = new Date();
-	maxDate.setFullYear(maxDate.getFullYear() - 18);
+	// Generate days 1-31
+	const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
+
+	// Generate months 1-12
+	const months = [
+		{ value: "1", label: "January" },
+		{ value: "2", label: "February" },
+		{ value: "3", label: "March" },
+		{ value: "4", label: "April" },
+		{ value: "5", label: "May" },
+		{ value: "6", label: "June" },
+		{ value: "7", label: "July" },
+		{ value: "8", label: "August" },
+		{ value: "9", label: "September" },
+		{ value: "10", label: "October" },
+		{ value: "11", label: "November" },
+		{ value: "12", label: "December" },
+	];
+
+	// Generate years from 1950 to current year
+	const currentYear = new Date().getFullYear();
+	const years = Array.from(
+		{ length: currentYear - 1950 + 1 },
+		(_, i) => (currentYear - i).toString()
+	);
+
+	const isSelectionComplete = day && month && year;
 
 	return (
 		<Dialog open={isOpen}>
@@ -52,42 +83,64 @@ export function BirthdayDialog({ isOpen, onSave }: BirthdayDialogProps) {
 				<DialogHeader>
 					<DialogTitle>Complete your profile</DialogTitle>
 					<DialogDescription>
-						Please enter your date of birth to continue. You must be at least 18
-						years old.
+						Please enter your date of birth to continue.
 					</DialogDescription>
 				</DialogHeader>
-				<div className="flex flex-col items-center py-4">
-					<div className="grid w-full max-w-sm items-center gap-2">
-						<Popover>
-							<PopoverTrigger asChild>
-								<Button
-									variant="outline"
-									className={cn(
-										"w-full justify-start text-left font-normal",
-										!date && "text-muted-foreground",
-									)}
-								>
-									<CalendarIcon className="mr-2 h-4 w-4" />
-									{date ? format(date, "PPP") : "Select your birthday"}
-								</Button>
-							</PopoverTrigger>
-							<PopoverContent className="w-auto p-0">
-								<Calendar
-									mode="single"
-									selected={date}
-									onSelect={setDate}
-									initialFocus
-									fromYear={1920}
-									toDate={maxDate}
-								/>
-							</PopoverContent>
-						</Popover>
+				<div className="flex flex-col py-4">
+					<div className="grid grid-cols-3 w-full gap-2">
+						{/* Month Select */}
+						<div>
+							<Select value={month} onValueChange={setMonth}>
+								<SelectTrigger>
+									<SelectValue placeholder="Month" />
+								</SelectTrigger>
+								<SelectContent>
+									{months.map((item) => (
+										<SelectItem key={item.value} value={item.value}>
+											{item.label}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
+
+						{/* Day Select */}
+						<div>
+							<Select value={day} onValueChange={setDay}>
+								<SelectTrigger>
+									<SelectValue placeholder="Day" />
+								</SelectTrigger>
+								<SelectContent>
+									{days.map((day) => (
+										<SelectItem key={day} value={day}>
+											{day}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
+
+						{/* Year Select */}
+						<div>
+							<Select value={year} onValueChange={setYear}>
+								<SelectTrigger>
+									<SelectValue placeholder="Year" />
+								</SelectTrigger>
+								<SelectContent>
+									{years.map((year) => (
+										<SelectItem key={year} value={year}>
+											{year}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
 					</div>
 				</div>
 				<DialogFooter>
 					<Button
 						onClick={handleSave}
-						disabled={!date || isSubmitting}
+						disabled={!isSelectionComplete || isSubmitting}
 						className="w-full sm:w-auto"
 					>
 						{isSubmitting ? "Saving..." : "Save"}
