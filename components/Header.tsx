@@ -81,19 +81,19 @@ export function Header() {
                 {hasActiveSubscription ? (
                   <Button
                     variant="outline"
-                    className="mr-2 h-[34px] flex items-center gap-1"
+                    className="mr-2 h-[34px] flex items-center gap-1 bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100 hover:text-amber-800"
                     onClick={() => setIsSubscriptionDetailsOpen(true)}
                   >
-                    <Crown className="h-4 w-4" />
+                    <Crown className="h-4 w-4 text-amber-500" />
                     <span>Premium</span>
                   </Button>
                 ) : (
                   <Button
                     onClick={handleUpgrade}
-                    className="mr-2 h-[34px]"
-                    variant="outline"
+                    className="mr-2 h-[34px] bg-amber-500 text-white hover:bg-amber-600"
+                    variant="default"
                   >
-                    <Sparkles className="h-4 w-4" />
+                    <Sparkles className="h-4 w-4 mr-1" />
                     Upgrade
                   </Button>
                 )}
@@ -102,7 +102,7 @@ export function Header() {
             </div>
           </div>
         </div>
-        <div className="container mx-auto border-b border-slate-200 dark:border-slate-800" />
+        
       </header>
 
       <PricingDialog

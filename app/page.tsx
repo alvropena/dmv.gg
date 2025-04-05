@@ -13,12 +13,12 @@ import { PricingDialog } from "@/components/PricingDialog";
 import { Footer } from "@/components/Footer";
 import { BirthdayDialog } from "@/components/BirthdayDialog";
 import { Loader2 } from "lucide-react";
-import { UserStats } from "./components/UserStats";
-import { UserProfileCard } from "./components/UserProfileCard";
-import { UserWelcomeCard } from "./components/UserWelcomeCard";
-import { StudyTips } from "./components/StudyTips";
-import { UserActivitySection } from "./components/UserActivitySection";
-import { SupportButton } from "./components/SupportButton";
+import { UserStats } from "@/components/UserStats";
+import { UserProfileCard } from "@/components/UserProfileCard";
+import { UserWelcomeCard } from "@/components/UserWelcomeCard";
+import { StudyTips } from "@/components/StudyTips";
+import { UserActivitySection } from "@/components/UserActivitySection";
+import { SupportButton } from "@/components/SupportButton";
 // Custom hook to detect mobile screens
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(false);

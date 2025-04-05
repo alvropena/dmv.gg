@@ -34,6 +34,60 @@ export default function PracticeTestPage() {
 	// Use the custom timer hook
 	const elapsedTime = useTimer(startTime);
 	
+	// Function to fetch test data and update local state
+	const fetchTestData = async () => {
+		if (!testId || !hasActiveSubscription || !user) return;
+
+		try {
+			const response = await fetch(`/api/tests/testId?testId=${testId}`, {
+				method: "GET"
+			});
+			
+			if (!response.ok) throw new Error("Failed to fetch test");
+
+			const { test, questions } = await response.json();
+
+			// Set the questions for the test
+			if (questions && Array.isArray(questions)) {
+				setQuestions(questions);
+			}
+
+			// If this is a test being restored, set the start time
+			if (test.startedAt) {
+				setStartTime(new Date(test.startedAt));
+			}
+
+			// If test is completed, show congratulations
+			if (test.status === "completed") {
+				setShowCongratulations(true);
+			}
+
+			// Restore the user's progress in the test
+			if (test.answers && Array.isArray(test.answers)) {
+				// Count how many questions have been answered
+				const answeredCount = test.answers.filter(
+					(answer: any) => answer.selectedAnswer !== null
+				).length;
+				setQuestionsAnswered(answeredCount);
+
+				// Find the last unanswered question to set the currentQuestionIndex
+				if (answeredCount < test.totalQuestions) {
+					const nextUnansweredIndex = test.answers.findIndex(
+						(answer: any) => answer.selectedAnswer === null
+					);
+					if (nextUnansweredIndex !== -1) {
+						setCurrentQuestionIndex(nextUnansweredIndex);
+					}
+				}
+			}
+			
+			return test;
+		} catch (error) {
+			console.error("Error fetching test data:", error);
+			return null;
+		}
+	};
+	
 	// Periodically update the test duration in the database
 	useEffect(() => {
 		// Don't update if the test is not started or is already completed
@@ -127,52 +181,12 @@ export default function PracticeTestPage() {
 
 	// Fetch existing test details and questions if we have a testId
 	useEffect(() => {
-		const fetchTestData = async () => {
+		const loadInitialTestData = async () => {
 			if (!testId || !hasActiveSubscription || !user) return;
 
 			setIsLoadingQuestions(true);
 			try {
-				const response = await fetch(`/api/tests/testId?testId=${testId}`, {
-					method: "GET"
-				});
-				
-				if (!response.ok) throw new Error("Failed to fetch test");
-
-				const { test, questions } = await response.json();
-
-				// Set the questions for the test
-				if (questions && Array.isArray(questions)) {
-					setQuestions(questions);
-				}
-
-				// If this is a test being restored, set the start time
-				if (test.startedAt) {
-					setStartTime(new Date(test.startedAt));
-				}
-
-				// If test is completed, show congratulations
-				if (test.status === "completed") {
-					setShowCongratulations(true);
-				}
-
-				// Restore the user's progress in the test
-				if (test.answers && Array.isArray(test.answers)) {
-					// Count how many questions have been answered
-					const answeredCount = test.answers.filter(
-						(answer: any) => answer.selectedAnswer !== null
-					).length;
-					setQuestionsAnswered(answeredCount);
-
-					// Find the last unanswered question to set the currentQuestionIndex
-					if (answeredCount < test.totalQuestions) {
-						const nextUnansweredIndex = test.answers.findIndex(
-							(answer: any) => answer.selectedAnswer === null
-						);
-						if (nextUnansweredIndex !== -1) {
-							setCurrentQuestionIndex(nextUnansweredIndex);
-						}
-					}
-				}
+				await fetchTestData();
 			} catch (error) {
 				console.error("Error fetching test data:", error);
 			} finally {
@@ -180,7 +194,7 @@ export default function PracticeTestPage() {
 			}
 		};
 
-		fetchTestData();
+		loadInitialTestData();
 	}, [testId, hasActiveSubscription, user]);
 
 	useEffect(() => {
@@ -208,9 +222,22 @@ export default function PracticeTestPage() {
 
 			if (!response.ok) {
 				console.error("Failed to save answer:", await response.text());
+				return false;
 			}
+			
+			// Immediately update the questionsAnswered state to reflect progress
+			setQuestionsAnswered(prev => {
+				// Fetch latest answered count after saving
+				return prev + 1;
+			});
+			
+			// Refresh test data to get latest progress
+			await fetchTestData();
+			
+			return true;
 		} catch (error) {
 			console.error("Error saving answer:", error);
+			return false;
 		}
 	};
 
@@ -243,23 +270,8 @@ export default function PracticeTestPage() {
 		}
 	}, [testId, startTime]);
 
-	// Define goToNextQuestion before it's used in handleKeyDown
-	const goToNextQuestion = useCallback(() => {
-		if (currentQuestionIndex < questions.length - 1) {
-			setCurrentQuestionIndex((prev) => prev + 1);
-			setSelectedOption(null);
-			setIsAnswerRevealed(false);
-			setQuestionsAnswered((prev) => prev + 1);
-		} else {
-			// Last question reviewed
-			setQuestionsAnswered(questions.length);
-			setShowCongratulations(true);
-			completeTest();
-		}
-	}, [currentQuestionIndex, questions.length, completeTest]);
-
 	// Add a new function to handle checking answers
-	const handleCheckAnswer = useCallback(() => {
+	const handleCheckAnswer = useCallback(async () => {
 		if (!selectedOption || isAnswerRevealed || questions.length === 0) return;
 
 		const currentQuestion = questions[currentQuestionIndex];
@@ -269,7 +281,9 @@ export default function PracticeTestPage() {
 
 		// Save answer to test
 		if (testId && currentQuestion.id) {
-			saveAnswer(currentQuestion.id, selectedOption);
+			await saveAnswer(currentQuestion.id, selectedOption);
+			// Refresh test data to ensure progress is up-to-date
+			await fetchTestData();
 		}
 	}, [
 		selectedOption,
@@ -278,7 +292,21 @@ export default function PracticeTestPage() {
 		questions,
 		currentQuestionIndex,
 		saveAnswer,
+		fetchTestData
 	]);
+
+	// Define goToNextQuestion before it's used in handleKeyDown
+	const goToNextQuestion = useCallback(() => {
+		if (currentQuestionIndex < questions.length - 1) {
+			setCurrentQuestionIndex((prev) => prev + 1);
+			setSelectedOption(null);
+			setIsAnswerRevealed(false);
+		} else {
+			// Last question reviewed
+			setShowCongratulations(true);
+			completeTest();
+		}
+	}, [currentQuestionIndex, questions.length, completeTest]);
 
 	const handleKeyDown = useCallback(
 		(e: KeyboardEvent) => {

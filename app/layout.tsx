@@ -23,7 +23,7 @@ export default function RootLayout({
 				<body className={inter.className}>
 					<Providers>
 						<Header />
-						<main className="min-h-screen">{children}</main>
+						<main className="h-fit">{children}</main>
 						<Toaster />
 					</Providers>
 				</body>
