@@ -7,7 +7,7 @@ import {
   useAuth
 } from '@clerk/nextjs'
 import { Button } from '@/components/ui/button'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Sparkles } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/contexts/AuthContext'
@@ -23,7 +23,7 @@ export function Header() {
   const handleLogoClick = (e: React.MouseEvent) => {
     e.preventDefault();
     if (isSignedIn) {
-      router.push('/dashboard');
+      router.push('/');
     } else {
       router.push('/');
     }
@@ -79,8 +79,16 @@ export function Header() {
                 </Button>
               </SignedOut>
               <SignedIn>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => router.push('/dashboard')}
+                  className="mr-2"
+                >
+                  Dashboard
+                </Button>
                 {!hasActiveSubscription && (
-                  <Button onClick={handleUpgrade} variant="outline" className="mr-2">
+                  <Button onClick={handleUpgrade} className="mr-2" variant="secondary">
+                    <Sparkles className="h-4 w-4" />
                     Upgrade
                   </Button>
                 )}

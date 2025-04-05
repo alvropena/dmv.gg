@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { db } from '@/lib/db';
+import crypto from 'crypto';
 
 export async function POST(req: Request) {
   const body = await req.text();
@@ -75,6 +76,7 @@ export async function POST(req: Request) {
           console.log('Processing one-time payment (lifetime plan)');
           await db.subscription.create({
             data: {
+              id: crypto.randomUUID(), // Generate UUID to match the schema
               userId: user.id, // Use the numeric ID from our database
               stripeCustomerId: session.customer as string,
               stripePriceId: priceId,
@@ -116,6 +118,7 @@ export async function POST(req: Request) {
           
           await db.subscription.create({
             data: {
+              id: crypto.randomUUID(), // Generate UUID to match the schema
               userId: user.id, // Use the numeric ID from our database
               stripeCustomerId: session.customer as string,
               stripeSubscriptionId: session.subscription as string,
@@ -145,16 +148,29 @@ export async function POST(req: Request) {
           ? new Date((subscription as any).current_period_end * 1000) 
           : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
         
-        await db.subscription.updateMany({
-          where: {
-            stripeSubscriptionId: subscription.id,
-          },
-          data: {
-            status: subscription.status,
-            currentPeriodStart: startDate,
-            currentPeriodEnd: endDate,
-          },
-        });
+        console.log(`Updating subscription ${subscription.id} to status: ${subscription.status}`);
+        
+        try {
+          const result = await db.subscription.updateMany({
+            where: {
+              stripeSubscriptionId: subscription.id,
+            },
+            data: {
+              status: subscription.status,
+              currentPeriodStart: startDate,
+              currentPeriodEnd: endDate,
+            },
+          });
+          
+          console.log(`Updated ${result.count} subscription records`);
+          
+          if (result.count === 0) {
+            console.warn(`No subscription found with stripeSubscriptionId: ${subscription.id}`);
+          }
+        } catch (error) {
+          console.error('Error updating subscription:', error);
+          throw error;
+        }
         break;
       }
     }

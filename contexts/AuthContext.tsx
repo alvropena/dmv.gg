@@ -29,6 +29,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const response = await fetch('/api/auth');
         const data = await response.json();
         setDbUser(data.user);
+        console.log('Fetched user data:', data.user);
+        
+        // Log subscription info
+        if (data.user?.subscriptions) {
+          console.log('User subscriptions:', data.user.subscriptions);
+        }
       } catch (error) {
         console.error('Error fetching user:', error);
       } finally {
@@ -46,6 +52,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         new Date(sub.currentPeriodEnd) > new Date()
     )
   );
+  
+  console.log('Has active subscription:', hasActiveSubscription);
 
   return (
     <AuthContext.Provider value={{ dbUser, isLoading, hasActiveSubscription }}>

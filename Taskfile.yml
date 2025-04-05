@@ -1,0 +1,45 @@
+version: '3'
+
+tasks:
+  install:
+    desc: Install all dependencies
+    cmds:
+      - npm install
+
+  db:reset:
+    desc: Reset the database and apply migrations
+    cmds:
+      - npx prisma migrate reset --force
+
+  # db:seed:
+  #   desc: Insert questions into the database
+  #   cmds:
+  #     - npx prisma db execute --file insert_questions.sql
+
+  stripe:listen:
+    desc: Start Stripe webhook listener
+    cmds:
+      - stripe listen --forward-to localhost:3000/api/webhooks
+
+  dev:
+    desc: Start the development server
+    cmds:
+      - npm run dev
+
+  setup:
+    desc: Complete setup (database reset, seed, and start dev server)
+    cmds:
+      - task: db:reset
+      # - task: db:seed
+      - task: dev
+
+  default:
+    desc: Display available tasks
+    cmds:
+      - task --list
+
+  # Usage examples in comments:
+  # Full setup: task setup
+  # Reset & seed DB: task db:reset db:seed
+  # Start webhook: task stripe:listen (in separate terminal)
+  # Start dev server: task dev

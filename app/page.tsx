@@ -1,16 +1,17 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, Trophy, RotateCcw, ArrowRight, BookOpen, Lock } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 import { questions } from "./data/questions";
-import { useUser } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
-import { useAuthContext } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
+import { DemoQuestion } from "@/components/landing/DemoQuestion";
+import { DemoProgress } from "@/components/landing/DemoProgress";
+import { DemoComplete } from "@/components/landing/DemoComplete";
+import { UserDashboard } from "@/components/dashboard/UserDashboard";
+import { PricingDialog } from "@/components/PricingDialog";
 
 // Custom hook to detect mobile screens
 const useIsMobile = () => {
@@ -39,14 +40,15 @@ export default function Home() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
-  const [score, setScore] = useState(0);
+  const [demoScore, setDemoScore] = useState(0);
   const [questionsAnswered, setQuestionsAnswered] = useState(0);
   const [streak, setStreak] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
-  
+  const [isDemoComplete, setIsDemoComplete] = useState(false);
+  const [isPricingOpen, setIsPricingOpen] = useState(false);
+
   const { user, isLoaded } = useUser();
   const router = useRouter();
-  const { dbUser, isLoading } = useAuthContext();
+  const { dbUser, isLoading, hasActiveSubscription } = useAuthContext();
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -64,15 +66,7 @@ export default function Home() {
       if (e.key === " ") {
         e.preventDefault();
         if (!isAnswerRevealed && selectedOption !== null) {
-          setIsAnswerRevealed(true);
-          setQuestionsAnswered((prev) => prev + 1);
-
-          if (selectedOption === currentQuestion.correctAnswer) {
-            setScore((prev) => prev + 1);
-            setStreak((prev) => prev + 1);
-          } else {
-            setStreak(0);
-          }
+          checkAnswer();
         } else if (isAnswerRevealed) {
           goToNextQuestion();
         }
@@ -100,7 +94,7 @@ export default function Home() {
       setQuestionsAnswered((prev) => prev + 1);
 
       if (selectedOption === currentQuestion.correctAnswer) {
-        setScore((prev) => prev + 1);
+        setDemoScore((prev) => prev + 1);
         setStreak((prev) => prev + 1);
       } else {
         setStreak(0);
@@ -114,26 +108,61 @@ export default function Home() {
       setSelectedOption(null);
       setIsAnswerRevealed(false);
     } else {
-      setIsComplete(true);
+      setIsDemoComplete(true);
     }
   };
 
-  const resetQuiz = () => {
+  const resetDemo = () => {
     setCurrentQuestionIndex(0);
     setSelectedOption(null);
     setIsAnswerRevealed(false);
-    setScore(0);
+    setDemoScore(0);
     setQuestionsAnswered(0);
     setStreak(0);
-    setIsComplete(false);
+    setIsDemoComplete(false);
   };
 
-  const handleLearnClick = () => {
-    if (!dbUser?.hasActiveSubscription) {
-      toast.error('Please upgrade to access the learning materials');
+  const handleStudyClick = () => {
+    window.open(
+      "https://www.dmv.ca.gov/portal/file/california-driver-handbook-pdf/",
+      "_blank"
+    );
+  };
+
+  const handlePracticeClick = () => {
+    console.log(
+      "Practice Test clicked. Subscription status:",
+      hasActiveSubscription
+    );
+    if (!hasActiveSubscription) {
+      console.log("Opening pricing dialog...");
+      setIsPricingOpen(true);
       return;
     }
-    router.push('/study');
+    router.push("/practice");
+  };
+
+  // Add handlePlanSelect function
+  const handlePlanSelect = async (plan: "weekly" | "monthly" | "lifetime") => {
+    try {
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          plan,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+    }
   };
 
   if (!isLoaded || isLoading) {
@@ -142,121 +171,50 @@ export default function Home() {
 
   const progressPercentage = (questionsAnswered / questions.length) * 100;
 
+  // Add PricingDialog component that will be used across all views
+  const pricingDialog = (
+    <PricingDialog
+      isOpen={isPricingOpen}
+      onClose={() => setIsPricingOpen(false)}
+      onPlanSelect={(plan) => {
+        handlePlanSelect(plan);
+        setIsPricingOpen(false);
+      }}
+    />
+  );
+
   // Render dashboard if user is authenticated
   if (user) {
-    // Get user's first name or full name
-    const firstName = user.firstName || user.fullName?.split(' ')[0] || 'there';
-
     return (
-      <div className="w-full max-w-3xl mx-auto px-4">
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="text-2xl">Welcome back, {firstName}!</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground mb-6">
-              Glad to see you again. Ready to continue your DMV test practice?
-            </p>
-            <div className="flex items-center gap-4 mt-6 flex-wrap">
-              <Button onClick={() => resetQuiz()} className="flex items-center gap-2">
-                Practice Test <ArrowRight className="h-4 w-4" />
-              </Button>
-              <Button 
-                onClick={handleLearnClick}
-                variant="outline"
-                className="flex items-center gap-2"
-              >
-                {!dbUser?.hasActiveSubscription && <Lock className="h-4 w-4 mr-1" />}
-                <BookOpen className="h-4 w-4" />
-                Learn DMV Rules
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-4">Your Progress</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center">
-                  <Trophy className="h-8 w-8 text-yellow-500 mb-2" />
-                  <h3 className="font-semibold text-xl">0</h3>
-                  <p className="text-muted-foreground text-sm">Tests Completed</p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center">
-                  <h3 className="font-semibold text-xl">0%</h3>
-                  <p className="text-muted-foreground text-sm">Average Score</p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center">
-                  <h3 className="font-semibold text-xl">0</h3>
-                  <p className="text-muted-foreground text-sm">Streak</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-        
-        {/* Quiz UI for authenticated users */}
-        {isComplete ? (
-          <Card className="max-w-3xl mx-auto">
-            <CardContent className="p-6 flex flex-col items-center">
-              <Trophy className="h-16 w-16 text-yellow-500 mb-4" />
-              <h2 className="text-2xl font-bold mb-4">Quiz Complete!</h2>
-              <p className="text-xl mb-6">
-                Your score: {score} / {questions.length}
-              </p>
-              <Progress value={progressPercentage} className="w-full mb-6" />
-              <p className="mb-6">
-                {score === questions.length
-                  ? "Perfect score! You're ready for the DMV test!"
-                  : "Keep practicing to improve your score!"}
-              </p>
-              <Button onClick={resetQuiz} className="flex items-center gap-2">
-                <RotateCcw className="h-4 w-4" />
-                Try Again
-              </Button>
-            </CardContent>
-          </Card>
-        ) : null}
-      </div>
+      <>
+        <UserDashboard
+          user={user}
+          hasActiveSubscription={hasActiveSubscription}
+          onStartQuiz={handlePracticeClick}
+          onLearnClick={handleStudyClick}
+          isComplete={isDemoComplete}
+          score={demoScore}
+          totalQuestions={questions.length}
+          progressPercentage={progressPercentage}
+          onReset={resetDemo}
+        />
+        {pricingDialog}
+      </>
     );
   }
 
-  // If not authenticated, render the landing page with quiz
-  if (isComplete) {
+  // If not authenticated, render the landing page demo
+  if (isDemoComplete) {
     return (
-      <div className="w-full">
-        <div className="max-w-3xl mx-auto px-4">
-          <Card className="max-w-3xl mx-auto">
-            <CardContent className="p-6 flex flex-col items-center">
-              <Trophy className="h-16 w-16 text-yellow-500 mb-4" />
-              <h2 className="text-2xl font-bold mb-4">Quiz Complete!</h2>
-              <p className="text-xl mb-6">
-                Your score: {score} / {questions.length}
-              </p>
-              <Progress value={progressPercentage} className="w-full mb-6" />
-              <p className="mb-6">
-                {score === questions.length
-                  ? "Perfect score! You're ready for the DMV test!"
-                  : "Keep practicing to improve your score!"}
-              </p>
-              <Button onClick={resetQuiz} className="flex items-center gap-2">
-                <RotateCcw className="h-4 w-4" />
-                Try Again
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      <>
+        <DemoComplete
+          score={demoScore}
+          totalQuestions={questions.length}
+          progressPercentage={progressPercentage}
+          onReset={resetDemo}
+        />
+        {pricingDialog}
+      </>
     );
   }
 
@@ -268,81 +226,27 @@ export default function Home() {
             Ace Your DMV Knowledge Test
           </h1>
           <h2 className="text-xl md:text-3xl text-muted-foreground max-w-xl mx-auto px-4">
-            Practice with real questions, track your progress, and ace your test 💯
+            Practice with real questions, track your progress, and ace your test
+            💯
           </h2>
         </div>
 
-        <div className="flex justify-between items-center mb-4">
-          <Badge variant="outline" className="text-sm">
-            Question {currentQuestionIndex + 1}/{questions.length}
-          </Badge>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-sm">
-              Score: {score}
-            </Badge>
-            {streak >= 3 && (
-              <Badge className="bg-orange-500">🔥 Streak: {streak}</Badge>
-            )}
-          </div>
-        </div>
+        <DemoProgress
+          currentQuestionIndex={currentQuestionIndex}
+          totalQuestions={questions.length}
+          score={demoScore}
+          streak={streak}
+          progressPercentage={progressPercentage}
+        />
 
-        <Progress value={progressPercentage} className="mb-6" />
-
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <h2 className="text-xl font-semibold mb-4">
-              {currentQuestion.question}
-            </h2>
-
-            {currentQuestion.type === "image" && (
-              <div className="flex justify-center mb-4">
-                <img
-                  src={currentQuestion.imageUrl || "/placeholder.svg"}
-                  alt="Question visual"
-                  className="max-h-48 object-contain border rounded"
-                />
-              </div>
-            )}
-
-            <div className="space-y-3 mt-4">
-              {currentQuestion.options.map((option, index) => (
-                <div
-                  key={index}
-                  className={`p-3 border rounded-lg cursor-pointer transition-colors flex items-center ${
-                    selectedOption === index
-                      ? "border-primary bg-primary/10"
-                      : "hover:bg-muted"
-                  } ${
-                    isAnswerRevealed && index === currentQuestion.correctAnswer
-                      ? "bg-green-100 border-green-500 dark:bg-green-900/30 dark:border-green-500"
-                      : ""
-                  } ${
-                    isAnswerRevealed &&
-                    selectedOption === index &&
-                    index !== currentQuestion.correctAnswer
-                      ? "bg-red-100 border-red-500 dark:bg-red-900/30 dark:border-red-500"
-                      : ""
-                  }`}
-                  onClick={() => selectOption(index)}
-                >
-                  <div className="flex-1">
-                    <span className="font-medium mr-2">{index + 1}.</span>
-                    {option}
-                  </div>
-                  {isAnswerRevealed &&
-                    index === currentQuestion.correctAnswer && (
-                      <CheckCircle className="h-5 w-5 text-green-500 ml-2" />
-                    )}
-                  {isAnswerRevealed &&
-                    selectedOption === index &&
-                    index !== currentQuestion.correctAnswer && (
-                      <XCircle className="h-5 w-5 text-red-500 ml-2" />
-                    )}
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <DemoQuestion
+          question={currentQuestion.question}
+          options={currentQuestion.options}
+          selectedOption={selectedOption}
+          isAnswerRevealed={isAnswerRevealed}
+          correctAnswer={currentQuestion.correctAnswer}
+          onOptionSelect={selectOption}
+        />
 
         <div className="flex justify-between">
           {!isAnswerRevealed ? (
@@ -369,6 +273,7 @@ export default function Home() {
           </div>
         )}
       </div>
+      {pricingDialog}
     </div>
   );
 }

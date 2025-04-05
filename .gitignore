@@ -37,3 +37,6 @@ next-env.d.ts
 
 # questions data
 app/data/questions.ts
+app/data/bank.csv
+
+.insert_questions.sql

@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id        Int           @id @default(autoincrement())
+  id        String        @id @default(uuid())
   clerkId   String        @unique
   email     String        @unique
   firstName String?
@@ -22,34 +22,76 @@ model User {
   createdAt DateTime      @default(now()) @db.Timestamptz
   updatedAt DateTime      @default(now()) @db.Timestamptz
   subscriptions Subscription[]
+  studySessions StudySession[]
 }
 
 model Subscription {
-  id              String    @id @default(cuid())
-  userId          Int
+  id              String    @id @default(uuid())
+  userId          String
   user            User      @relation(fields: [userId], references: [id])
   stripeCustomerId String?
   stripePriceId   String?
   stripeSubscriptionId String?
   status          String    // 'active', 'canceled', 'past_due', etc.
-  currentPeriodStart DateTime
-  currentPeriodEnd   DateTime
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  currentPeriodStart DateTime @db.Timestamptz
+  currentPeriodEnd   DateTime @db.Timestamptz
+  createdAt       DateTime  @default(now()) @db.Timestamptz
+  updatedAt       DateTime  @updatedAt @db.Timestamptz
 
   @@index([userId])
 }
 
 model Question {
-  id          Int      @id @default(autoincrement())
-  title       String   @db.Text
-  optionA     String   @db.Text
-  optionB     String   @db.Text
-  optionC     String   @db.Text
-  correctAnswer String @db.VarChar(1)  // 'A', 'B', or 'C'
-  explanation String   @db.Text
-  createdAt   DateTime @default(now()) @db.Timestamptz
-  updatedAt   DateTime @updatedAt @db.Timestamptz
+  id          String    @id @default(uuid())
+  title       String    @db.Text
+  optionA     String    @db.Text
+  optionB     String    @db.Text
+  optionC     String    @db.Text
+  optionD     String?   @db.Text
+  correctAnswer String   @db.VarChar(1)  // 'A', 'B', 'C', or 'D'
+  explanation String     @db.Text
+  createdAt   DateTime   @default(now()) @db.Timestamptz
+  updatedAt   DateTime   @updatedAt @db.Timestamptz
+  
+  // Relation to study session answers
+  answers     SessionAnswer[]
 
   @@index([id])
+}
+
+model StudySession {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  startedAt   DateTime  @default(now()) @db.Timestamptz
+  completedAt DateTime? @db.Timestamptz
+  durationSeconds Int?  // Duration of the session in seconds
+  score       Int       @default(0)
+  totalQuestions Int    @default(0)
+  status      String    @default("in_progress") // "in_progress", "completed", "abandoned"
+  
+  // Relation to session answers
+  answers     SessionAnswer[]
+  
+  createdAt   DateTime  @default(now()) @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @db.Timestamptz
+
+  @@index([userId])
+}
+
+model SessionAnswer {
+  sessionId   String
+  session     StudySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  questionId  String
+  question    Question  @relation(fields: [questionId], references: [id])
+  selectedAnswer String? @db.VarChar(1)  // 'A', 'B', or 'C' or null if not answered
+  isCorrect   Boolean?
+  answeredAt  DateTime? @db.Timestamptz
+  
+  createdAt   DateTime  @default(now()) @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @db.Timestamptz
+
+  @@id([sessionId, questionId])
+  @@index([sessionId])
+  @@index([questionId])
 }
