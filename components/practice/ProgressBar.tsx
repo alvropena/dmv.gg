@@ -18,19 +18,16 @@ export function ProgressBar({
 
 	return (
 		<>
-			<div className="flex items-center gap-2 mb-6">
-				<Badge variant="outline" className="ml-auto">
+			<div className="flex justify-between items-center mb-4 mx-3 sm:mx-0">
+				<Badge variant="outline" className="text-sm">
+					Question {currentQuestionIndex + 1}/{totalQuestions}
+				</Badge>
+				<Badge variant="outline">
 					Time: {elapsedTime}
 				</Badge>
 			</div>
 
-			<div className="flex justify-between items-center mb-4">
-				<Badge variant="outline" className="text-sm">
-					Question {currentQuestionIndex + 1}/{totalQuestions}
-				</Badge>
-			</div>
-
-			<Progress value={progressPercentage} className="mb-6" />
+			<Progress value={progressPercentage} className="mb-6 mx-3 sm:mx-0" />
 		</>
 	);
 }

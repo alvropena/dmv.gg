@@ -1,6 +1,13 @@
 import { stripe } from '@/lib/stripe';
 import { NextResponse } from 'next/server';
 
+// Default price IDs from environment variables
+const DEFAULT_PRICE_IDS = [
+  process.env.STRIPE_PRICE_ID_WEEKLY,
+  process.env.STRIPE_PRICE_ID_MONTHLY,
+  process.env.STRIPE_PRICE_ID_LIFETIME,
+].filter(Boolean) as string[];
+
 export async function GET() {
   try {
     const [products, prices] = await Promise.all([
@@ -22,9 +29,23 @@ export async function GET() {
 
     // Group prices by product and format the response
     const formattedPrices = prices.data
-      .filter(price => productMap.has(price.product as string))
+      // Only include prices that are in our default price IDs list
+      .filter(price => DEFAULT_PRICE_IDS.includes(price.id) && productMap.has(price.product as string))
       .map(price => {
         const product = productMap.get(price.product as string)!;
+        
+        // Parse features from metadata if available
+        let features: string[] = [];
+        try {
+          if (product.metadata.features) {
+            features = JSON.parse(product.metadata.features);
+          }
+        } catch (e) {
+          console.error('Error parsing features:', e);
+          // If features can't be parsed, try to use a comma-separated list
+          features = product.metadata.features ? product.metadata.features.split(',').map(f => f.trim()) : [];
+        }
+        
         return {
           id: price.id,
           name: product.name,
@@ -33,7 +54,7 @@ export async function GET() {
           currency: price.currency,
           type: price.type,
           interval: price.recurring?.interval,
-          features: product.metadata.features ? JSON.parse(product.metadata.features) : [],
+          features: features,
           metadata: product.metadata,
         };
       })

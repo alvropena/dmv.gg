@@ -333,7 +333,7 @@ export default function PracticeTestPage() {
 					onOptionSelect={selectOption}
 				/>
 
-				<div className="flex justify-between">
+				<div className="flex justify-between mx-3 sm:mx-0">
 					{!isAnswerRevealed ? (
 						<Button
 							onClick={handleCheckAnswer}
@@ -350,7 +350,7 @@ export default function PracticeTestPage() {
 				</div>
 
 				{!isMobile && (
-					<div className="mt-6 text-center text-sm text-muted-foreground">
+					<div className="mt-6 text-center text-sm text-muted-foreground mx-3 sm:mx-0">
 						<p>
 							Keyboard shortcuts: Press 1-4 to select an option, Space or Enter
 							to check/continue

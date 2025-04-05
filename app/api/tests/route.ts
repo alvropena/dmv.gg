@@ -98,17 +98,17 @@ export async function GET() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Get all tests for the user
+    // Get tests with their answers
     const tests = await db.test.findMany({
-      where: { userId: dbUser.id },
-      orderBy: { startedAt: 'desc' },
-      include: {
-        answers: {
-          include: {
-            question: true
-          }
-        },
+      where: { 
+        userId: dbUser.id 
       },
+      orderBy: {
+        startedAt: 'desc'
+      },
+      include: {
+        answers: true
+      }
     });
 
     return NextResponse.json({ tests });

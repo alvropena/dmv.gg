@@ -24,6 +24,7 @@ model User {
   updatedAt DateTime      @default(now()) @db.Timestamptz
   subscriptions Subscription[]
   tests Test[]
+  supportRequests SupportRequest[]
 }
 
 model Subscription {
@@ -116,4 +117,23 @@ model TestAnswer {
   @@id([testId, questionId])
   @@index([testId])
   @@index([questionId])
+}
+
+model SupportRequest {
+  id          String    @id @default(uuid())
+  userId      String?
+  user        User?     @relation(fields: [userId], references: [id])
+  email       String?   // For guests/non-logged in users
+  message     String    @db.Text
+  status      String    @default("open") // "open", "in_progress", "resolved", "closed"
+  resolution  String?   @db.Text
+  adminNotes  String?   @db.Text
+  
+  createdAt   DateTime  @default(now()) @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @db.Timestamptz
+  resolvedAt  DateTime? @db.Timestamptz
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
 }

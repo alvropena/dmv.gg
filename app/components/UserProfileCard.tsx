@@ -1,5 +1,6 @@
 import { User } from "lucide-react";
 import { UserResource } from "@clerk/types";
+import { Badge } from "@/components/ui/badge";
 
 type UserProfileCardProps = {
   user: UserResource;
@@ -23,12 +24,18 @@ export function UserProfileCard({
           </div>
           <div>
             <h3 className="font-medium">{displayName}</h3>
-            <p className="text-sm text-muted-foreground">
-              Premium Member
-            </p>
+            <Badge variant="secondary" className="text-xs">Premium</Badge>
           </div>
         </div>
-        <div className="flex gap-6">
+        
+        {/* Mobile view */}
+        <div className="flex flex-col items-end gap-1 sm:hidden">
+          <p className="text-xs">Study streak: <span className="font-bold">{studyStreak} days</span></p>
+          <p className="text-xs">Time studied: <span className="font-bold">{studyTime}</span></p>
+        </div>
+        
+        {/* Desktop view */}
+        <div className="hidden sm:flex gap-6">
           <div className="text-right">
             <p className="text-sm text-muted-foreground">Study streak</p>
             <p className="font-semibold">{studyStreak} days</p>

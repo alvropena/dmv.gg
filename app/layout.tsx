@@ -22,7 +22,7 @@ export default function RootLayout({
 				<body className={inter.className}>
 					<Providers>
 						<Header />
-						<main className="min-h-screen py-8">{children}</main>
+						<main className="min-h-screen">{children}</main>
 					</Providers>
 				</body>
 			</html>

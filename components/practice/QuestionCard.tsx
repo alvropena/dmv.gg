@@ -19,11 +19,15 @@ export function QuestionCard({
 		{ key: "A", text: question.optionA, number: "1" },
 		{ key: "B", text: question.optionB, number: "2" },
 		{ key: "C", text: question.optionC, number: "3" },
-		{ key: "D", text: question.optionD, number: "4" },
 	];
+	
+	// Only add option D if it exists and has content
+	if (question.optionD) {
+		options.push({ key: "D", text: question.optionD, number: "4" });
+	}
 
 	return (
-		<Card className="mb-6">
+		<Card className="mb-6 mx-3 sm:mx-0">
 			<CardHeader>
 				<CardTitle>{question.title}</CardTitle>
 			</CardHeader>

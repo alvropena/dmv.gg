@@ -13,7 +13,14 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    const { testId } = params;
+    // Get testId from query parameters instead of path params
+    const { searchParams } = new URL(request.url);
+    const testId = searchParams.get('testId');
+
+    if (!testId) {
+      return NextResponse.json({ error: 'Test ID is required' }, { status: 400 });
+    }
+    
     const body = await request.json();
     const { questionId, selectedAnswer } = body;
     

@@ -9,12 +9,15 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { useUser } from "@clerk/nextjs";
 
 export function SupportButton() {
+  const { user, isSignedIn } = useUser();
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [open, setOpen] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,9 +25,29 @@ export function SupportButton() {
 
     try {
       setIsSubmitting(true);
-      // Here you would add the actual API call to submit the support request
-      // For now, we'll just simulate the API call with a timeout
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setError("");
+      
+      // Prepare the request payload
+      const payload = {
+        message,
+        userId: isSignedIn ? user.id : null,
+        email: isSignedIn ? user.primaryEmailAddress?.emailAddress : null,
+      };
+
+      // Send the request to the API
+      const response = await fetch("/api/support", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to submit support request");
+      }
+
       setIsSubmitted(true);
 
       // Reset the form after 3 seconds and close the popover
@@ -35,6 +58,7 @@ export function SupportButton() {
       }, 3000);
     } catch (error) {
       console.error("Error submitting support request:", error);
+      setError("Failed to send your message. Please try again later.");
     } finally {
       setIsSubmitting(false);
     }
@@ -48,7 +72,7 @@ export function SupportButton() {
             className="h-14 w-14 rounded-full shadow-lg"
             aria-label="Contact Support"
           >
-            <Headset className="h-14 w-14" />
+            <Headset className="h-6 w-6" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-80 mb-4" side="top" align="end">
@@ -73,6 +97,12 @@ export function SupportButton() {
                   required
                 />
               </div>
+
+              {error && (
+                <div className="text-sm font-medium text-destructive">
+                  {error}
+                </div>
+              )}
 
               <Button
                 type="submit"

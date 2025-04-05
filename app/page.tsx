@@ -258,8 +258,7 @@ export default function Home() {
           {/* Stats cards */}
           <UserStats />
 
-          {/* Recent Sessions Section */}
-
+          {/* User Activity Section */}
           <UserActivitySection />
 
           {/* Study Tips Section */}

@@ -25,8 +25,8 @@ export async function GET() {
     const oneWeekAgo = new Date(now);
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-    // Get all completed study sessions for the user
-    const completedSessions = await db.studySession.findMany({
+    // Get all completed tests for the user
+    const completedTests = await db.test.findMany({
       where: { 
         userId: dbUser.id,
         status: 'completed'
@@ -36,8 +36,8 @@ export async function GET() {
       }
     });
 
-    // Get completed sessions from the last week
-    const lastWeekCompletedSessions = await db.studySession.findMany({
+    // Get completed tests from the last week
+    const lastWeekCompletedTests = await db.test.findMany({
       where: { 
         userId: dbUser.id,
         status: 'completed',
@@ -48,11 +48,11 @@ export async function GET() {
       },
     });
 
-    // Get sessions from the week before that for comparison
+    // Get tests from the week before that for comparison
     const twoWeeksAgo = new Date(oneWeekAgo);
     twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 7);
     
-    const previousWeekCompletedSessions = await db.studySession.findMany({
+    const previousWeekCompletedTests = await db.test.findMany({
       where: { 
         userId: dbUser.id,
         status: 'completed',
@@ -64,28 +64,28 @@ export async function GET() {
     });
 
     // Calculate the difference from previous week
-    const weeklyDifference = lastWeekCompletedSessions.length - previousWeekCompletedSessions.length;
+    const weeklyDifference = lastWeekCompletedTests.length - previousWeekCompletedTests.length;
 
     // Calculate average score for all completed tests
     let averageScore = 0;
-    if (completedSessions.length > 0) {
-      const totalScore = completedSessions.reduce((sum, session) => sum + session.score, 0);
-      averageScore = Math.round(totalScore / completedSessions.length);
+    if (completedTests.length > 0) {
+      const totalScore = completedTests.reduce((sum: number, test: any) => sum + test.score, 0);
+      averageScore = Math.round(totalScore / completedTests.length);
     }
 
     // Get the last test score if available
-    const lastSession = completedSessions[0]; // They are ordered by completedAt desc
-    const lastScore = lastSession ? lastSession.score : 0;
+    const lastTest = completedTests[0]; // They are ordered by completedAt desc
+    const lastScore = lastTest ? lastTest.score : 0;
     
     // Calculate score difference between last two tests
     let scoreDifference = 0;
-    if (completedSessions.length >= 2) {
-      scoreDifference = lastSession.score - completedSessions[1].score;
+    if (completedTests.length >= 2) {
+      scoreDifference = lastTest.score - completedTests[1].score;
     }
 
     return NextResponse.json({ 
       stats: {
-        totalCompleted: completedSessions.length,
+        totalCompleted: completedTests.length,
         weeklyDifference: weeklyDifference,
         averageScore,
         lastScore,

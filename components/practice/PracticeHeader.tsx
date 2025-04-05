@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 interface PracticeHeaderProps {
 	onBackToHome: () => void;
@@ -7,15 +7,17 @@ interface PracticeHeaderProps {
 
 export function PracticeHeader({ onBackToHome }: PracticeHeaderProps) {
 	return (
-		<div className="flex items-center gap-2 mb-6">
-			<Button
-				variant="outline"
-				size="sm"
-				onClick={onBackToHome}
-				className="flex items-center gap-1"
+		<div className="flex items-center gap-2 mb-6 mx-3 sm:mx-0">
+			<Link 
+				href="/" 
+				onClick={(e) => {
+					e.preventDefault();
+					onBackToHome();
+				}}
+				className="flex items-center gap-1 hover:underline"
 			>
 				<ArrowLeft className="h-4 w-4" /> Back to Home
-			</Button>
+			</Link>
 		</div>
 	);
 }
