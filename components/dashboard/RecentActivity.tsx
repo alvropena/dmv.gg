@@ -1,6 +1,5 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Users, FileText, Flag, BookOpen, MessageSquare } from "lucide-react";
 
 export function RecentActivity() {
@@ -9,13 +8,7 @@ export function RecentActivity() {
 			<CardContent className="pt-4">
 				<div className="flex justify-between items-center mb-4">
 					<h3 className="text-base font-bold">Recent Activity</h3>
-					<Button
-						variant="outline"
-						size="sm"
-						className="rounded-md text-xs h-7"
-					>
-						View All
-					</Button>
+
 				</div>
 
 				<div className="space-y-4">
