@@ -74,14 +74,27 @@ export function SubscriptionDetailsDialog({
     try {
       setIsCancelling(true);
 
-      // This would be the API call to cancel the subscription
-      // For now, just close the dialog after a delay to simulate the API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Call our API to cancel the subscription
+      const response = await fetch('/api/subscriptions/cancel', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          subscriptionId: activeSubscription.id,
+        }),
+      });
 
-      // Close the dialog after "cancelling"
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to cancel subscription');
+      }
+
+      // Close the dialog after successful cancellation
       onClose();
     } catch (error) {
       console.error("Error cancelling subscription:", error);
+      // You could add toast notification here for error handling
     } finally {
       setIsCancelling(false);
     }
@@ -120,6 +133,11 @@ export function SubscriptionDetailsDialog({
                         <CheckCircle className="h-3 w-3 mr-1 text-green-500" />
                         Active
                       </div>
+                      {activeSubscription.cancelAtPeriodEnd && (
+                        <div className="mt-2 text-xs text-muted-foreground">
+                          Cancels at period end
+                        </div>
+                      )}
                     </TableCell>
                   </TableRow>
 
@@ -164,8 +182,8 @@ export function SubscriptionDetailsDialog({
           <Button onClick={onClose} variant="outline">
             Close
           </Button>
-
-          {activeSubscription?.stripeSubscriptionId && (
+          
+          {activeSubscription?.stripeSubscriptionId && !activeSubscription.cancelAtPeriodEnd && (
             <Button 
               onClick={handleCancelSubscription} 
               variant="destructive"

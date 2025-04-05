@@ -20,6 +20,7 @@ CREATE TABLE "Subscription" (
     "stripePriceId" TEXT,
     "stripeSubscriptionId" TEXT,
     "status" TEXT NOT NULL,
+    "cancelAtPeriodEnd" BOOLEAN NOT NULL DEFAULT false,
     "currentPeriodStart" TIMESTAMPTZ NOT NULL,
     "currentPeriodEnd" TIMESTAMPTZ NOT NULL,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,

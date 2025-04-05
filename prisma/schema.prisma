@@ -35,6 +35,7 @@ model Subscription {
   stripePriceId   String?
   stripeSubscriptionId String?
   status          String    // 'active', 'canceled', 'past_due', etc.
+  cancelAtPeriodEnd Boolean @default(false) // Track if subscription is set to cancel at period end
   currentPeriodStart DateTime @db.Timestamptz
   currentPeriodEnd   DateTime @db.Timestamptz
   createdAt       DateTime  @default(now()) @db.Timestamptz

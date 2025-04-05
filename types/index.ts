@@ -5,6 +5,7 @@ export type Subscription = {
   stripePriceId: string | null;
   stripeSubscriptionId: string | null;
   status: string;
+  cancelAtPeriodEnd: boolean;
   currentPeriodStart: Date;
   currentPeriodEnd: Date;
   createdAt: Date;
