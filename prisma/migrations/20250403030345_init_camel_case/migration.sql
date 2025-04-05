@@ -45,7 +45,7 @@ CREATE TABLE "Question" (
 );
 
 -- CreateTable
-CREATE TABLE "StudySession" (
+CREATE TABLE "Test" (
     "id" TEXT NOT NULL DEFAULT gen_random_uuid(),
     "userId" TEXT NOT NULL,
     "startedAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -57,12 +57,23 @@ CREATE TABLE "StudySession" (
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "StudySession_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Test_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "SessionAnswer" (
-    "sessionId" TEXT NOT NULL,
+CREATE TABLE "TestQuestion" (
+    "testId" TEXT NOT NULL,
+    "questionId" TEXT NOT NULL,
+    "order" INT NOT NULL,
+    "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "TestQuestion_pkey" PRIMARY KEY ("testId","questionId")
+);
+
+-- CreateTable
+CREATE TABLE "TestAnswer" (
+    "testId" TEXT NOT NULL,
     "questionId" TEXT NOT NULL,
     "selectedAnswer" VARCHAR(1),
     "isCorrect" BOOLEAN,
@@ -70,7 +81,7 @@ CREATE TABLE "SessionAnswer" (
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "SessionAnswer_pkey" PRIMARY KEY ("sessionId","questionId")
+    CONSTRAINT "TestAnswer_pkey" PRIMARY KEY ("testId","questionId")
 );
 
 -- CreateIndex
@@ -86,22 +97,34 @@ CREATE INDEX "Subscription_userId_idx" ON "Subscription"("userId");
 CREATE INDEX "Question_id_idx" ON "Question"("id");
 
 -- CreateIndex
-CREATE INDEX "StudySession_userId_idx" ON "StudySession"("userId");
+CREATE INDEX "Test_userId_idx" ON "Test"("userId");
 
 -- CreateIndex
-CREATE INDEX "SessionAnswer_sessionId_idx" ON "SessionAnswer"("sessionId");
+CREATE INDEX "TestQuestion_testId_idx" ON "TestQuestion"("testId");
 
 -- CreateIndex
-CREATE INDEX "SessionAnswer_questionId_idx" ON "SessionAnswer"("questionId");
+CREATE INDEX "TestQuestion_questionId_idx" ON "TestQuestion"("questionId");
+
+-- CreateIndex
+CREATE INDEX "TestAnswer_testId_idx" ON "TestAnswer"("testId");
+
+-- CreateIndex
+CREATE INDEX "TestAnswer_questionId_idx" ON "TestAnswer"("questionId");
 
 -- AddForeignKey
 ALTER TABLE "Subscription" ADD CONSTRAINT "Subscription_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "StudySession" ADD CONSTRAINT "StudySession_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Test" ADD CONSTRAINT "Test_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "SessionAnswer" ADD CONSTRAINT "SessionAnswer_sessionId_fkey" FOREIGN KEY ("sessionId") REFERENCES "StudySession"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "TestQuestion" ADD CONSTRAINT "TestQuestion_testId_fkey" FOREIGN KEY ("testId") REFERENCES "Test"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "SessionAnswer" ADD CONSTRAINT "SessionAnswer_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "Question"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "TestQuestion" ADD CONSTRAINT "TestQuestion_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "Question"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TestAnswer" ADD CONSTRAINT "TestAnswer_testId_fkey" FOREIGN KEY ("testId") REFERENCES "Test"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TestAnswer" ADD CONSTRAINT "TestAnswer_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "Question"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

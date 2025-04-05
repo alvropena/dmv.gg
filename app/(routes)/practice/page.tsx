@@ -26,15 +26,15 @@ export default function PracticeTestPage() {
 	const [questions, setQuestions] = useState<Question[]>([]);
 	const [isLoadingQuestions, setIsLoadingQuestions] = useState(true);
 	const [showCongratulations, setShowCongratulations] = useState(false);
-	const [sessionId, setSessionId] = useState<string | null>(null);
-	const [isCreatingSession, setIsCreatingSession] = useState(true);
+	const [testId, setTestId] = useState<string | null>(null);
+	const [isCreatingTest, setIsCreatingTest] = useState(true);
 	const [startTime, setStartTime] = useState<Date>(new Date());
 	const mountedRef = useRef(false);
 
 	// Use the custom timer hook
 	const elapsedTime = useTimer(startTime);
 
-	// Create a new study session - only once on mount
+	// Create a new test - only once on mount
 	useEffect(() => {
 		// Skip if already mounted or if we don't have user data
 		if (mountedRef.current || !hasActiveSubscription || !user) return;
@@ -42,85 +42,88 @@ export default function PracticeTestPage() {
 		// Mark as mounted to prevent duplicate calls
 		mountedRef.current = true;
 
-		const createStudySession = async () => {
+		const createTest = async () => {
 			try {
-				// Check if there's already a session ID in the URL
+				// Check if there's already a test ID in the URL
 				const urlParams = new URLSearchParams(window.location.search);
-				const urlSessionId = urlParams.get("session");
+				const urlTestId = urlParams.get("test");
 
-				// If URL already has a session ID, use that instead of creating a new one
-				if (urlSessionId) {
-					setSessionId(urlSessionId);
-					setIsCreatingSession(false);
+				// If URL already has a test ID, use that instead of creating a new one
+				if (urlTestId) {
+					setTestId(urlTestId);
+					setIsCreatingTest(false);
 					return;
 				}
 
-				// Only create a new session if we don't have one
-				setIsCreatingSession(true);
-				const response = await fetch("/api/study-sessions", {
+				// Only create a new test if we don't have one
+				setIsCreatingTest(true);
+				const response = await fetch("/api/tests", {
 					method: "POST",
 				});
 
-				if (!response.ok) throw new Error("Failed to create study session");
+				if (!response.ok) throw new Error("Failed to create test");
 
-				const { session } = await response.json();
-				setSessionId(session.id);
+				const { test } = await response.json();
+				setTestId(test.id);
 				setStartTime(new Date());
 
-				// Update URL with session ID without triggering navigation
+				// Update URL with test ID without triggering navigation
 				window.history.replaceState(
 					null,
 					"",
-					`/practice?session=${session.id}`,
+					`/practice?test=${test.id}`,
 				);
 			} catch (error) {
-				console.error("Error creating study session:", error);
+				console.error("Error creating test:", error);
 			} finally {
-				setIsCreatingSession(false);
+				setIsCreatingTest(false);
 			}
 		};
 
-		createStudySession();
-	}, [hasActiveSubscription, user]); // No sessionId dependency to prevent re-runs
+		createTest();
+	}, [hasActiveSubscription, user]); // No testId dependency to prevent re-runs
 
-	// Fetch existing session details and questions if we have a sessionId
+	// Fetch existing test details and questions if we have a testId
 	useEffect(() => {
-		const fetchSessionData = async () => {
-			if (!sessionId || !hasActiveSubscription || !user) return;
+		const fetchTestData = async () => {
+			if (!testId || !hasActiveSubscription || !user) return;
 
 			setIsLoadingQuestions(true);
 			try {
-				const response = await fetch(`/api/study-sessions/${sessionId}`);
-				if (!response.ok) throw new Error("Failed to fetch session");
+				const response = await fetch(`/api/tests/testId?testId=${testId}`, {
+					method: "GET"
+				});
+				
+				if (!response.ok) throw new Error("Failed to fetch test");
 
-				const { session, questions } = await response.json();
+				const { test, questions } = await response.json();
 
 				// Set the questions for the test
 				if (questions && Array.isArray(questions)) {
 					setQuestions(questions);
 				}
 
-				// If this is a session being restored, set the start time
-				if (session.startedAt) {
-					setStartTime(new Date(session.startedAt));
+				// If this is a test being restored, set the start time
+				if (test.startedAt) {
+					setStartTime(new Date(test.startedAt));
 				}
 
-				// If session is completed, show congratulations
-				if (session.status === "completed") {
+				// If test is completed, show congratulations
+				if (test.status === "completed") {
 					setShowCongratulations(true);
 				}
 
-				// Restore the user's progress in the session
-				if (session.answers && Array.isArray(session.answers)) {
+				// Restore the user's progress in the test
+				if (test.answers && Array.isArray(test.answers)) {
 					// Count how many questions have been answered
-					const answeredCount = session.answers.filter(
+					const answeredCount = test.answers.filter(
 						(answer: any) => answer.selectedAnswer !== null
 					).length;
 					setQuestionsAnswered(answeredCount);
 
 					// Find the last unanswered question to set the currentQuestionIndex
-					if (answeredCount < session.totalQuestions) {
-						const nextUnansweredIndex = session.answers.findIndex(
+					if (answeredCount < test.totalQuestions) {
+						const nextUnansweredIndex = test.answers.findIndex(
 							(answer: any) => answer.selectedAnswer === null
 						);
 						if (nextUnansweredIndex !== -1) {
@@ -129,14 +132,14 @@ export default function PracticeTestPage() {
 					}
 				}
 			} catch (error) {
-				console.error("Error fetching session data:", error);
+				console.error("Error fetching test data:", error);
 			} finally {
 				setIsLoadingQuestions(false);
 			}
 		};
 
-		fetchSessionData();
-	}, [sessionId, hasActiveSubscription, user]);
+		fetchTestData();
+	}, [testId, hasActiveSubscription, user]);
 
 	useEffect(() => {
 		// Redirect if not subscribed
@@ -145,12 +148,12 @@ export default function PracticeTestPage() {
 		}
 	}, [isLoaded, isLoading, hasActiveSubscription, router]);
 
-	// Save answer to the session
+	// Save answer to the test
 	const saveAnswer = async (questionId: string, selectedAnswer: string) => {
-		if (!sessionId) return;
+		if (!testId) return;
 
 		try {
-			const response = await fetch(`/api/study-sessions/${sessionId}/answers`, {
+			const response = await fetch(`/api/tests/testId/answers?testId=${testId}`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -169,16 +172,16 @@ export default function PracticeTestPage() {
 		}
 	};
 
-	// Complete the session when user finishes
-	const completeSession = useCallback(async () => {
-		if (!sessionId) return;
+	// Complete the test when user finishes
+	const completeTest = useCallback(async () => {
+		if (!testId) return;
 
 		const now = new Date();
 		const durationMs = now.getTime() - startTime.getTime();
 		const durationSecs = Math.floor(durationMs / 1000);
 
 		try {
-			const response = await fetch(`/api/study-sessions/${sessionId}`, {
+			const response = await fetch(`/api/tests/testId?testId=${testId}`, {
 				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json",
@@ -191,12 +194,12 @@ export default function PracticeTestPage() {
 			});
 
 			if (!response.ok) {
-				console.error("Failed to complete session:", await response.text());
+				console.error("Failed to complete test:", await response.text());
 			}
 		} catch (error) {
-			console.error("Error completing session:", error);
+			console.error("Error completing test:", error);
 		}
-	}, [sessionId, startTime]);
+	}, [testId, startTime]);
 
 	// Define goToNextQuestion before it's used in handleKeyDown
 	const goToNextQuestion = useCallback(() => {
@@ -209,9 +212,9 @@ export default function PracticeTestPage() {
 			// Last question reviewed
 			setQuestionsAnswered(questions.length);
 			setShowCongratulations(true);
-			completeSession();
+			completeTest();
 		}
-	}, [currentQuestionIndex, questions.length, completeSession]);
+	}, [currentQuestionIndex, questions.length, completeTest]);
 
 	// Add a new function to handle checking answers
 	const handleCheckAnswer = useCallback(() => {
@@ -222,14 +225,14 @@ export default function PracticeTestPage() {
 
 		setIsAnswerRevealed(true);
 
-		// Save answer to session
-		if (sessionId && currentQuestion.id) {
+		// Save answer to test
+		if (testId && currentQuestion.id) {
 			saveAnswer(currentQuestion.id, selectedOption);
 		}
 	}, [
 		selectedOption,
 		isAnswerRevealed,
-		sessionId,
+		testId,
 		questions,
 		currentQuestionIndex,
 		saveAnswer,
@@ -285,7 +288,7 @@ export default function PracticeTestPage() {
 		}
 	};
 
-	if (!isLoaded || isLoading || isLoadingQuestions || isCreatingSession) {
+	if (!isLoaded || isLoading || isLoadingQuestions || isCreatingTest) {
 		return (
 			<div className="flex items-center justify-center h-screen">
 				<Loader2 className="h-8 w-8 animate-spin text-primary" />

@@ -4,7 +4,7 @@ import { db } from '@/lib/db';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { sessionId: string } }
+  { params }: { params: { testId: string } }
 ) {
   try {
     const { userId } = await auth();
@@ -13,23 +13,30 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    const { sessionId } = params;
+    const { testId } = params;
     const body = await request.json();
     const { status, completedAt, durationSeconds } = body;
     
-    // Check if the session belongs to the user
-    const session = await db.studySession.findFirst({
+    // Get the user from the database
+    const dbUser = await db.user.findUnique({
+      where: { clerkId: userId }
+    });
+
+    if (!dbUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+    
+    // Check if the test belongs to the user
+    const test = await db.test.findUnique({
       where: {
-        id: sessionId,
-        user: {
-          clerkId: userId,
-        },
+        id: testId,
+        userId: dbUser.id,
       },
     });
     
-    if (!session) {
+    if (!test) {
       return NextResponse.json(
-        { error: 'Session not found or unauthorized' },
+        { error: 'Test not found or unauthorized' },
         { status: 404 }
       );
     }
@@ -45,17 +52,17 @@ export async function PATCH(
       updateData.durationSeconds = durationSeconds;
     }
     
-    // Update the session
-    const updatedSession = await db.studySession.update({
-      where: { id: sessionId },
+    // Update the test
+    const updatedTest = await db.test.update({
+      where: { id: testId },
       data: updateData,
     });
     
-    return NextResponse.json({ session: updatedSession });
+    return NextResponse.json({ test: updatedTest });
   } catch (error) {
-    console.error('Error updating session:', error);
+    console.error('Error updating test:', error);
     return NextResponse.json(
-      { error: 'Failed to update session' },
+      { error: 'Failed to update test' },
       { status: 500 }
     );
   }
@@ -63,7 +70,7 @@ export async function PATCH(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { sessionId: string } }
+  { params }: { params: { testId: string } }
 ) {
   try {
     const { userId } = await auth();
@@ -71,7 +78,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { sessionId } = params;
+    const { testId } = params;
 
     // Get the user from the database
     const dbUser = await db.user.findUnique({
@@ -82,11 +89,11 @@ export async function GET(
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Get the session with answers and questions
-    const session = await db.studySession.findUnique({
+    // Get the test with answers and questions
+    const test = await db.test.findUnique({
       where: {
-        id: sessionId,
-        userId: dbUser.id, // Ensure the session belongs to the user
+        id: testId,
+        userId: dbUser.id, // Ensure the test belongs to the user
       },
       include: {
         questions: {
@@ -105,27 +112,27 @@ export async function GET(
       },
     });
 
-    if (!session) {
-      return NextResponse.json({ error: 'Session not found' }, { status: 404 });
+    if (!test) {
+      return NextResponse.json({ error: 'Test not found' }, { status: 404 });
     }
 
-    // Extract the ordered list of questions from the session
-    const orderedQuestions = session.questions.map(sq => sq.question);
+    // Extract the ordered list of questions from the test
+    const orderedQuestions = test.questions.map((tq: any) => tq.question);
 
     return NextResponse.json({ 
-      session,
+      test,
       questions: orderedQuestions,
     });
 
   } catch (error) {
-    console.error('Error fetching session:', error);
-    return NextResponse.json({ error: 'Failed to fetch session' }, { status: 500 });
+    console.error('Error fetching test:', error);
+    return NextResponse.json({ error: 'Failed to fetch test' }, { status: 500 });
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { sessionId: string } }
+  { params }: { params: { testId: string } }
 ) {
   try {
     const { userId } = await auth();
@@ -134,35 +141,42 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    const { sessionId } = params;
+    const { testId } = params;
     
-    // Check if the session belongs to the user
-    const session = await db.studySession.findFirst({
+    // Get the user from the database
+    const dbUser = await db.user.findUnique({
+      where: { clerkId: userId }
+    });
+
+    if (!dbUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+    
+    // Check if the test belongs to the user
+    const test = await db.test.findUnique({
       where: {
-        id: sessionId,
-        user: {
-          clerkId: userId,
-        },
+        id: testId,
+        userId: dbUser.id,
       },
     });
     
-    if (!session) {
+    if (!test) {
       return NextResponse.json(
-        { error: 'Session not found or unauthorized' },
+        { error: 'Test not found or unauthorized' },
         { status: 404 }
       );
     }
     
-    // Delete the session (cascade will delete associated answers)
-    await db.studySession.delete({
-      where: { id: sessionId },
+    // Delete the test (cascade will delete associated answers)
+    await db.test.delete({
+      where: { id: testId },
     });
     
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting session:', error);
+    console.error('Error deleting test:', error);
     return NextResponse.json(
-      { error: 'Failed to delete session' },
+      { error: 'Failed to delete test' },
       { status: 500 }
     );
   }

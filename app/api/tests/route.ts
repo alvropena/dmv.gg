@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
-import { Question } from '@/types';
 
 // Maximum number of questions per test
 const MAX_QUESTIONS_PER_TEST = 46;
@@ -16,7 +15,7 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-// Create a new study session
+// Create a new test
 export async function POST() {
   try {
     const { userId } = await auth();
@@ -41,8 +40,8 @@ export async function POST() {
     const shuffledQuestions = shuffleArray(allQuestions);
     const selectedQuestions = shuffledQuestions.slice(0, MAX_QUESTIONS_PER_TEST);
     
-    // Create a new study session
-    const session = await db.studySession.create({
+    // Create a new test
+    const test = await db.test.create({
       data: {
         userId: dbUser.id,
         totalQuestions: selectedQuestions.length,
@@ -50,42 +49,38 @@ export async function POST() {
       },
     });
 
-    // Create SessionQuestion entries for the selected questions
-    await Promise.all(
-      selectedQuestions.map((question, index) =>
-        db.sessionQuestion.create({
-          data: {
-            sessionId: session.id,
-            questionId: question.id,
-            order: index,
-          },
-        })
-      )
-    );
+    // Create TestQuestion entries for the selected questions
+    for (let i = 0; i < selectedQuestions.length; i++) {
+      await db.testQuestion.create({
+        data: {
+          testId: test.id,
+          questionId: selectedQuestions[i].id,
+          order: i,
+        },
+      });
+    }
 
-    // Create initial session answers for the selected questions
-    await Promise.all(
-      selectedQuestions.map((question) =>
-        db.sessionAnswer.create({
-          data: {
-            sessionId: session.id,
-            questionId: question.id,
-          },
-        })
-      )
-    );
+    // Create initial test answers for the selected questions
+    for (const question of selectedQuestions) {
+      await db.testAnswer.create({
+        data: {
+          testId: test.id,
+          questionId: question.id,
+        },
+      });
+    }
 
-    return NextResponse.json({ session });
+    return NextResponse.json({ test });
   } catch (error) {
-    console.error('Error creating study session:', error);
+    console.error('Error creating test:', error);
     return NextResponse.json(
-      { error: 'Failed to create study session' },
+      { error: 'Failed to create test' },
       { status: 500 }
     );
   }
 }
 
-// Get all study sessions for the current user
+// Get all tests for the current user
 export async function GET() {
   try {
     const { userId } = await auth();
@@ -103,8 +98,8 @@ export async function GET() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Get all study sessions for the user
-    const sessions = await db.studySession.findMany({
+    // Get all tests for the user
+    const tests = await db.test.findMany({
       where: { userId: dbUser.id },
       orderBy: { startedAt: 'desc' },
       include: {
@@ -116,11 +111,11 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json({ sessions });
+    return NextResponse.json({ tests });
   } catch (error) {
-    console.error('Error fetching study sessions:', error);
+    console.error('Error fetching tests:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch study sessions' },
+      { error: 'Failed to fetch tests' },
       { status: 500 }
     );
   }
