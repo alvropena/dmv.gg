@@ -84,6 +84,22 @@ CREATE TABLE "TestAnswer" (
     CONSTRAINT "TestAnswer_pkey" PRIMARY KEY ("testId","questionId")
 );
 
+-- CreateTable
+CREATE TABLE "SupportRequest" (
+    "id" TEXT NOT NULL DEFAULT gen_random_uuid(),
+    "userId" TEXT,
+    "email" TEXT,
+    "message" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'open',
+    "resolution" TEXT,
+    "adminNotes" TEXT,
+    "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "resolvedAt" TIMESTAMPTZ,
+
+    CONSTRAINT "SupportRequest_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_clerkId_key" ON "User"("clerkId");
 
@@ -111,6 +127,15 @@ CREATE INDEX "TestAnswer_testId_idx" ON "TestAnswer"("testId");
 -- CreateIndex
 CREATE INDEX "TestAnswer_questionId_idx" ON "TestAnswer"("questionId");
 
+-- CreateIndex
+CREATE INDEX "SupportRequest_userId_idx" ON "SupportRequest"("userId");
+
+-- CreateIndex
+CREATE INDEX "SupportRequest_status_idx" ON "SupportRequest"("status");
+
+-- CreateIndex
+CREATE INDEX "SupportRequest_createdAt_idx" ON "SupportRequest"("createdAt");
+
 -- AddForeignKey
 ALTER TABLE "Subscription" ADD CONSTRAINT "Subscription_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -128,3 +153,6 @@ ALTER TABLE "TestAnswer" ADD CONSTRAINT "TestAnswer_testId_fkey" FOREIGN KEY ("t
 
 -- AddForeignKey
 ALTER TABLE "TestAnswer" ADD CONSTRAINT "TestAnswer_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "Question"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SupportRequest" ADD CONSTRAINT "SupportRequest_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
