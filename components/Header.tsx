@@ -9,6 +9,7 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { PricingDialog } from "@/components/PricingDialog";
 import { SubscriptionDetailsDialog } from "@/components/SubscriptionDetailsDialog";
+import { SignInDialog } from "@/components/SignInDialog";
 import Link from "next/link";
 
 
@@ -18,6 +19,7 @@ export function Header() {
   const { hasActiveSubscription } = useAuthContext();
   const [isPricingOpen, setIsPricingOpen] = useState(false);
   const [isSubscriptionDetailsOpen, setIsSubscriptionDetailsOpen] = useState(false);
+  const [isSignInOpen, setIsSignInOpen] = useState(false);
 
   const handleLogoClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -29,7 +31,7 @@ export function Header() {
   };
 
   const handleGetStarted = () => {
-    router.push("/sign-in");
+    setIsSignInOpen(true);
   };
 
   const handleUpgrade = () => {
@@ -117,6 +119,11 @@ export function Header() {
       <SubscriptionDetailsDialog
         isOpen={isSubscriptionDetailsOpen}
         onClose={() => setIsSubscriptionDetailsOpen(false)}
+      />
+
+      <SignInDialog
+        isOpen={isSignInOpen}
+        onClose={() => setIsSignInOpen(false)}
       />
     </>
   );

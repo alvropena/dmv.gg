@@ -3,7 +3,9 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Trophy, RotateCcw } from "lucide-react";
+import { Trophy, RotateCcw, ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { SignInDialog } from "@/components/SignInDialog";
 
 interface DemoCompleteProps {
   score: number;
@@ -18,6 +20,8 @@ export function DemoComplete({
   progressPercentage,
   onReset,
 }: DemoCompleteProps) {
+  const [isSignInOpen, setIsSignInOpen] = useState(false);
+
   return (
     <div className="w-full">
       <div className="max-w-3xl mx-auto px-4">
@@ -34,13 +38,31 @@ export function DemoComplete({
                 ? "Perfect score! Ready to start your real practice?"
                 : "This was just a demo - sign up to access full practice tests!"}
             </p>
-            <Button onClick={onReset} className="flex items-center gap-2">
-              <RotateCcw className="h-4 w-4" />
-              Try Demo Again
-            </Button>
+            <div className="flex gap-4">
+              <Button 
+                variant="secondary" 
+                onClick={onReset} 
+                className="flex items-center gap-2"
+              >
+                <RotateCcw className="h-4 w-4" />
+                Try Demo Again
+              </Button>
+              <Button 
+                onClick={() => setIsSignInOpen(true)}
+                className="flex items-center gap-2"
+              >
+                Sign Up
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
+
+      <SignInDialog
+        isOpen={isSignInOpen}
+        onClose={() => setIsSignInOpen(false)}
+      />
     </div>
   );
 } 
