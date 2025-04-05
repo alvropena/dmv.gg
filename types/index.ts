@@ -1,6 +1,6 @@
 export type Subscription = {
   id: string;
-  userId: number;
+  userId: string;
   stripeCustomerId: string | null;
   stripePriceId: string | null;
   stripeSubscriptionId: string | null;
@@ -13,16 +13,17 @@ export type Subscription = {
 };
 
 export type User = {
-  id: number;
+  id: string;
   clerkId: string;
   email: string;
   firstName: string | null;
   lastName: string | null;
+  birthday?: Date | null;
   createdAt: Date;
   updatedAt: Date;
   subscriptions: Subscription[];
-  studySessions?: StudySession[];
-  hasActiveSubscription?: boolean;
+  tests?: Test[];
+  supportRequests?: SupportRequest[];
 };
 
 export interface Question {
@@ -31,11 +32,11 @@ export interface Question {
   optionA: string;
   optionB: string;
   optionC: string;
-  optionD?: string;
+  optionD?: string | null;
   correctAnswer: string;
   explanation: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export type AuthContextType = {
@@ -44,7 +45,7 @@ export type AuthContextType = {
   hasActiveSubscription: boolean;
 };
 
-export type StudySession = {
+export type Test = {
   id: string;
   userId: string;
   startedAt: Date;
@@ -52,20 +53,42 @@ export type StudySession = {
   durationSeconds?: number | null;
   score: number;
   totalQuestions: number;
-  status: 'in_progress' | 'completed' | 'abandoned';
-  answers?: SessionAnswer[];
+  status: string; // "in_progress", "completed", "abandoned"
+  answers?: TestAnswer[];
+  questions?: TestQuestion[];
   createdAt: Date;
   updatedAt: Date;
 };
 
-export type SessionAnswer = {
-  id: string;
-  sessionId: string;
+export type TestQuestion = {
+  testId: string;
   questionId: string;
+  order: number;
   question?: Question;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type TestAnswer = {
+  testId: string;
+  questionId: string;
   selectedAnswer: string | null;
   isCorrect: boolean | null;
   answeredAt: Date | null;
+  question?: Question;
   createdAt: Date;
   updatedAt: Date;
+};
+
+export type SupportRequest = {
+  id: string;
+  userId: string | null;
+  email: string | null;
+  message: string;
+  status: string; // "open", "in_progress", "resolved", "closed"
+  resolution: string | null;
+  adminNotes: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  resolvedAt: Date | null;
 }; 

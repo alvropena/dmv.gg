@@ -33,6 +33,48 @@ export default function PracticeTestPage() {
 
 	// Use the custom timer hook
 	const elapsedTime = useTimer(startTime);
+	
+	// Periodically update the test duration in the database
+	useEffect(() => {
+		// Don't update if the test is not started or is already completed
+		if (!testId || showCongratulations) return;
+		
+		// Update duration every 30 seconds
+		const updateInterval = 30 * 1000; // 30 seconds
+		
+		const updateDuration = async () => {
+			try {
+				const now = new Date();
+				const durationMs = now.getTime() - startTime.getTime();
+				const durationSecs = Math.floor(durationMs / 1000);
+				
+				await fetch(`/api/tests/testId?testId=${testId}`, {
+					method: "PATCH",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						status: "in_progress",
+						durationSeconds: durationSecs,
+					}),
+				});
+			} catch (error) {
+				console.error("Error updating test duration:", error);
+			}
+		};
+		
+		// Initial update
+		updateDuration();
+		
+		// Set up periodic updates
+		const intervalId = setInterval(updateDuration, updateInterval);
+		
+		return () => {
+			clearInterval(intervalId);
+			// Final update when component unmounts
+			updateDuration();
+		};
+	}, [testId, startTime, showCongratulations]);
 
 	// Create a new test - only once on mount
 	useEffect(() => {

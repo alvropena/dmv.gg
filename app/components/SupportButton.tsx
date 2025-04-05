@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Headset, Send } from "lucide-react";
+import { Headset, CheckCircle } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -93,7 +93,7 @@ export function SupportButton() {
                   placeholder="Please provide details about your issue or question"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex min-h-[200px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   required
                 />
               </div>
@@ -118,8 +118,8 @@ export function SupportButton() {
             </form>
           ) : (
             <div className="flex flex-col items-center justify-center py-4 gap-2">
-              <div className="bg-green-100 dark:bg-green-900 rounded-full p-3">
-                <Send className="h-6 w-6 text-green-600 dark:text-green-300" />
+              <div className="bg-green-100 dark:bg-green-900/30 rounded-full p-3">
+                <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-300" />
               </div>
               <h3 className="font-medium text-lg">Message Sent!</h3>
               <p className="text-sm text-muted-foreground text-center">

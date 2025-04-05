@@ -70,7 +70,7 @@ export function Header() {
             </Link>
 
             <div className="flex items-center gap-2">
-              {/* <ThemeToggle /> */}
+              <ThemeToggle />
               <SignedOut>
                 <Button onClick={handleGetStarted}>
                   Get Started

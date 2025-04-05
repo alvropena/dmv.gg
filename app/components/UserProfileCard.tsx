@@ -3,7 +3,7 @@ import { UserResource } from "@clerk/types";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useState, useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Gift } from "lucide-react";
 
 type UserProfileCardProps = {
   user: UserResource;
@@ -16,7 +16,7 @@ type UserStatsData = {
 
 export function UserProfileCard({ user }: UserProfileCardProps) {
   const { hasActiveSubscription } = useAuthContext();
-  const [stats, setStats] = useState<UserStatsData>({ studyStreak: 0, studyTime: "0m" });
+  const [stats, setStats] = useState<UserStatsData>({ studyStreak: 0, studyTime: "0 mins" });
   const [isLoading, setIsLoading] = useState(true);
   const [userBirthday, setUserBirthday] = useState<string | null>(null);
   
@@ -35,35 +35,41 @@ export function UserProfileCard({ user }: UserProfileCardProps) {
         
         const data = await response.json();
         
-        // Calculate study streak based on consecutive days with completed tests
+        // Get streak directly from the API
         const streak = data.streak || 0;
         
-        // Calculate total study time from all completed tests
-        let totalTimeInMinutes = 0;
-        if (data.tests && Array.isArray(data.tests)) {
-          totalTimeInMinutes = data.tests.reduce((total: number, test: { durationSeconds: number }) => {
-            return total + (test.durationSeconds ? Math.floor(test.durationSeconds / 60) : 0);
-          }, 0);
+        // Get study time in seconds from the API
+        const totalStudyTimeSeconds = data.totalStudyTimeSeconds || 0;
+        
+        // Format the study time in a more readable format
+        const totalMinutes = Math.floor(totalStudyTimeSeconds / 60);
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        
+        let formattedStudyTime = "";
+        
+        if (hours > 0) {
+          formattedStudyTime = `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
+          if (minutes > 0) {
+            formattedStudyTime += ` ${minutes} ${minutes === 1 ? 'min' : 'mins'}`;
+          }
+        } else {
+          formattedStudyTime = `${totalMinutes} ${totalMinutes === 1 ? 'min' : 'mins'}`;
         }
         
-        // Format the study time
-        let formattedTime = "";
-        if (totalTimeInMinutes >= 60) {
-          const hours = Math.floor(totalTimeInMinutes / 60);
-          const minutes = totalTimeInMinutes % 60;
-          formattedTime = `${hours}h ${minutes}m`;
-        } else {
-          formattedTime = `${totalTimeInMinutes}m`;
+        // If no time recorded yet, show 0 mins
+        if (totalStudyTimeSeconds === 0) {
+          formattedStudyTime = "0 mins";
         }
         
         setStats({
           studyStreak: streak,
-          studyTime: formattedTime
+          studyTime: formattedStudyTime
         });
       } catch (error) {
         console.error('Error fetching user stats:', error);
         // Use defaults if there's an error
-        setStats({ studyStreak: 0, studyTime: "0m" });
+        setStats({ studyStreak: 0, studyTime: "0 mins" });
       } finally {
         setIsLoading(false);
       }
@@ -121,7 +127,10 @@ export function UserProfileCard({ user }: UserProfileCardProps) {
           <div>
             <h3 className="font-medium">{displayName}</h3>
             {userBirthday && (
-              <p className="text-xs text-muted-foreground">🎂: {userBirthday}</p>
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <Gift className="h-3 w-3" />
+                {userBirthday}
+              </p>
             )}
           </div>
         </div>
@@ -135,7 +144,7 @@ export function UserProfileCard({ user }: UserProfileCardProps) {
           <>
             {/* Mobile view */}
             <div className="flex flex-col items-end gap-1 sm:hidden">
-              <p className="text-xs">Study streak: <span className="font-bold">{stats.studyStreak} days</span></p>
+              <p className="text-xs">Study streak: <span className="font-bold">{stats.studyStreak} {stats.studyStreak === 1 ? 'day' : 'days'}</span></p>
               <p className="text-xs">Time studied: <span className="font-bold">{stats.studyTime}</span></p>
             </div>
             
@@ -143,7 +152,7 @@ export function UserProfileCard({ user }: UserProfileCardProps) {
             <div className="hidden sm:flex gap-6">
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Study streak</p>
-                <p className="font-semibold">{stats.studyStreak} days</p>
+                <p className="font-semibold">{stats.studyStreak} {stats.studyStreak === 1 ? 'day' : 'days'}</p>
               </div>
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Time studied</p>

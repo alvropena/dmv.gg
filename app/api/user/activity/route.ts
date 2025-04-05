@@ -19,42 +19,52 @@ export async function GET() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Get all completed tests for the user
-    const completedTests = await db.test.findMany({
+    // Get ALL tests for the user (both completed and in-progress)
+    const allTests = await db.test.findMany({
       where: { 
-        userId: dbUser.id,
-        status: 'completed'
+        userId: dbUser.id
       },
       orderBy: {
-        completedAt: 'desc'
+        startedAt: 'desc'
+      }
+    });
+
+    // Get only completed tests for streak calculation
+    const completedTests = allTests.filter(test => test.status === 'completed');
+
+    // Calculate total study time from all tests (including in-progress)
+    let totalStudyTimeSeconds = 0;
+    
+    allTests.forEach(test => {
+      if (test.durationSeconds) {
+        totalStudyTimeSeconds += test.durationSeconds;
       }
     });
 
     // Calculate study streak
-    // A streak is the number of consecutive days with completed tests
+    // A streak is the number of consecutive days with activity (both completed and in-progress tests)
     let streak = 0;
     
-    if (completedTests.length > 0) {
-      // Get all unique dates when tests were completed
-      const testDatesSet = new Set<string>();
+    if (allTests.length > 0) {
+      // Get all unique dates when user had activity
+      const activityDatesSet = new Set<string>();
       
-      completedTests
-        .filter(test => test.completedAt !== null)
-        .forEach(test => {
-          const date = new Date(test.completedAt as Date);
-          testDatesSet.add(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
-        });
+      allTests.forEach(test => {
+        // Use completedAt for completed tests, or startedAt for in-progress
+        const date = new Date(test.completedAt || test.startedAt);
+        activityDatesSet.add(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
+      });
       
-      const testDates = Array.from(testDatesSet).sort().reverse(); // Sort in descending order
+      const activityDates = Array.from(activityDatesSet).sort().reverse(); // Sort in descending order
       
       // Start with today
       const today = new Date();
       const todayString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
       
-      // Check if the user has a test today
-      const hasTestToday = testDates[0] === todayString;
+      // Check if the user has activity today
+      const hasActivityToday = activityDates.includes(todayString);
       
-      if (hasTestToday) {
+      if (hasActivityToday) {
         streak = 1;
         
         // Check previous days
@@ -64,7 +74,7 @@ export async function GET() {
           checkDay.setDate(checkDay.getDate() - 1);
           const checkDayString = `${checkDay.getFullYear()}-${checkDay.getMonth() + 1}-${checkDay.getDate()}`;
           
-          if (testDates.includes(checkDayString)) {
+          if (activityDates.includes(checkDayString)) {
             streak++;
           } else {
             break; // Streak is broken
@@ -73,10 +83,25 @@ export async function GET() {
       }
     }
 
+    // Format total study time
+    let totalStudyTimeFormatted = "";
+    const totalMinutes = Math.floor(totalStudyTimeSeconds / 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    
+    if (hours > 0) {
+      totalStudyTimeFormatted = `${hours}h ${minutes}m`;
+    } else {
+      totalStudyTimeFormatted = `${minutes}m`;
+    }
+
     return NextResponse.json({ 
       streak,
-      tests: completedTests.map(test => ({
+      totalStudyTimeSeconds,
+      totalStudyTimeFormatted,
+      tests: allTests.map(test => ({
         id: test.id,
+        status: test.status,
         startedAt: test.startedAt,
         completedAt: test.completedAt,
         durationSeconds: test.durationSeconds,

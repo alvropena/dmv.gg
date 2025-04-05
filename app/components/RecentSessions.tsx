@@ -4,6 +4,7 @@ import { Calendar, Clock, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Test, TestAnswer } from "@prisma/client";
+import { useRouter } from "next/navigation";
 
 type TestWithAnswers = Test & {
   answers: TestAnswer[];
@@ -16,6 +17,7 @@ type RecentSessionsProps = {
 export function RecentSessions({
   isLoading: initialLoading = false,
 }: RecentSessionsProps) {
+  const router = useRouter();
   const [tests, setTests] = useState<TestWithAnswers[]>([]);
   const [isLoading, setIsLoading] = useState(initialLoading);
   const [error, setError] = useState<string | null>(null);
@@ -74,6 +76,17 @@ export function RecentSessions({
   // Get the latest 2 tests for display
   const recentTests = tests.slice(0, 2);
 
+  // Navigate to test page
+  const handleTestNavigation = (testId: string, isCompleted: boolean) => {
+    if (isCompleted) {
+      // Navigate to review page
+      router.push(`/practice?test=${testId}&review=true`);
+    } else {
+      // Continue the test
+      router.push(`/practice?test=${testId}`);
+    }
+  };
+
   return (
     <div className="mb-6">
       <div className="flex justify-between items-center mb-4">
@@ -107,20 +120,11 @@ export function RecentSessions({
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <Badge
-                      variant={
-                        test.status === "completed" ? "success" : "secondary"
-                      }
-                      className={
-                        test.status !== "completed"
-                          ? "text-blue-600 bg-blue-100 dark:bg-blue-900 dark:text-blue-300"
-                          : ""
-                      }
-                    >
-                      {test.status === "completed"
-                        ? "Completed"
-                        : "In Progress"}
-                    </Badge>
+                    {test.status === "completed" && (
+                      <Badge variant="success">
+                        Completed
+                      </Badge>
+                    )}
                     <h3 className="font-semibold text-lg">
                       {test.status === "completed"
                         ? "Traffic Laws Test"
@@ -131,23 +135,25 @@ export function RecentSessions({
                     variant={
                       test.status === "completed" ? "outline" : "default"
                     }
+                    onClick={() => handleTestNavigation(test.id, test.status === "completed")}
                   >
                     {test.status === "completed" ? "Review" : "Continue"}
                   </Button>
                 </div>
 
                 <div className="mb-4">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    <span className="text-sm">
-                      {formatDate(test.startedAt)}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground mt-2">
-                    <Clock className="h-4 w-4" />
-                    <span className="text-sm">
-                      Time spent: {formatDuration(test.durationSeconds)}
-                    </span>
+                  <div className="flex items-center justify-between">
+                    {test.status !== "completed" && (
+                      <Badge className="text-blue-600 bg-blue-100 dark:bg-blue-900 dark:text-blue-300">
+                        In Progress
+                      </Badge>
+                    )}
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Calendar className="h-4 w-4" />
+                      <span className="text-sm">
+                        {formatDate(test.startedAt)}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -172,20 +178,10 @@ export function RecentSessions({
                   ) : (
                     <>
                       <span className="text-sm">
-                        Progress:{" "}
-                        {Math.round(
-                          (getAnsweredCount(test) / test.totalQuestions) * 100
-                        )}
-                        % (
-                        {getAnsweredCount(test)}{" "}
-                        completed,{" "}
-                        {test.totalQuestions - getAnsweredCount(test)}{" "}
-                        left)
+                        Progress: <span className="font-bold">{getAnsweredCount(test)} completed, {test.totalQuestions - getAnsweredCount(test)} left</span>
                       </span>
-                      <span className="text-sm font-medium">
-                        {getAnsweredCount(test) === 0
-                          ? "Ready to start"
-                          : "In progress"}
+                      <span className="text-sm font-bold">
+                        {Math.round((getAnsweredCount(test) / test.totalQuestions) * 100)}%
                       </span>
                     </>
                   )}

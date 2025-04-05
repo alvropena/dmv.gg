@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Header } from "@/components/Header";
 import { Providers } from "@/components/Providers";
+import { Toaster } from "@/components/ui/sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -23,6 +24,7 @@ export default function RootLayout({
 					<Providers>
 						<Header />
 						<main className="min-h-screen">{children}</main>
+						<Toaster />
 					</Providers>
 				</body>
 			</html>

@@ -11,10 +11,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CalendarIcon, Clock, CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { CalendarIcon, Clock, CheckCircle, XCircle, Loader2, AlertTriangle } from "lucide-react";
 import { Subscription } from "@/types";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
 
 interface SubscriptionDetailsDialogProps {
   isOpen: boolean;
@@ -25,10 +27,15 @@ export function SubscriptionDetailsDialog({
   isOpen,
   onClose,
 }: SubscriptionDetailsDialogProps) {
-  const { dbUser } = useAuthContext();
+  const { dbUser, hasActiveSubscription } = useAuthContext();
   const [activeSubscription, setActiveSubscription] =
     useState<Subscription | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [isReactivating, setIsReactivating] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [showCancelConfirmation, setShowCancelConfirmation] = useState(false);
+  const [confirmationText, setConfirmationText] = useState("");
+  const CONFIRMATION_PHRASE = "cancel";
 
   useEffect(() => {
     if (dbUser?.subscriptions) {
@@ -73,6 +80,7 @@ export function SubscriptionDetailsDialog({
 
     try {
       setIsCancelling(true);
+      setSuccessMessage(null);
 
       // Call our API to cancel the subscription
       const response = await fetch('/api/subscriptions/cancel', {
@@ -90,110 +98,249 @@ export function SubscriptionDetailsDialog({
         throw new Error(errorData.message || 'Failed to cancel subscription');
       }
 
-      // Close the dialog after successful cancellation
-      onClose();
+      const result = await response.json();
+      
+      // Update the subscription locally
+      setActiveSubscription(prev => 
+        prev ? { ...prev, cancelAtPeriodEnd: true } : null
+      );
+      
+      setSuccessMessage(result.message);
+      
+      // Reset confirmation UI
+      setShowCancelConfirmation(false);
+      setConfirmationText("");
+
+      // Show toast notification
+      toast.success("We are sad to see you go :(", {
+        description: "Your subscription will remain active until the end of the billing period.",
+      });
     } catch (error) {
       console.error("Error cancelling subscription:", error);
-      // You could add toast notification here for error handling
+      toast.error(error instanceof Error ? error.message : "Failed to cancel subscription");
     } finally {
       setIsCancelling(false);
     }
   };
 
+  const handleCancelRequest = () => {
+    setShowCancelConfirmation(true);
+  };
+
+  const handleCancelBack = () => {
+    setShowCancelConfirmation(false);
+    setConfirmationText("");
+  };
+
+  const handleReactivateSubscription = async () => {
+    if (!activeSubscription?.stripeSubscriptionId) return;
+
+    try {
+      setIsReactivating(true);
+      setSuccessMessage(null);
+
+      // Call our API to reactivate the subscription
+      const response = await fetch('/api/subscriptions/reactivate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          subscriptionId: activeSubscription.id,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to reactivate subscription');
+      }
+
+      const result = await response.json();
+      
+      // Update the subscription locally
+      setActiveSubscription(prev => 
+        prev ? { ...prev, cancelAtPeriodEnd: false } : null
+      );
+      
+      setSuccessMessage(result.message);
+
+      // Show toast notification
+      toast.success("Welcome back! :)", {
+        description: "Your subscription has been reactivated successfully.",
+      });
+    } catch (error) {
+      console.error("Error reactivating subscription:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to reactivate subscription");
+    } finally {
+      setIsReactivating(false);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Manage Subscription</DialogTitle>
-          <DialogDescription>
-            Details about your premium subscription.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-[425px] w-[90%] mx-auto rounded-md">
+        {!showCancelConfirmation ? (
+          <>
+            <DialogHeader>
+              <DialogTitle>Manage Subscription</DialogTitle>
+              <DialogDescription>
+                Details about your premium subscription.
+              </DialogDescription>
+            </DialogHeader>
 
-        <div className="py-4">
-          <Table>
-            <TableBody>
-              <TableRow>
-                <TableCell className="text-muted-foreground font-medium">
-                  Plan
-                </TableCell>
-                <TableCell className="text-right font-medium">
-                  {getPlanName()}
-                </TableCell>
-              </TableRow>
-
-              {activeSubscription && (
-                <>
+            <div className="py-4">
+              <Table>
+                <TableBody>
                   <TableRow>
                     <TableCell className="text-muted-foreground font-medium">
-                      Status
+                      Plan
                     </TableCell>
-                    <TableCell className="text-right">
-                      <div className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-md text-green-500">
-                        <CheckCircle className="h-3 w-3 mr-1 text-green-500" />
-                        Active
-                      </div>
-                      {activeSubscription.cancelAtPeriodEnd && (
-                        <div className="mt-2 text-xs text-muted-foreground">
-                          Cancels at period end
-                        </div>
-                      )}
+                    <TableCell className="text-right font-medium">
+                      {getPlanName()}
                     </TableCell>
                   </TableRow>
 
-                  {activeSubscription.stripeSubscriptionId && (
-                    <TableRow>
-                      <TableCell className="text-muted-foreground font-medium">
-                        Next renewal
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          <CalendarIcon className="h-4 w-4" />
-                          <span className="font-medium">
-                            {formatDate(
-                              new Date(activeSubscription.currentPeriodEnd)
-                            )}
-                          </span>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  {activeSubscription && (
+                    <>
+                      <TableRow>
+                        <TableCell className="text-muted-foreground font-medium">
+                          Status
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {activeSubscription.cancelAtPeriodEnd ? (
+                            <div className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-md text-red-500">
+                              <XCircle className="h-3 w-3 mr-1 text-red-500" />
+                              Canceled
+                            </div>
+                          ) : (
+                            <div className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-md text-green-500">
+                              <CheckCircle className="h-3 w-3 mr-1 text-green-500" />
+                              Active
+                            </div>
+                          )}
+                        </TableCell>
+                      </TableRow>
 
-                  {!activeSubscription.stripeSubscriptionId && (
-                    <TableRow>
-                      <TableCell className="text-muted-foreground font-medium">
-                        Expires
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-1">
-                          <Clock className="h-4 w-4" />
-                          <span className="font-medium">Never (Lifetime)</span>
-                        </div>
-                      </TableCell>
-                    </TableRow>
+                      {activeSubscription.stripeSubscriptionId && (
+                        <TableRow>
+                          <TableCell className="text-muted-foreground font-medium">
+                            {activeSubscription.cancelAtPeriodEnd ? "Active until" : "Next renewal"}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex items-center justify-end gap-1">
+                              <CalendarIcon className="h-4 w-4" />
+                              <span className="font-medium">
+                                {formatDate(
+                                  new Date(activeSubscription.currentPeriodEnd)
+                                )}
+                              </span>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+
+                      {!activeSubscription.stripeSubscriptionId && (
+                        <TableRow>
+                          <TableCell className="text-muted-foreground font-medium">
+                            Expires
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex items-center justify-end gap-1">
+                              <Clock className="h-4 w-4" />
+                              <span className="font-medium">Never (Lifetime)</span>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </>
                   )}
-                </>
+                </TableBody>
+              </Table>
+            </div>
+
+            <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-between">
+              {activeSubscription?.stripeSubscriptionId && !activeSubscription.cancelAtPeriodEnd && (
+                <Button 
+                  onClick={handleCancelRequest}
+                  variant="destructive"
+                  className="order-1 sm:order-2"
+                >
+                  Cancel Subscription
+                </Button>
               )}
-            </TableBody>
-          </Table>
-        </div>
+              
+              {activeSubscription?.stripeSubscriptionId && activeSubscription.cancelAtPeriodEnd && (
+                <Button 
+                  onClick={handleReactivateSubscription}
+                  variant="default"
+                  disabled={isReactivating}
+                  className="order-1 sm:order-2"
+                >
+                  {isReactivating ? 
+                    <Loader2 className="h-4 w-4 animate-spin" /> : 
+                    "Reactivate Subscription"
+                  }
+                </Button>
+              )}
+              
+              <Button onClick={onClose} variant="outline" className="order-2 sm:order-1">
+                Close
+              </Button>
+            </DialogFooter>
+          </>
+        ) : (
+          <>
+            <DialogHeader>
+              <DialogTitle>Cancel Subscription</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to cancel your subscription?
+              </DialogDescription>
+            </DialogHeader>
 
-        <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-between">
-          <Button onClick={onClose} variant="outline">
-            Close
-          </Button>
-          
-          {activeSubscription?.stripeSubscriptionId && !activeSubscription.cancelAtPeriodEnd && (
-            <Button 
-              onClick={handleCancelSubscription} 
-              variant="destructive"
-              disabled={isCancelling}
-            >
-              {isCancelling && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-              Cancel Subscription
-            </Button>
-          )}
-        </DialogFooter>
+            <div className="space-y-4">
+              <div className="bg-amber-50 p-4 rounded-md border border-amber-200 flex items-start gap-2">
+                <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                <div className="text-xs text-amber-800">
+                  <p>Your subscription will remain active until the end of your current billing period. After that, you will lose access to premium features.</p>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  Type <span className="font-bold">{CONFIRMATION_PHRASE}</span> to confirm cancellation:
+                </p>
+                <Input 
+                  value={confirmationText} 
+                  onChange={(e) => setConfirmationText(e.target.value)} 
+                  placeholder={CONFIRMATION_PHRASE}
+                />
+              </div>
+            </div>
+
+            <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:justify-between">
+              <Button 
+                onClick={handleCancelSubscription} 
+                variant="destructive"
+                disabled={isCancelling || confirmationText.toLowerCase() !== CONFIRMATION_PHRASE}
+                className="order-1 sm:order-2"
+              >
+                {isCancelling ? 
+                  <Loader2 className="h-4 w-4 animate-spin" /> : 
+                  "Confirm Cancellation"
+                }
+              </Button>
+              
+              <Button 
+                onClick={handleCancelBack} 
+                variant="outline" 
+                className="order-2 sm:order-1 sm:ml-0"
+                disabled={isCancelling}
+              >
+                Back
+              </Button>
+            </DialogFooter>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );
