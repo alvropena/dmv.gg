@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useUser } from "@clerk/nextjs";
+import { Textarea } from "@/components/ui/textarea";
 
 export function SupportButton() {
   const { user, isSignedIn } = useUser();
@@ -64,8 +65,14 @@ export function SupportButton() {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === " ") {
+      e.stopPropagation();
+    }
+  };
+
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-6 right-6 z-50" onKeyDown={handleKeyDown}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -88,12 +95,13 @@ export function SupportButton() {
 
               <div className="space-y-2">
                 <Label htmlFor="message">Message</Label>
-                <textarea
+                <Textarea
                   id="message"
                   placeholder="Please provide details about your issue or question"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="flex min-h-[200px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  onKeyDown={handleKeyDown}
+                  className="min-h-[200px]"
                   required
                 />
               </div>

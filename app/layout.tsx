@@ -8,8 +8,8 @@ import { Toaster } from "@/components/ui/sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-	title: "DMV.gg - Practice Your DMV Test",
-	description: "Practice your DMV test with our comprehensive question bank",
+	title: "DMV.gg - Ace Your DMV Test",
+	description: "Ace your DMV test with our comprehensive question bank",
 };
 
 export default function RootLayout({
