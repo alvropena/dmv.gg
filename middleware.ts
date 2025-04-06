@@ -5,17 +5,14 @@ const publicRoutes = [
   '/',
   '/sign-in',
   '/api/webhooks(.*)',
-];
-
-// Create a matcher for routes that don't require authentication
-const isPublicRoute = createRouteMatcher([
-  ...publicRoutes,
-  // Add static files patterns
   '/_next(.*)',
   '/favicon.ico',
   '/sitemap.xml',
   '/robots.txt',
-]);
+];
+
+// Create a matcher for routes that don't require authentication
+const isPublicRoute = createRouteMatcher(publicRoutes);
 
 export default clerkMiddleware((auth, req) => {
   // If the route is public, don't require authentication
