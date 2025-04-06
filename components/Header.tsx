@@ -2,7 +2,7 @@
 
 import { SignedIn, SignedOut, UserButton, useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Crown} from "lucide-react";
+import { ArrowRight, Sparkles, Crown } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
@@ -12,13 +12,13 @@ import { SubscriptionDetailsDialog } from "@/components/SubscriptionDetailsDialo
 import { SignInDialog } from "@/components/SignInDialog";
 import Link from "next/link";
 
-
 export function Header() {
   const router = useRouter();
   const { isSignedIn } = useAuth();
   const { hasActiveSubscription } = useAuthContext();
   const [isPricingOpen, setIsPricingOpen] = useState(false);
-  const [isSubscriptionDetailsOpen, setIsSubscriptionDetailsOpen] = useState(false);
+  const [isSubscriptionDetailsOpen, setIsSubscriptionDetailsOpen] =
+    useState(false);
   const [isSignInOpen, setIsSignInOpen] = useState(false);
 
   const handleLogoClick = (e: React.MouseEvent) => {
@@ -62,7 +62,7 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 w-full z-50 backdrop-blur-md bg-background/80">
+      <header className="sticky top-0 w-full z-50 backdrop-blur-md bg-background/80 border-b">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             <Link href="/" onClick={handleLogoClick}>
@@ -71,12 +71,47 @@ export function Header() {
               </h1>
             </Link>
 
+            <SignedOut>
+              <nav className="hidden md:flex gap-6">
+                <Link
+                  href="#features"
+                  className="text-sm font-medium hover:underline underline-offset-4"
+                >
+                  Features
+                </Link>
+                <Link
+                  href="#how-it-works"
+                  className="text-sm font-medium hover:underline underline-offset-4"
+                >
+                  How It Works
+                </Link>
+                <Link
+                  href="#pricing"
+                  className="text-sm font-medium hover:underline underline-offset-4"
+                >
+                  Pricing
+                </Link>
+                <Link
+                  href="#testimonials"
+                  className="text-sm font-medium hover:underline underline-offset-4"
+                >
+                  Testimonials
+                </Link>
+                <Link
+                  href="#faq"
+                  className="text-sm font-medium hover:underline underline-offset-4"
+                >
+                  FAQ
+                </Link>
+              </nav>
+            </SignedOut>
+
             <div className="flex items-center gap-2">
               <ThemeToggle />
               <SignedOut>
                 <Button onClick={handleGetStarted}>
                   Get Started
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4 ml-1" />
                 </Button>
               </SignedOut>
               <SignedIn>
@@ -104,7 +139,6 @@ export function Header() {
             </div>
           </div>
         </div>
-        
       </header>
 
       <PricingDialog

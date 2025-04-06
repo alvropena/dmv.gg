@@ -6,12 +6,6 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { questions } from "@/data/questions";
-import { DemoQuestion } from "@/components/landing/DemoQuestion";
-import { DemoProgress } from "@/components/landing/DemoProgress";
-import { DemoComplete } from "@/components/landing/DemoComplete";
-import { PricingDialog } from "@/components/PricingDialog";
-import { Footer } from "@/components/Footer";
-import { BirthdayDialog } from "@/components/BirthdayDialog";
 import { Loader2 } from "lucide-react";
 import { UserStats } from "@/components/UserStats";
 import { UserProfileCard } from "@/components/UserProfileCard";
@@ -19,6 +13,10 @@ import { UserWelcomeCard } from "@/components/UserWelcomeCard";
 import { StudyTips } from "@/components/StudyTips";
 import { UserActivitySection } from "@/components/UserActivitySection";
 import { SupportButton } from "@/components/SupportButton";
+import { PricingDialog } from "@/components/PricingDialog";
+import { BirthdayDialog } from "@/components/BirthdayDialog";
+import LandingPage from "@/components/landing";
+
 // Custom hook to detect mobile screens
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -43,97 +41,12 @@ const useIsMobile = () => {
 
 export default function Home() {
   const isMobile = useIsMobile();
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<number | null>(null);
-  const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
-  const [demoScore, setDemoScore] = useState(0);
-  const [questionsAnswered, setQuestionsAnswered] = useState(0);
-  const [streak, setStreak] = useState(0);
-  const [isDemoComplete, setIsDemoComplete] = useState(false);
   const [isPricingOpen, setIsPricingOpen] = useState(false);
   const [isBirthdayDialogOpen, setIsBirthdayDialogOpen] = useState(false);
 
   const { user, isLoaded } = useUser();
   const router = useRouter();
   const { isLoading, hasActiveSubscription } = useAuthContext();
-
-  const currentQuestion = questions[currentQuestionIndex];
-
-  const checkAnswer = useCallback(() => {
-    if (selectedOption !== null && !isAnswerRevealed) {
-      setIsAnswerRevealed(true);
-      setQuestionsAnswered((prev) => prev + 1);
-
-      if (selectedOption === currentQuestion.correctAnswer) {
-        setDemoScore((prev) => prev + 1);
-        setStreak((prev) => prev + 1);
-      } else {
-        setStreak(0);
-      }
-    }
-  }, [selectedOption, isAnswerRevealed, currentQuestion.correctAnswer]);
-
-  const goToNextQuestion = useCallback(() => {
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex((prev) => prev + 1);
-      setSelectedOption(null);
-      setIsAnswerRevealed(false);
-    } else {
-      setIsDemoComplete(true);
-    }
-  }, [currentQuestionIndex]);
-
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      // Number keys 1-4 for selecting options (0-3 in array)
-      if (e.key >= "1" && e.key <= "4" && !isAnswerRevealed) {
-        const optionIndex = Number.parseInt(e.key) - 1;
-        if (optionIndex >= 0 && optionIndex < currentQuestion.options.length) {
-          setSelectedOption(optionIndex);
-        }
-      }
-
-      // Space to check answer or continue
-      if (e.key === " ") {
-        e.preventDefault();
-        if (!isAnswerRevealed && selectedOption !== null) {
-          checkAnswer();
-        } else if (isAnswerRevealed) {
-          goToNextQuestion();
-        }
-      }
-    },
-    [
-      currentQuestion,
-      selectedOption,
-      isAnswerRevealed,
-      checkAnswer,
-      goToNextQuestion,
-    ]
-  );
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [handleKeyDown]);
-
-  const selectOption = (index: number) => {
-    if (!isAnswerRevealed) {
-      setSelectedOption(index);
-    }
-  };
-
-  const resetDemo = () => {
-    setCurrentQuestionIndex(0);
-    setSelectedOption(null);
-    setIsAnswerRevealed(false);
-    setDemoScore(0);
-    setQuestionsAnswered(0);
-    setStreak(0);
-    setIsDemoComplete(false);
-  };
 
   const handleStudyClick = () => {
     window.open(
@@ -220,8 +133,6 @@ export default function Home() {
     );
   }
 
-  const progressPercentage = (questionsAnswered / questions.length) * 100;
-
   // Add PricingDialog component that will be used across all views
   const pricingDialog = (
     <PricingDialog
@@ -269,79 +180,6 @@ export default function Home() {
     );
   }
 
-  // If not authenticated, render the landing page demo
-  if (isDemoComplete) {
-    return (
-      <>
-        <DemoComplete
-          score={demoScore}
-          totalQuestions={questions.length}
-          progressPercentage={progressPercentage}
-          onReset={resetDemo}
-        />
-        {pricingDialog}
-        <Footer />
-      </>
-    );
-  }
-
-  return (
-    <div className="w-full">
-      <div className="container mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6">
-            Ace Your DMV Knowledge Test
-          </h1>
-          <h2 className="text-xl md:text-3xl text-muted-foreground max-w-xl mx-auto px-4">
-            Practice with real questions, track your progress, and ace your test
-            💯
-          </h2>
-        </div>
-
-        <DemoProgress
-          currentQuestionIndex={currentQuestionIndex}
-          totalQuestions={questions.length}
-          score={demoScore}
-          streak={streak}
-          progressPercentage={progressPercentage}
-        />
-
-        <DemoQuestion
-          question={currentQuestion.question}
-          options={currentQuestion.options}
-          selectedOption={selectedOption}
-          isAnswerRevealed={isAnswerRevealed}
-          correctAnswer={currentQuestion.correctAnswer}
-          onOptionSelect={selectOption}
-        />
-
-        <div className="flex justify-between">
-          {!isAnswerRevealed ? (
-            <Button
-              onClick={checkAnswer}
-              disabled={selectedOption === null}
-              className="w-full"
-            >
-              Check Answer{!isMobile && " (Space)"}
-            </Button>
-          ) : (
-            <Button onClick={goToNextQuestion} className="w-full">
-              Next Question{!isMobile && " (Space)"}
-            </Button>
-          )}
-        </div>
-
-        {!isMobile && (
-          <div className="mt-6 text-center text-sm text-muted-foreground">
-            <p>
-              Keyboard shortcuts: Press 1-4 to select an option, Space to
-              check/continue
-            </p>
-          </div>
-        )}
-      </div>
-      {pricingDialog}
-      <Footer />
-    </div>
-  );
+  // If not authenticated, render the landing page
+  return <LandingPage />;
 }
