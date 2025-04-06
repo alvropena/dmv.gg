@@ -143,12 +143,7 @@ export default function Home() {
   };
 
   const handlePracticeClick = () => {
-    console.log(
-      "Practice Test clicked. Subscription status:",
-      hasActiveSubscription
-    );
     if (!hasActiveSubscription) {
-      console.log("Opening pricing dialog...");
       setIsPricingOpen(true);
       return;
     }

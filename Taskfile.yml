@@ -38,6 +38,11 @@ tasks:
     cmds:
       - task --list
 
+  run:
+    desc: Run the application
+    cmds:
+      - npm run dev
+
   # Usage examples in comments:
   # Full setup: task setup
   # Reset & seed DB: task db:reset db:seed
