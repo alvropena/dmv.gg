@@ -5,6 +5,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Header } from "@/components/Header";
 import { Providers } from "@/components/Providers";
 import { Toaster } from "@/components/ui/sonner";
+import { Analytics } from "@vercel/analytics/react"
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -28,6 +30,7 @@ export default function RootLayout({
 					</Providers>
 				</body>
 			</html>
+			<Analytics />
 		</ClerkProvider>
 	);
 }
