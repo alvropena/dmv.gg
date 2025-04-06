@@ -4,7 +4,7 @@ type UserAnalyticsProps = {
   className?: string;
 };
 
-export function UserAnalytics({ className }: UserAnalyticsProps) {
+export function UserAnalytics() {
   return (
     <div className="mb-6">
       <div className="flex justify-between items-center mb-4">

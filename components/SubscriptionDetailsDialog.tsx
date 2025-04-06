@@ -208,15 +208,15 @@ export function SubscriptionDetailsDialog({
                         </TableCell>
                         <TableCell className="text-right">
                           {activeSubscription.cancelAtPeriodEnd ? (
-                            <div className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-md text-red-500">
-                              <XCircle className="h-3 w-3 mr-1 text-red-500" />
+                            <Badge variant="destructive" className="rounded-full">
+                              <XCircle className="h-3 w-3 mr-1" />
                               Canceled
-                            </div>
+                            </Badge>
                           ) : (
-                            <div className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-md text-green-500">
-                              <CheckCircle className="h-3 w-3 mr-1 text-green-500" />
+                            <Badge variant="success" className="rounded-full">
+                              <CheckCircle className="h-3 w-3 mr-1" />
                               Active
-                            </div>
+                            </Badge>
                           )}
                         </TableCell>
                       </TableRow>

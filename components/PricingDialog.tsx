@@ -1,7 +1,7 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Play } from "lucide-react";
+import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import { formatCurrency } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/useIsMobile";

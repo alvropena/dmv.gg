@@ -1,4 +1,3 @@
-import { User } from "lucide-react";
 import { UserResource } from "@clerk/types";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useAuthContext } from "@/contexts/AuthContext";

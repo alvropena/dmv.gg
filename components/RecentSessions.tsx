@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, Loader2 } from "lucide-react";
+import { Calendar, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Test, TestAnswer } from "@prisma/client";
@@ -59,15 +59,7 @@ export function RecentSessions({
       minute: "2-digit",
     });
   };
-
-  // Helper function to format duration
-  const formatDuration = (seconds: number | null) => {
-    if (!seconds) return "0 minutes";
-
-    const minutes = Math.floor(seconds / 60);
-    return `${minutes} minute${minutes !== 1 ? "s" : ""}`;
-  };
-
+  
   // Calculate progress for in-progress tests
   const getAnsweredCount = (test: TestWithAnswers) => {
     return test.answers.filter(a => a.selectedAnswer !== null).length;

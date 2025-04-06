@@ -1,13 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import {
-  Lock,
-  ArrowRight,
-  FileText,
-  Play,
-  PlayCircle,
-  PlusCircle,
-} from "lucide-react";
+import { Lock, FileText, Play, PlayCircle, PlusCircle } from "lucide-react";
 import { UserResource } from "@clerk/types";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -15,7 +8,6 @@ import { useRouter } from "next/navigation";
 type UserWelcomeCardProps = {
   user: UserResource;
   hasActiveSubscription: boolean;
-  onPracticeClick?: () => void;
   onStudyClick: () => void;
   onStartTestClick?: () => void;
 };
@@ -35,7 +27,7 @@ type Test = {
 export function UserWelcomeCard({
   user,
   hasActiveSubscription,
-  onPracticeClick,
+
   onStudyClick,
   onStartTestClick,
 }: UserWelcomeCardProps) {
@@ -172,7 +164,14 @@ export function UserWelcomeCard({
         <div className="mb-6">
           <div className="flex justify-between mb-2">
             <span className="text-sm">
-              Progress: {isLoading ? "Loading..." : <span className="font-bold">{completedQuestions} completed, {remainingQuestions} left</span>}
+              Progress:{" "}
+              {isLoading ? (
+                "Loading..."
+              ) : (
+                <span className="font-bold">
+                  {completedQuestions} completed, {remainingQuestions} left
+                </span>
+              )}
             </span>
             <span className="font-bold text-sm">
               {isLoading ? "Loading..." : `${progress}%`}

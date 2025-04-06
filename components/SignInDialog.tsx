@@ -7,7 +7,7 @@ interface SignInDialogProps {
   onClose: () => void;
 }
 
-export function SignInDialog({ isOpen, onClose }: SignInDialogProps) {
+export function SignInDialog({ isOpen }: SignInDialogProps) {
   if (!isOpen) return null;
 
   return (

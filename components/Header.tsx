@@ -2,7 +2,7 @@
 
 import { SignedIn, SignedOut, UserButton, useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Crown, Info } from "lucide-react";
+import { ArrowRight, Sparkles, Crown} from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
