@@ -20,17 +20,17 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<ClerkProvider>
-			<html lang="en" suppressHydrationWarning>
-				<body className={inter.className}>
+		<html lang="en" suppressHydrationWarning>
+			<body className={inter.className}>
+				<ClerkProvider>
 					<Providers>
 						<Header />
 						<main className="h-fit">{children}</main>
 						<Toaster />
+						<Analytics />
 					</Providers>
-				</body>
-			</html>
-			<Analytics />
-		</ClerkProvider>
+				</ClerkProvider>
+			</body>
+		</html>
 	);
 }
