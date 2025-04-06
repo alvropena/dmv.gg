@@ -27,7 +27,7 @@ export function SubscriptionDetailsDialog({
   isOpen,
   onClose,
 }: SubscriptionDetailsDialogProps) {
-  const { dbUser, hasActiveSubscription } = useAuthContext();
+  const { dbUser } = useAuthContext();
   const [activeSubscription, setActiveSubscription] =
     useState<Subscription | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);

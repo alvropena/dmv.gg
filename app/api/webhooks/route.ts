@@ -5,6 +5,12 @@ import Stripe from 'stripe';
 import { db } from '@/lib/db';
 import crypto from 'crypto';
 
+// Define a more specific type for Subscription with timestamps
+interface StripeSubscriptionWithTimestamps extends Stripe.Subscription {
+  current_period_start: number;
+  current_period_end: number;
+}
+
 export async function POST(req: Request) {
   const body = await req.text();
   const signature = headers().get('Stripe-Signature');
@@ -93,22 +99,23 @@ export async function POST(req: Request) {
           console.log('Processing subscription payment (weekly/monthly plan)');
           console.log(`Fetching subscription details for: ${session.subscription}`);
           // Fetch the subscription to get the current period dates
-          const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+          const subscriptionData = await stripe.subscriptions.retrieve(session.subscription as string);
+          const subscription = subscriptionData as unknown as StripeSubscriptionWithTimestamps;
           console.log('Subscription status:', subscription.status);
           
           // Log the timestamp values to debug
           console.log('Raw timestamps:', {
-            current_period_start: (subscription as any).current_period_start,
-            current_period_end: (subscription as any).current_period_end,
+            current_period_start: subscription.current_period_start,
+            current_period_end: subscription.current_period_end,
           });
           
           // Safely convert Unix timestamps to Date objects
-          const startDate = (subscription as any).current_period_start 
-            ? new Date((subscription as any).current_period_start * 1000) 
+          const startDate = subscription.current_period_start 
+            ? new Date(subscription.current_period_start * 1000) 
             : new Date();
             
-          const endDate = (subscription as any).current_period_end 
-            ? new Date((subscription as any).current_period_end * 1000) 
+          const endDate = subscription.current_period_end 
+            ? new Date(subscription.current_period_end * 1000) 
             : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // Default to 30 days in the future
           
           console.log('Converted dates:', {
@@ -137,15 +144,16 @@ export async function POST(req: Request) {
 
       case 'customer.subscription.updated':
       case 'customer.subscription.deleted': {
-        const subscription = event.data.object as Stripe.Subscription;
+        const subscriptionObject = event.data.object as Stripe.Subscription;
+        const subscription = subscriptionObject as unknown as StripeSubscriptionWithTimestamps;
         
         // Safely convert Unix timestamps to Date objects
-        const startDate = (subscription as any).current_period_start 
-          ? new Date((subscription as any).current_period_start * 1000) 
+        const startDate = subscription.current_period_start 
+          ? new Date(subscription.current_period_start * 1000) 
           : new Date();
           
-        const endDate = (subscription as any).current_period_end 
-          ? new Date((subscription as any).current_period_end * 1000) 
+        const endDate = subscription.current_period_end 
+          ? new Date(subscription.current_period_end * 1000) 
           : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
         
         console.log(`Updating subscription ${subscription.id} to status: ${subscription.status}`);

@@ -1,9 +1,5 @@
 import React from "react";
 
-type UserAnalyticsProps = {
-  className?: string;
-};
-
 export function UserAnalytics() {
   return (
     <div className="mb-6">

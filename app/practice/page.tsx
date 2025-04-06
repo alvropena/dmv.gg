@@ -14,6 +14,11 @@ import { useTimer } from "@/hooks/useTimer";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { Loader2 } from "lucide-react";
 
+interface TestAnswer {
+	selectedAnswer: string | null;
+	questionId: string;
+}
+
 export default function PracticeTestPage() {
 	const { user, isLoaded } = useUser();
 	const router = useRouter();
@@ -35,7 +40,7 @@ export default function PracticeTestPage() {
 	const elapsedTime = useTimer(startTime);
 	
 	// Function to fetch test data and update local state
-	const fetchTestData = async () => {
+	const fetchTestData = useCallback(async () => {
 		if (!testId || !hasActiveSubscription || !user) return;
 
 		try {
@@ -66,14 +71,14 @@ export default function PracticeTestPage() {
 			if (test.answers && Array.isArray(test.answers)) {
 				// Count how many questions have been answered
 				const answeredCount = test.answers.filter(
-					(answer: any) => answer.selectedAnswer !== null
+					(answer: TestAnswer) => answer.selectedAnswer !== null
 				).length;
 				setQuestionsAnswered(answeredCount);
 
 				// Find the last unanswered question to set the currentQuestionIndex
 				if (answeredCount < test.totalQuestions) {
 					const nextUnansweredIndex = test.answers.findIndex(
-						(answer: any) => answer.selectedAnswer === null
+						(answer: TestAnswer) => answer.selectedAnswer === null
 					);
 					if (nextUnansweredIndex !== -1) {
 						setCurrentQuestionIndex(nextUnansweredIndex);
@@ -86,7 +91,7 @@ export default function PracticeTestPage() {
 			console.error("Error fetching test data:", error);
 			return null;
 		}
-	};
+	}, [testId, hasActiveSubscription, user]);
 	
 	// Periodically update the test duration in the database
 	useEffect(() => {
@@ -177,7 +182,7 @@ export default function PracticeTestPage() {
 		};
 
 		createTest();
-	}, [hasActiveSubscription, user]); // No testId dependency to prevent re-runs
+	}, [hasActiveSubscription, user, router]); // Add router to dependencies
 
 	// Fetch existing test details and questions if we have a testId
 	useEffect(() => {
@@ -195,7 +200,7 @@ export default function PracticeTestPage() {
 		};
 
 		loadInitialTestData();
-	}, [testId, hasActiveSubscription, user]);
+	}, [testId, hasActiveSubscription, user, fetchTestData]); // Add fetchTestData to dependencies
 
 	useEffect(() => {
 		// Redirect if not subscribed
@@ -205,8 +210,8 @@ export default function PracticeTestPage() {
 	}, [isLoaded, isLoading, hasActiveSubscription, router]);
 
 	// Save answer to the test
-	const saveAnswer = async (questionId: string, selectedAnswer: string) => {
-		if (!testId) return;
+	const saveAnswer = useCallback(async (questionId: string, selectedAnswer: string) => {
+		if (!testId) return false;
 
 		try {
 			const response = await fetch(`/api/tests/testId/answers?testId=${testId}`, {
@@ -239,7 +244,7 @@ export default function PracticeTestPage() {
 			console.error("Error saving answer:", error);
 			return false;
 		}
-	};
+	}, [testId, fetchTestData]);
 
 	// Complete the test when user finishes
 	const completeTest = useCallback(async () => {
