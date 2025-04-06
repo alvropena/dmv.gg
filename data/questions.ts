@@ -35,8 +35,8 @@ const sampleQuestions: Question[] = [
         optionD: "Turn right only",
         correctAnswer: "Stop and wait until the light turns green",
         explanation: "A red traffic light means you must come to a complete stop and wait until the light turns green before proceeding.",
-        createdAt: "2023-01-01T00:00:00Z",
-        updatedAt: "2023-01-01T00:00:00Z"
+        createdAt: new Date("2023-01-01T00:00:00Z"),
+        updatedAt: new Date("2023-01-01T00:00:00Z")
     },
     {
         id: "2",
@@ -47,8 +47,8 @@ const sampleQuestions: Question[] = [
         optionD: "55 mph",
         correctAnswer: "25 mph",
         explanation: "The speed limit in residential areas is typically 25 mph to ensure the safety of pedestrians and children.",
-        createdAt: "2023-01-01T00:00:00Z",
-        updatedAt: "2023-01-01T00:00:00Z"
+        createdAt: new Date("2023-01-01T00:00:00Z"),
+        updatedAt: new Date("2023-01-01T00:00:00Z")
     },
     {
         id: "3",
@@ -59,8 +59,8 @@ const sampleQuestions: Question[] = [
         optionD: "Only when there are other vehicles nearby",
         correctAnswer: "When changing lanes or turning in any direction",
         explanation: "You should always use your turn signals when changing lanes or turning in any direction to communicate your intentions to other drivers.",
-        createdAt: "2023-01-01T00:00:00Z",
-        updatedAt: "2023-01-01T00:00:00Z"
+        createdAt: new Date("2023-01-01T00:00:00Z"),
+        updatedAt: new Date("2023-01-01T00:00:00Z")
     },
     {
         id: "4",
@@ -71,8 +71,8 @@ const sampleQuestions: Question[] = [
         optionD: "Turn right only",
         correctAnswer: "Stop if it's safe to do so, otherwise proceed with caution",
         explanation: "A yellow traffic light means the light is about to turn red. You should stop if it's safe to do so, otherwise proceed with caution.",
-        createdAt: "2023-01-01T00:00:00Z",
-        updatedAt: "2023-01-01T00:00:00Z"
+        createdAt: new Date("2023-01-01T00:00:00Z"),
+        updatedAt: new Date("2023-01-01T00:00:00Z")
     },
     {
         id: "5",
@@ -83,8 +83,8 @@ const sampleQuestions: Question[] = [
         optionD: "Drive around the bus on the left side",
         correctAnswer: "Stop and wait until the bus turns off its lights and continues moving",
         explanation: "When approaching a school bus with flashing red lights, you must stop and wait until the bus turns off its lights and continues moving, regardless of which direction you're traveling.",
-        createdAt: "2023-01-01T00:00:00Z",
-        updatedAt: "2023-01-01T00:00:00Z"
+        createdAt: new Date("2023-01-01T00:00:00Z"),
+        updatedAt: new Date("2023-01-01T00:00:00Z")
     }
 ];
 
