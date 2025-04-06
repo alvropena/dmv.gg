@@ -3,8 +3,7 @@ import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 
 export async function POST(
-  request: NextRequest,
-  { params }: { params: { testId: string } }
+  request: NextRequest
 ) {
   try {
     const { userId } = await auth();

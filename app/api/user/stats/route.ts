@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 
@@ -69,7 +69,7 @@ export async function GET() {
     // Calculate average score for all completed tests
     let averageScore = 0;
     if (completedTests.length > 0) {
-      const totalScore = completedTests.reduce((sum: number, test: any) => sum + test.score, 0);
+      const totalScore = completedTests.reduce((sum: number, test: { score: number }) => sum + test.score, 0);
       averageScore = Math.round(totalScore / completedTests.length);
     }
 

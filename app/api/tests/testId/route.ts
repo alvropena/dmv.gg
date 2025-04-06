@@ -3,8 +3,7 @@ import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 
 export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { testId: string } }
+  request: NextRequest
 ) {
   try {
     const { userId } = await auth();
@@ -49,7 +48,11 @@ export async function PATCH(
     }
     
     // Prepare update data
-    const updateData: any = { status };
+    const updateData: {
+      status: string;
+      completedAt?: Date;
+      durationSeconds?: number;
+    } = { status };
     
     if (completedAt) {
       updateData.completedAt = new Date(completedAt);
@@ -76,8 +79,7 @@ export async function PATCH(
 }
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { testId: string } }
+  request: NextRequest
 ) {
   try {
     const { userId } = await auth();
@@ -130,7 +132,7 @@ export async function GET(
     }
 
     // Extract the ordered list of questions from the test
-    const orderedQuestions = test.questions.map((tq: any) => tq.question);
+    const orderedQuestions = test.questions.map((tq: { question: unknown }) => tq.question);
 
     return NextResponse.json({ 
       test,
@@ -144,8 +146,7 @@ export async function GET(
 }
 
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { testId: string } }
+  request: NextRequest
 ) {
   try {
     const { userId } = await auth();

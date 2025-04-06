@@ -32,7 +32,6 @@ export function SubscriptionDetailsDialog({
     useState<Subscription | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
   const [isReactivating, setIsReactivating] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [showCancelConfirmation, setShowCancelConfirmation] = useState(false);
   const [confirmationText, setConfirmationText] = useState("");
   const CONFIRMATION_PHRASE = "cancel";
@@ -80,7 +79,6 @@ export function SubscriptionDetailsDialog({
 
     try {
       setIsCancelling(true);
-      setSuccessMessage(null);
 
       // Call our API to cancel the subscription
       const response = await fetch('/api/subscriptions/cancel', {
@@ -104,8 +102,6 @@ export function SubscriptionDetailsDialog({
       setActiveSubscription(prev => 
         prev ? { ...prev, cancelAtPeriodEnd: true } : null
       );
-      
-      setSuccessMessage(result.message);
       
       // Reset confirmation UI
       setShowCancelConfirmation(false);
@@ -137,7 +133,6 @@ export function SubscriptionDetailsDialog({
 
     try {
       setIsReactivating(true);
-      setSuccessMessage(null);
 
       // Call our API to reactivate the subscription
       const response = await fetch('/api/subscriptions/reactivate', {
@@ -161,8 +156,6 @@ export function SubscriptionDetailsDialog({
       setActiveSubscription(prev => 
         prev ? { ...prev, cancelAtPeriodEnd: false } : null
       );
-      
-      setSuccessMessage(result.message);
 
       // Show toast notification
       toast.success("Welcome back! :)", {

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 
@@ -29,8 +29,8 @@ export async function GET() {
       }
     });
 
-    // Get only completed tests for streak calculation
-    const completedTests = allTests.filter(test => test.status === 'completed');
+    // Filter completed tests if needed elsewhere
+    const completedTestsData = allTests.filter(test => test.status === 'completed');
 
     // Calculate total study time from all tests (including in-progress)
     let totalStudyTimeSeconds = 0;
