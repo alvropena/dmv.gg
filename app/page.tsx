@@ -251,7 +251,7 @@ export default function Home() {
           <UserWelcomeCard
             user={user}
             hasActiveSubscription={hasActiveSubscription}
-            onPracticeClick={handlePracticeClick}
+            onStartTestClick={handlePracticeClick}
             onStudyClick={handleStudyClick}
           />
 
