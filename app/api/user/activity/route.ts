@@ -29,9 +29,6 @@ export async function GET() {
       }
     });
 
-    // Filter completed tests if needed elsewhere
-    const completedTestsData = allTests.filter(test => test.status === 'completed');
-
     // Calculate total study time from all tests (including in-progress)
     let totalStudyTimeSeconds = 0;
     

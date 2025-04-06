@@ -96,7 +96,7 @@ export function SubscriptionDetailsDialog({
         throw new Error(errorData.message || 'Failed to cancel subscription');
       }
 
-      const result = await response.json();
+      await response.json();
       
       // Update the subscription locally
       setActiveSubscription(prev => 
@@ -150,7 +150,7 @@ export function SubscriptionDetailsDialog({
         throw new Error(errorData.message || 'Failed to reactivate subscription');
       }
 
-      const result = await response.json();
+      await response.json();
       
       // Update the subscription locally
       setActiveSubscription(prev => 
