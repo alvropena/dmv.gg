@@ -1,11 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { questions } from "@/data/questions";
 import { Loader2 } from "lucide-react";
 import { UserStats } from "@/components/UserStats";
 import { UserProfileCard } from "@/components/UserProfileCard";
@@ -17,30 +15,7 @@ import { PricingDialog } from "@/components/PricingDialog";
 import { BirthdayDialog } from "@/components/BirthdayDialog";
 import LandingPage from "@/components/landing";
 
-// Custom hook to detect mobile screens
-const useIsMobile = () => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkIsMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    // Initial check
-    checkIsMobile();
-
-    // Add event listener
-    window.addEventListener("resize", checkIsMobile);
-
-    // Cleanup
-    return () => window.removeEventListener("resize", checkIsMobile);
-  }, []);
-
-  return isMobile;
-};
-
 export default function Home() {
-  const isMobile = useIsMobile();
   const [isPricingOpen, setIsPricingOpen] = useState(false);
   const [isBirthdayDialogOpen, setIsBirthdayDialogOpen] = useState(false);
 
