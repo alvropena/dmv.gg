@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { ChevronLeft, ChevronRight, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 
 const testimonials = [
   {
@@ -71,47 +72,66 @@ export default function Testimonials() {
   const visibleTestimonials = testimonials.slice(currentIndex, currentIndex + 3)
 
   return (
-    <div className="relative mt-8">
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {visibleTestimonials.map((testimonial, index) => (
-          <Card key={index} className="overflow-hidden">
-            <CardContent className="p-6">
-              <div className="flex flex-col space-y-4">
-                <div className="flex items-center space-x-2">
-                  <Avatar className="h-10 w-10 border bg-gray-100">
-                    <AvatarFallback>{testimonial.avatar}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <div className="font-medium">{testimonial.name}</div>
-                    <div className="text-xs text-gray-500">{testimonial.state}</div>
-                  </div>
-                </div>
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-4 w-4 ${i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
-                    />
-                  ))}
-                </div>
-                <p className="text-sm text-gray-600">{testimonial.content}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+    <section id="testimonials" className="w-full py-12 md:py-24 lg:py-32">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col items-center justify-center space-y-4 text-center">
+          <div className="space-y-2">
+            <Badge
+              variant="outline"
+              className="w-fit mx-auto border-blue-200 bg-blue-100 text-blue-800 hover:bg-blue-100"
+            >
+              Success Stories
+            </Badge>
+            <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">Hear From Our Users</h2>
+            <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+              Thousands of drivers have used DMV.gg to pass their knowledge test on the first try.
+            </p>
+          </div>
+        </div>
 
-      <div className="flex justify-center mt-8 gap-2">
-        <Button variant="outline" size="icon" onClick={prevTestimonial} className="rounded-full">
-          <ChevronLeft className="h-4 w-4" />
-          <span className="sr-only">Previous</span>
-        </Button>
-        <Button variant="outline" size="icon" onClick={nextTestimonial} className="rounded-full">
-          <ChevronRight className="h-4 w-4" />
-          <span className="sr-only">Next</span>
-        </Button>
+        <div className="mx-auto max-w-5xl mt-8">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {visibleTestimonials.map((testimonial, index) => (
+              <Card key={index} className="overflow-hidden">
+                <CardContent className="p-6">
+                  <div className="flex flex-col space-y-4">
+                    <div className="flex items-center space-x-2">
+                      <Avatar className="h-10 w-10 border bg-gray-100">
+                        <AvatarFallback>{testimonial.avatar}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="font-medium">{testimonial.name}</div>
+                        <div className="text-xs text-gray-500">{testimonial.state}</div>
+                      </div>
+                    </div>
+                    <div className="flex">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
+                        />
+                      ))}
+                    </div>
+                    <p className="text-sm text-gray-600">{testimonial.content}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="flex justify-center mt-8 gap-2">
+            <Button variant="outline" size="icon" onClick={prevTestimonial} className="rounded-full">
+              <ChevronLeft className="h-4 w-4" />
+              <span className="sr-only">Previous</span>
+            </Button>
+            <Button variant="outline" size="icon" onClick={nextTestimonial} className="rounded-full">
+              <ChevronRight className="h-4 w-4" />
+              <span className="sr-only">Next</span>
+            </Button>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   )
 }
 

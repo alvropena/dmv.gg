@@ -1,10 +1,50 @@
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
+"use client";
+
+import { Badge } from "@/components/ui/badge";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
+
+const faqItems = [
+  {
+    question: "Is DMV.gg free to use?",
+    answer:
+      "Yes, DMV.gg offers a free version with limited questions. For full access to all questions and features, we offer affordable premium plans.",
+  },
+  {
+    question: "Are these the actual questions from the California DMV test?",
+    answer:
+      "Our questions are based on the official California DMV handbook and are similar to those you'll encounter on the actual test. Many users report seeing identical questions.",
+  },
+  {
+    question: "How often is the content updated?",
+    answer:
+      "We regularly update our question bank to reflect the latest DMV test content and rule changes for each state.",
+  },
+  {
+    question: "Can I use DMV.gg on my phone?",
+    answer:
+      "Yes, DMV.gg is fully responsive and works on all devices including smartphones, tablets, and computers.",
+  },
+  {
+    question: "How many practice tests can I take?",
+    answer:
+      "With our premium plan, you can take unlimited practice tests until you feel confident and ready for the real exam.",
+  },
+  {
+    question: "Do you offer a pass guarantee?",
+    answer:
+      "While we can't guarantee everyone will pass, our statistics show that users who complete at least 5 practice tests have a 95% pass rate on their first attempt.",
+  },
+];
 
 export default function FAQ() {
   return (
-    <section id="faq" className="w-full py-12 md:py-24 lg:py-32 bg-muted">
-      <div className="container px-4 md:px-6">
+    <section id="faq" className="w-full py-12 md:py-24 lg:py-32 ">
+      <div className="container mx-auto px-4">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">
             <Badge
@@ -13,71 +53,30 @@ export default function FAQ() {
             >
               FAQ
             </Badge>
-            <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">Frequently Asked Questions</h2>
+            <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
+              Frequently Asked Questions
+            </h2>
             <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              Find answers to common questions about our platform and the DMV knowledge test.
+              Find answers to common questions about our platform and the DMV
+              knowledge test.
             </p>
           </div>
         </div>
-        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 lg:gap-12 mt-8">
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-bold mb-2">Is DMV.gg free to use?</h3>
-              <p className="text-muted-foreground">
-                Yes, DMV.gg offers a free version with limited questions. For full access to all questions and
-                features, we offer affordable premium plans.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-bold mb-2">
-                Are these the actual questions from the California DMV test?
-              </h3>
-              <p className="text-muted-foreground">
-                Our questions are based on the official California DMV handbook and are similar to those you'll
-                encounter on the actual test. Many users report seeing identical questions.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-bold mb-2">How often is the content updated?</h3>
-              <p className="text-muted-foreground">
-                We regularly update our question bank to reflect the latest DMV test content and rule changes for
-                each state.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-bold mb-2">Can I use DMV.gg on my phone?</h3>
-              <p className="text-muted-foreground">
-                Yes, DMV.gg is fully responsive and works on all devices including smartphones, tablets, and
-                computers.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-bold mb-2">How many practice tests can I take?</h3>
-              <p className="text-muted-foreground">
-                With our premium plan, you can take unlimited practice tests until you feel confident and ready for
-                the real exam.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="text-lg font-bold mb-2">Do you offer a pass guarantee?</h3>
-              <p className="text-muted-foreground">
-                While we can't guarantee everyone will pass, our statistics show that users who complete at least 5
-                practice tests have a 95% pass rate on their first attempt.
-              </p>
-            </CardContent>
-          </Card>
+        <div className="mx-auto max-w-3xl mt-8">
+          <Accordion type="single" collapsible className="w-full">
+            {faqItems.map((item, index) => (
+              <AccordionItem key={index} value={`item-${index}`}>
+                <AccordionTrigger className="text-left text-lg font-semibold">
+                  {item.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  {item.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </div>
     </section>
-  )
-} 
+  );
+}
