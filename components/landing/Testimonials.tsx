@@ -79,14 +79,11 @@ export default function Testimonials() {
 	);
 
 	return (
-		<section id="testimonials" className="w-full py-12 md:py-24 lg:py-32">
+		<section id="testimonials" className="w-full py-16 md:py-20 lg:py-24">
 			<div className="container mx-auto px-4">
 				<div className="flex flex-col items-center justify-center space-y-4 text-center">
 					<div className="space-y-2">
-						<Badge
-							variant="outline"
-							className="w-fit mx-auto border-blue-200 bg-blue-100 text-blue-800 hover:bg-blue-100"
-						>
+						<Badge variant="outline" className="w-fit mx-auto">
 							Success Stories
 						</Badge>
 						<h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
@@ -114,9 +111,7 @@ export default function Testimonials() {
 											</Avatar>
 											<div>
 												<div className="font-medium">{testimonial.name}</div>
-												<div className="text-xs text-gray-500">
-													{testimonial.state}
-												</div>
+												<div className="text-xs">{testimonial.state}</div>
 											</div>
 										</div>
 										<div className="flex">
@@ -127,9 +122,7 @@ export default function Testimonials() {
 												/>
 											))}
 										</div>
-										<p className="text-sm text-gray-600">
-											{testimonial.content}
-										</p>
+										<p className="text-sm">{testimonial.content}</p>
 									</div>
 								</CardContent>
 							</Card>

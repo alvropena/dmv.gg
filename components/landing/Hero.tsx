@@ -1,12 +1,23 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle } from "lucide-react";
 import TestDemo from "@/components/landing/TestDemo";
+import { useState } from "react";
+import { SignInDialog } from "@/components/SignInDialog";
 
 export default function Hero() {
+	const [isSignInOpen, setIsSignInOpen] = useState(false);
+
+	const handleStartPracticing = (e: React.MouseEvent) => {
+		e.preventDefault();
+		setIsSignInOpen(true);
+	};
+
 	return (
-		<section className="w-full py-12 md:py-24 lg:py-32">
+		<section className="w-full py-16 md:py-20 lg:py-24">
 			<div className="container mx-auto px-4">
 				<div className="grid gap-6 lg:grid-cols-[1fr_600px] lg:gap-12 xl:grid-cols-[1fr_700px]">
 					<div className="flex flex-col justify-center space-y-4">
@@ -26,8 +37,8 @@ export default function Hero() {
 							</p>
 						</div>
 						<div className="flex flex-col gap-2 min-[400px]:flex-row">
-							<Button size="lg" asChild>
-								<Link href="/signup">Start Practicing Now</Link>
+							<Button size="lg" onClick={handleStartPracticing}>
+								Start Practicing Now
 							</Button>
 							<Button size="lg" variant="outline" asChild>
 								<Link href="#how-it-works">Learn More</Link>
@@ -55,6 +66,11 @@ export default function Hero() {
 					</div>
 				</div>
 			</div>
+
+			<SignInDialog
+				isOpen={isSignInOpen}
+				onClose={() => setIsSignInOpen(false)}
+			/>
 		</section>
 	);
 }

@@ -220,7 +220,7 @@ export default function Pricing() {
 
 	if (loading) {
 		return (
-			<section id="pricing" className="w-full py-12 md:py-24 lg:py-32">
+			<section id="pricing" className="w-full py-16 md:py-20 lg:py-24">
 				<div className="container mx-auto px-4">
 					<div className="flex justify-center items-center h-64">
 						<div className="animate-spin rounded-full h-8 w-8 border-b-2" />
@@ -232,7 +232,7 @@ export default function Pricing() {
 
 	if (error) {
 		return (
-			<section id="pricing" className="w-full py-12 md:py-24 lg:py-32">
+			<section id="pricing" className="w-full py-16 md:py-20 lg:py-24">
 				<div className="container mx-auto px-4">
 					<div className="flex flex-col items-center h-64 justify-center">
 						<p>Error: {error}</p>
@@ -246,7 +246,7 @@ export default function Pricing() {
 	}
 
 	return (
-		<section id="pricing" className="w-full py-12 md:py-24 lg:py-32">
+		<section id="pricing" className="w-full py-16 md:py-20 lg:py-24">
 			<div className="container mx-auto px-4">
 				<div className="flex flex-col items-center justify-center space-y-4 text-center">
 					<div className="space-y-2">
