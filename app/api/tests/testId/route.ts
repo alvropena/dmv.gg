@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 
@@ -7,11 +8,11 @@ export async function PATCH(
 ) {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     // Get testId from query parameters instead of path params
     const { searchParams } = new URL(request.url);
     const testId = searchParams.get('testId');
@@ -19,10 +20,10 @@ export async function PATCH(
     if (!testId) {
       return NextResponse.json({ error: 'Test ID is required' }, { status: 400 });
     }
-    
+
     const body = await request.json();
     const { status, completedAt, durationSeconds } = body;
-    
+
     // Get the user from the database
     const dbUser = await db.user.findUnique({
       where: { clerkId: userId }
@@ -31,7 +32,7 @@ export async function PATCH(
     if (!dbUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
-    
+
     // Check if the test belongs to the user
     const test = await db.test.findUnique({
       where: {
@@ -39,35 +40,35 @@ export async function PATCH(
         userId: dbUser.id,
       },
     });
-    
+
     if (!test) {
       return NextResponse.json(
         { error: 'Test not found or unauthorized' },
         { status: 404 }
       );
     }
-    
+
     // Prepare update data
     const updateData: {
       status: string;
       completedAt?: Date;
       durationSeconds?: number;
     } = { status };
-    
+
     if (completedAt) {
       updateData.completedAt = new Date(completedAt);
     }
-    
+
     if (durationSeconds !== undefined) {
       updateData.durationSeconds = durationSeconds;
     }
-    
+
     // Update the test
     const updatedTest = await db.test.update({
       where: { id: testId },
       data: updateData,
     });
-    
+
     return NextResponse.json({ test: updatedTest });
   } catch (error) {
     console.error('Error updating test:', error);
@@ -134,7 +135,7 @@ export async function GET(
     // Extract the ordered list of questions from the test
     const orderedQuestions = test.questions.map((tq: { question: unknown }) => tq.question);
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       test,
       questions: orderedQuestions,
     });
@@ -150,11 +151,11 @@ export async function DELETE(
 ) {
   try {
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     // Get testId from query parameters instead of path params
     const { searchParams } = new URL(request.url);
     const testId = searchParams.get('testId');
@@ -162,7 +163,7 @@ export async function DELETE(
     if (!testId) {
       return NextResponse.json({ error: 'Test ID is required' }, { status: 400 });
     }
-    
+
     // Get the user from the database
     const dbUser = await db.user.findUnique({
       where: { clerkId: userId }
@@ -171,7 +172,7 @@ export async function DELETE(
     if (!dbUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
-    
+
     // Check if the test belongs to the user
     const test = await db.test.findUnique({
       where: {
@@ -179,19 +180,19 @@ export async function DELETE(
         userId: dbUser.id,
       },
     });
-    
+
     if (!test) {
       return NextResponse.json(
         { error: 'Test not found or unauthorized' },
         { status: 404 }
       );
     }
-    
+
     // Delete the test (cascade will delete associated answers)
     await db.test.delete({
       where: { id: testId },
     });
-    
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting test:', error);

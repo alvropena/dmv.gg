@@ -18,9 +18,9 @@ export async function GET() {
     // Create a map of product IDs to their details
     const productMap = new Map(products.data
       // Filter only DMV.gg products
-      .filter(product => 
+      .filter(product =>
         // Filter by product name containing "DMV.gg"
-        product.name.includes('DMV.gg') || 
+        product.name.includes('DMV.gg') ||
         // OR filter by a specific metadata flag if you have one set up
         product.metadata.project === 'dmv'
       )
@@ -32,8 +32,12 @@ export async function GET() {
       // Only include prices that are in our default price IDs list
       .filter(price => DEFAULT_PRICE_IDS.includes(price.id) && productMap.has(price.product as string))
       .map(price => {
-        const product = productMap.get(price.product as string)!;
-        
+        const product = productMap.get(price.product as string) || {
+          name: '',
+          description: '',
+          metadata: { features: '' }
+        };
+
         // Parse features from metadata if available
         let features: string[] = [];
         try {
@@ -43,9 +47,9 @@ export async function GET() {
         } catch (e) {
           console.error('Error parsing features:', e);
           // If features can't be parsed, try to use a comma-separated list
-          features = product.metadata.features ? product.metadata.features.split(',').map(f => f.trim()) : [];
+          features = product.metadata.features ? product.metadata.features.split(',').map((f: string) => f.trim()) : [];
         }
-        
+
         return {
           id: price.id,
           name: product.name,
