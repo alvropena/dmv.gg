@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/db";
 
 export async function GET() {
     try {
@@ -14,7 +14,7 @@ export async function GET() {
         }
 
         // Find the user in our database
-        const user = await prisma.user.findFirst({
+        const user = await db.user.findFirst({
             where: {
                 clerkId: userId,
             },
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
         }
 
         // Update the user's birthday
-        await prisma.user.updateMany({
+        await db.user.updateMany({
             where: {
                 clerkId: userId,
             },
