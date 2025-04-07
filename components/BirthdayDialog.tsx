@@ -38,9 +38,9 @@ export function BirthdayDialog({ isOpen, onSave }: BirthdayDialogProps) {
 			// Convert selections to a Date object
 			// Note: month is 0-indexed in JavaScript Date
 			const date = new Date(
-				parseInt(year),
-				parseInt(month) - 1,
-				parseInt(day)
+				Number.parseInt(year),
+				Number.parseInt(month) - 1,
+				Number.parseInt(day),
 			);
 			await onSave(date);
 		} catch (error) {
@@ -71,17 +71,16 @@ export function BirthdayDialog({ isOpen, onSave }: BirthdayDialogProps) {
 
 	// Generate years from 1950 to current year
 	const currentYear = new Date().getFullYear();
-	const years = Array.from(
-		{ length: currentYear - 1950 + 1 },
-		(_, i) => (currentYear - i).toString()
+	const years = Array.from({ length: currentYear - 1950 + 1 }, (_, i) =>
+		(currentYear - i).toString(),
 	);
 
 	const isSelectionComplete = day && month && year;
 
 	return (
 		<Dialog open={isOpen}>
-			<DialogContent 
-				className="sm:max-w-[400px] w-[90%] mx-auto rounded-md" 
+			<DialogContent
+				className="sm:max-w-[400px] w-[90%] mx-auto rounded-md"
 				showCloseButton={false}
 				onPointerDownOutside={(e) => e.preventDefault()}
 				onFocusOutside={(e) => e.preventDefault()}
@@ -149,7 +148,11 @@ export function BirthdayDialog({ isOpen, onSave }: BirthdayDialogProps) {
 						disabled={!isSelectionComplete || isSubmitting}
 						className="w-full sm:w-auto"
 					>
-						{isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+						{isSubmitting ? (
+							<Loader2 className="h-4 w-4 animate-spin" />
+						) : (
+							"Save"
+						)}
 					</Button>
 				</DialogFooter>
 			</DialogContent>
