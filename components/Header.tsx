@@ -116,23 +116,23 @@ export function Header() {
               </SignedOut>
               <SignedIn>
                 {hasActiveSubscription || dbUser?.role === "ADMIN" ? (
-                  <Button
-                    variant="outline"
-                    className="mr-2 h-[34px] flex items-center gap-1 bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100 hover:text-amber-800"
-                    onClick={() => setIsSubscriptionDetailsOpen(true)}
-                  >
+                  <>
                     {dbUser?.role === "ADMIN" ? (
-                      <>
-                        <Crown className="h-4 w-4 text-amber-500" />
-                        <span>Admin</span>
-                      </>
+                      <div className="mr-2 px-2 py-1 bg-zinc-900 text-zinc-100 text-xs font-semibold rounded flex items-center gap-1">
+                        <Crown className="h-3.5 w-3.5 text-zinc-400" />
+                        <span>ADMIN</span>
+                      </div>
                     ) : (
-                      <>
+                      <Button
+                        variant="outline"
+                        className="mr-2 h-[34px] flex items-center gap-1 bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100 hover:text-amber-800"
+                        onClick={() => setIsSubscriptionDetailsOpen(true)}
+                      >
                         <Crown className="h-4 w-4 text-amber-500" />
                         <span>Premium</span>
-                      </>
+                      </Button>
                     )}
-                  </Button>
+                  </>
                 ) : (
                   <Button
                     onClick={handleUpgrade}
