@@ -22,7 +22,7 @@ interface Price {
 interface PricingDialogProps {
 	isOpen: boolean;
 	onClose: () => void;
-	onPlanSelect: (plan: "weekly" | "monthly" | "lifetime") => void;
+	onPlanSelect: (plan: "daily" | "weekly" | "monthly" | "lifetime") => void;
 }
 
 export function PricingDialog({
@@ -34,7 +34,7 @@ export function PricingDialog({
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [selectedPlan, setSelectedPlan] = useState<
-		"weekly" | "monthly" | "lifetime" | null
+		"daily" | "weekly" | "monthly" | "lifetime" | null
 	>(null);
 	const isMobile = useIsMobile();
 
@@ -47,10 +47,21 @@ export function PricingDialog({
 				const data = await response.json();
 				setPrices(data);
 
-				// Default to monthly plan if available
+				// Check for plan options and set a default
+				const dailyPlan = data.find((p: Price) => p.interval === "day");
+				const weeklyPlan = data.find((p: Price) => p.interval === "week");
 				const monthlyPlan = data.find((p: Price) => p.interval === "month");
-				if (monthlyPlan) {
+				const lifetimePlan = data.find((p: Price) => p.type === "one_time");
+
+				// Set a default plan - prioritize in this order: daily, monthly, weekly, lifetime
+				if (dailyPlan) {
+					setSelectedPlan("daily");
+				} else if (monthlyPlan) {
 					setSelectedPlan("monthly");
+				} else if (weeklyPlan) {
+					setSelectedPlan("weekly");
+				} else if (lifetimePlan) {
+					setSelectedPlan("lifetime");
 				}
 			} catch (err) {
 				setError(
@@ -66,8 +77,9 @@ export function PricingDialog({
 		}
 	}, [isOpen]);
 
-	const getPlanType = (price: Price): "weekly" | "monthly" | "lifetime" => {
+	const getPlanType = (price: Price): "daily" | "weekly" | "monthly" | "lifetime" => {
 		if (price.type === "one_time") return "lifetime";
+		if (price.interval === "day") return "daily";
 		if (price.interval === "week") return "weekly";
 		return "monthly";
 	};
@@ -162,8 +174,32 @@ export function PricingDialog({
 									))}
 						</div>
 
-						{/* Plan selection */}
-						<div className="grid grid-cols-3 gap-2 mb-4">
+						{/* Plan selection - updated grid layout based on available plans */}
+						<div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+							{prices.filter((p) => getPlanType(p) === "daily").length > 0 && (
+								<Card
+									className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-md ${
+										selectedPlan === "daily" ? "border-primary border-2" : ""
+									}`}
+									onClick={() => {
+										setSelectedPlan("daily");
+									}}
+								>
+									<div className="text-xs text-center">Daily</div>
+									{prices.find((p) => getPlanType(p) === "daily") && (
+										<div className="font-bold text-sm text-center">
+											{formatCurrency(
+												prices.find((p) => getPlanType(p) === "daily")
+													?.unitAmount || 0,
+												prices.find((p) => getPlanType(p) === "daily")
+													?.currency || "usd",
+											)}
+											/day
+										</div>
+									)}
+								</Card>
+							)}
+							
 							{prices.filter((p) => getPlanType(p) === "weekly").length > 0 && (
 								<Card
 									className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-md ${
@@ -188,48 +224,52 @@ export function PricingDialog({
 								</Card>
 							)}
 
-							<Card
-								className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-md ${
-									selectedPlan === "monthly" ? "border-primary border-2" : ""
-								}`}
-								onClick={() => {
-									setSelectedPlan("monthly");
-								}}
-							>
-								<div className="text-xs text-center">Monthly</div>
-								{prices.find((p) => getPlanType(p) === "monthly") && (
-									<div className="font-bold text-sm text-center">
-										{formatCurrency(
-											prices.find((p) => getPlanType(p) === "monthly")
-												?.unitAmount || 0,
-											prices.find((p) => getPlanType(p) === "monthly")
-												?.currency || "usd",
-										)}
-										/mo
-									</div>
-								)}
-							</Card>
+							{prices.filter((p) => getPlanType(p) === "monthly").length > 0 && (
+								<Card
+									className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-md ${
+										selectedPlan === "monthly" ? "border-primary border-2" : ""
+									}`}
+									onClick={() => {
+										setSelectedPlan("monthly");
+									}}
+								>
+									<div className="text-xs text-center">Monthly</div>
+									{prices.find((p) => getPlanType(p) === "monthly") && (
+										<div className="font-bold text-sm text-center">
+											{formatCurrency(
+												prices.find((p) => getPlanType(p) === "monthly")
+													?.unitAmount || 0,
+												prices.find((p) => getPlanType(p) === "monthly")
+													?.currency || "usd",
+											)}
+											/mo
+										</div>
+									)}
+								</Card>
+							)}
 
-							<Card
-								className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-md ${
-									selectedPlan === "lifetime" ? "border-primary border-2" : ""
-								}`}
-								onClick={() => {
-									setSelectedPlan("lifetime");
-								}}
-							>
-								<div className="text-xs text-center">Lifetime</div>
-								{prices.find((p) => getPlanType(p) === "lifetime") && (
-									<div className="font-bold text-sm text-center">
-										{formatCurrency(
-											prices.find((p) => getPlanType(p) === "lifetime")
-												?.unitAmount || 0,
-											prices.find((p) => getPlanType(p) === "lifetime")
-												?.currency || "usd",
-										)}
-									</div>
-								)}
-							</Card>
+							{prices.filter((p) => getPlanType(p) === "lifetime").length > 0 && (
+								<Card
+									className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-md ${
+										selectedPlan === "lifetime" ? "border-primary border-2" : ""
+									}`}
+									onClick={() => {
+										setSelectedPlan("lifetime");
+									}}
+								>
+									<div className="text-xs text-center">Lifetime</div>
+									{prices.find((p) => getPlanType(p) === "lifetime") && (
+										<div className="font-bold text-sm text-center">
+											{formatCurrency(
+												prices.find((p) => getPlanType(p) === "lifetime")
+													?.unitAmount || 0,
+												prices.find((p) => getPlanType(p) === "lifetime")
+													?.currency || "usd",
+											)}
+										</div>
+									)}
+								</Card>
+							)}
 						</div>
 
 						{/* Continue button */}

@@ -39,7 +39,7 @@ export default function Home() {
   };
 
   // Add handlePlanSelect function
-  const handlePlanSelect = async (plan: "weekly" | "monthly" | "lifetime") => {
+  const handlePlanSelect = async (plan: "daily" | "weekly" | "monthly" | "lifetime") => {
     try {
       const response = await fetch("/api/create-checkout-session", {
         method: "POST",
