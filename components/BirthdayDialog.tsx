@@ -80,12 +80,14 @@ export function BirthdayDialog({ isOpen, onSave, onClose }: BirthdayDialogProps)
 	const isSelectionComplete = day && month && year;
 
 	return (
-		<Dialog open={isOpen}>
+		<Dialog open={isOpen} onOpenChange={onClose}>
 			<DialogContent
 				className="sm:max-w-[400px] w-[90%] mx-auto rounded-md"
 				showCloseButton={false}
-				onPointerDownOutside={(e) => e.preventDefault()}
-				onFocusOutside={(e) => e.preventDefault()}
+				onEscapeKeyDown={onClose}
+				onInteractOutside={(e) => {
+					e.preventDefault();
+				}}
 			>
 				<DialogHeader>
 					<DialogTitle>Complete your profile</DialogTitle>
