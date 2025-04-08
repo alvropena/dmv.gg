@@ -118,16 +118,16 @@ export function Header() {
                 {hasActiveSubscription || dbUser?.role === "ADMIN" ? (
                   <>
                     {dbUser?.role === "ADMIN" ? (
-                      <div className="mr-2 px-3 py-1 bg-zinc-900 text-zinc-100 text-xl font-bold rounded flex items-center">
+                      <div className="mr-2 px-3 py-1 bg-zinc-900 text-zinc-100 font-bold rounded flex items-center">
                         <span>ADMIN</span>
                       </div>
                     ) : (
                       <Button
                         variant="outline"
-                        className="mr-2 h-[38px] text-xl flex items-center gap-1 bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100 hover:text-amber-800"
+                        className="mr-2 h-[38px] flex items-center gap-1 bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100 hover:text-amber-800"
                         onClick={() => setIsSubscriptionDetailsOpen(true)}
                       >
-                        <Crown className="h-5 w-5 text-amber-500" />
+                        <Crown className="h-4 w-4 text-amber-500" />
                         <span>Premium</span>
                       </Button>
                     )}
@@ -135,10 +135,10 @@ export function Header() {
                 ) : (
                   <Button
                     onClick={handleUpgrade}
-                    className="mr-2 h-[38px] text-xl bg-amber-500 text-white hover:bg-amber-600"
+                    className="mr-2 h-[38px] bg-amber-500 text-white hover:bg-amber-600"
                     variant="default"
                   >
-                    <Sparkles className="h-5 w-5 mr-1" />
+                    <Sparkles className="h-4 w-4" />
                     Upgrade
                   </Button>
                 )}
