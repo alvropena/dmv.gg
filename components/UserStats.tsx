@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { TestsCompletedCard } from "./stats/TestsCompletedCard";
 import { AverageScoreCard } from "./stats/AverageScoreCard";
 import { LastScoreCard } from "./stats/LastScoreCard";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 export type UserStats = {
   totalCompleted: number;
@@ -16,6 +17,7 @@ type UserStatsProps = {
 };
 
 export function UserStats({ initialStats }: UserStatsProps) {
+  const { dbUser, isLoading: isUserLoading } = useAuthContext();
   const [stats, setStats] = useState<UserStats>(
     initialStats || {
       totalCompleted: 0,
@@ -29,7 +31,7 @@ export function UserStats({ initialStats }: UserStatsProps) {
   const [statsError, setStatsError] = useState<string | null>(null);
 
   const fetchUserStats = useCallback(async () => {
-    if (initialStats) return;
+    if (initialStats || isUserLoading || !dbUser) return;
     
     setIsStatsLoading(true);
     setStatsError(null);
@@ -52,7 +54,7 @@ export function UserStats({ initialStats }: UserStatsProps) {
     } finally {
       setIsStatsLoading(false);
     }
-  }, [initialStats]);
+  }, [initialStats, dbUser, isUserLoading]);
 
   useEffect(() => {
     fetchUserStats();
@@ -63,20 +65,20 @@ export function UserStats({ initialStats }: UserStatsProps) {
       <TestsCompletedCard 
         totalCompleted={stats.totalCompleted}
         weeklyDifference={stats.weeklyDifference}
-        isLoading={isStatsLoading}
+        isLoading={isStatsLoading || isUserLoading}
         error={statsError}
       />
       
       <AverageScoreCard 
         averageScore={stats.averageScore}
         scoreDifference={stats.scoreDifference}
-        isLoading={isStatsLoading}
+        isLoading={isStatsLoading || isUserLoading}
         error={statsError}
       />
       
       <LastScoreCard 
         lastScore={stats.lastScore}
-        isLoading={isStatsLoading}
+        isLoading={isStatsLoading || isUserLoading}
         error={statsError}
       />
     </div>

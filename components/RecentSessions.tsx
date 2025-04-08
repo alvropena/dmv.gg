@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import type { Test, TestAnswer } from "@prisma/client";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 type TestWithAnswers = Test & {
 	answers: TestAnswer[];
@@ -18,12 +19,16 @@ export function RecentSessions({
 	isLoading: initialLoading = false,
 }: RecentSessionsProps) {
 	const router = useRouter();
+	const { dbUser, isLoading: isUserLoading } = useAuthContext();
 	const [tests, setTests] = useState<TestWithAnswers[]>([]);
 	const [isLoading, setIsLoading] = useState(initialLoading);
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		const fetchTests = async () => {
+			// Don't fetch if user is not initialized yet
+			if (isUserLoading || !dbUser) return;
+			
 			setIsLoading(true);
 			setError(null);
 			try {
@@ -44,7 +49,7 @@ export function RecentSessions({
 		};
 
 		fetchTests();
-	}, []);
+	}, [dbUser, isUserLoading]);
 
 	// Helper function to format date
 	const formatDate = (dateString: Date | null) => {
@@ -89,7 +94,7 @@ export function RecentSessions({
 				/>
 			</div>
 
-			{isLoading ? (
+			{isLoading || isUserLoading ? (
 				<div className="flex justify-center items-center p-12">
 					<Loader2 className="h-8 w-8 animate-spin text-primary" />
 				</div>
