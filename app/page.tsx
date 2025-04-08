@@ -21,7 +21,7 @@ export default function Home() {
 
   const { user, isLoaded } = useUser();
   const router = useRouter();
-  const { isLoading, hasActiveSubscription } = useAuthContext();
+  const { dbUser, isLoading, hasActiveSubscription } = useAuthContext();
 
   const handleStudyClick = () => {
     window.open(
@@ -63,23 +63,10 @@ export default function Home() {
 
   // Check if user has birthday set
   useEffect(() => {
-    const checkUserBirthday = async () => {
-      if (!user) return;
-
-      try {
-        const response = await fetch("/api/user/birthday");
-        const data = await response.json();
-
-        if (!data.hasBirthday) {
-          setIsBirthdayDialogOpen(true);
-        }
-      } catch (error) {
-        console.error("Error checking user birthday:", error);
-      }
-    };
-
-    checkUserBirthday();
-  }, [user]);
+    if (!isLoading && dbUser && !dbUser.birthday) {
+      setIsBirthdayDialogOpen(true);
+    }
+  }, [dbUser, isLoading]);
 
   // Handle saving birthday
   const handleSaveBirthday = async (birthday: Date) => {
@@ -94,6 +81,8 @@ export default function Home() {
 
       if (response.ok) {
         setIsBirthdayDialogOpen(false);
+        // Force a refresh of the auth context to get the updated user data
+        router.refresh();
       }
     } catch (error) {
       console.error("Error saving birthday:", error);

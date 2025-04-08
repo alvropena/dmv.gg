@@ -27,7 +27,6 @@ type Test = {
 export function UserWelcomeCard({
 	user,
 	hasActiveSubscription,
-
 	onStudyClick,
 	onStartTestClick,
 }: UserWelcomeCardProps) {
@@ -114,6 +113,12 @@ export function UserWelcomeCard({
 	}, []);
 
 	const handleContinueTest = () => {
+		if (!hasActiveSubscription) {
+			if (onStartTestClick) {
+				onStartTestClick();
+			}
+			return;
+		}
 		if (latestTestId) {
 			router.push(`/practice?test=${latestTestId}`);
 		}
@@ -121,7 +126,6 @@ export function UserWelcomeCard({
 
 	const handleStartNewTest = async () => {
 		if (!hasActiveSubscription) {
-			// Handle premium feature restriction
 			if (onStartTestClick) {
 				onStartTestClick();
 			}
@@ -189,7 +193,6 @@ export function UserWelcomeCard({
 							<Button
 								onClick={handleContinueTest}
 								className="flex items-center justify-center gap-2"
-								disabled={!hasActiveSubscription}
 							>
 								{!hasActiveSubscription ? (
 									<Lock className="h-4 w-4" />
@@ -202,7 +205,7 @@ export function UserWelcomeCard({
 								variant="secondary"
 								onClick={handleStartNewTest}
 								className="flex items-center justify-center gap-2"
-								disabled={!hasActiveSubscription || isCreatingTest}
+								disabled={isCreatingTest}
 							>
 								{!hasActiveSubscription ? (
 									<Lock className="h-4 w-4" />
@@ -217,7 +220,7 @@ export function UserWelcomeCard({
 							variant="secondary"
 							onClick={handleStartNewTest}
 							className="flex items-center justify-center gap-2"
-							disabled={!hasActiveSubscription || isCreatingTest}
+							disabled={isCreatingTest}
 						>
 							{!hasActiveSubscription ? (
 								<Lock className="h-4 w-4" />

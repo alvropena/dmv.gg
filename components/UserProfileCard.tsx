@@ -14,7 +14,7 @@ type UserStatsData = {
 };
 
 export function UserProfileCard({ user }: UserProfileCardProps) {
-	const { hasActiveSubscription } = useAuthContext();
+	const { dbUser, hasActiveSubscription } = useAuthContext();
 	const [stats, setStats] = useState<UserStatsData>({
 		studyStreak: 0,
 		studyTime: "0 mins",
@@ -90,34 +90,25 @@ export function UserProfileCard({ user }: UserProfileCardProps) {
 		}
 	}, [hasActiveSubscription]);
 
-	// Fetch user birthday
+	// Update birthday when dbUser changes
 	useEffect(() => {
-		const fetchUserBirthday = async () => {
-			try {
-				const response = await fetch("/api/user/birthday");
-				if (!response.ok) {
-					throw new Error("Failed to fetch user birthday");
-				}
-
-				const data = await response.json();
-				if (data.birthday) {
-					const birthdayDate = new Date(data.birthday);
-					// Format as Month Day, Year, e.g. "January 1, 2000"
-					const formattedBirthday = birthdayDate.toLocaleDateString("en-US", {
-						month: "long",
-						day: "numeric",
-						year: "numeric",
-					});
-					setUserBirthday(formattedBirthday);
-				}
-			} catch (error) {
-				console.error("Error fetching user birthday:", error);
-				setUserBirthday(null);
-			}
-		};
-
-		fetchUserBirthday();
-	}, []);
+		if (dbUser?.birthday) {
+			// Create a new Date object with the UTC time
+			const birthdayDate = new Date(dbUser.birthday);
+			// Add the timezone offset to get the correct local date
+			birthdayDate.setMinutes(birthdayDate.getMinutes() + birthdayDate.getTimezoneOffset());
+			
+			const formattedBirthday = birthdayDate.toLocaleDateString("en-US", {
+				month: "long",
+				day: "numeric",
+				year: "numeric",
+				timeZone: "UTC"
+			});
+			setUserBirthday(formattedBirthday);
+		} else {
+			setUserBirthday(null);
+		}
+	}, [dbUser]);
 
 	return (
 		<div className="rounded-lg p-4 mb-6 border border-slate-200 dark:border-slate-800">
