@@ -22,9 +22,10 @@ import {
 interface BirthdayDialogProps {
 	isOpen: boolean;
 	onSave: (birthday: Date) => Promise<void>;
+	onClose: () => void;
 }
 
-export function BirthdayDialog({ isOpen, onSave }: BirthdayDialogProps) {
+export function BirthdayDialog({ isOpen, onSave, onClose }: BirthdayDialogProps) {
 	const [day, setDay] = useState<string | undefined>(undefined);
 	const [month, setMonth] = useState<string | undefined>(undefined);
 	const [year, setYear] = useState<string | undefined>(undefined);
@@ -43,6 +44,7 @@ export function BirthdayDialog({ isOpen, onSave }: BirthdayDialogProps) {
 				Number.parseInt(day),
 			);
 			await onSave(date);
+			onClose(); // Close the dialog after successful save
 		} catch (error) {
 			console.error("Error saving birthday:", error);
 		} finally {

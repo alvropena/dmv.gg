@@ -138,6 +138,7 @@ export default function Home() {
         <BirthdayDialog
           isOpen={isBirthdayDialogOpen}
           onSave={handleSaveBirthday}
+          onClose={() => setIsBirthdayDialogOpen(false)}
         />
         <SupportButton />
       </>
