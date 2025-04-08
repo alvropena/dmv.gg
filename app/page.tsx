@@ -13,7 +13,6 @@ import { UserActivitySection } from "@/components/UserActivitySection";
 import { SupportButton } from "@/components/SupportButton";
 import { PricingDialog } from "@/components/PricingDialog";
 import { BirthdayDialog } from "@/components/BirthdayDialog";
-import type { User } from "@/types";
 import LandingPage from "@/components/landing";
 
 export default function Home() {
