@@ -22,7 +22,7 @@ interface TestAnswer {
 export default function PracticeTestPage() {
 	const { user, isLoaded } = useUser();
 	const router = useRouter();
-	const { hasActiveSubscription, isLoading } = useAuthContext();
+	const { hasActiveSubscription, isLoading, dbUser } = useAuthContext();
 	const isMobile = useIsMobile();
 	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 	const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -36,26 +36,37 @@ export default function PracticeTestPage() {
 	const [startTime, setStartTime] = useState<Date>(new Date());
 	const mountedRef = useRef(false);
 
+	// Add hasAccess check
+	const hasAccess = hasActiveSubscription || dbUser?.role === "ADMIN";
+
 	// Use the custom timer hook
 	const elapsedTime = useTimer(startTime);
 	
 	// Function to fetch test data and update local state
 	const fetchTestData = useCallback(async () => {
-		if (!testId || !hasActiveSubscription || !user) return;
+		if (!testId || !hasAccess || !user) return;
 
 		try {
 			const response = await fetch(`/api/tests/testId?testId=${testId}`, {
-				method: "GET"
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				}
 			});
 			
-			if (!response.ok) throw new Error("Failed to fetch test");
+			if (!response.ok) {
+				throw new Error("Failed to fetch test");
+			}
 
 			const { test, questions } = await response.json();
 
-			// Set the questions for the test
-			if (questions && Array.isArray(questions)) {
-				setQuestions(questions);
+			// Validate test data
+			if (!test || !questions || !Array.isArray(questions)) {
+				throw new Error("Invalid test data received");
 			}
+
+			// Set the questions for the test
+			setQuestions(questions);
 
 			// If this is a test being restored, set the start time
 			if (test.startedAt) {
@@ -89,9 +100,11 @@ export default function PracticeTestPage() {
 			return test;
 		} catch (error) {
 			console.error("Error fetching test data:", error);
+			// On error, redirect back to home
+			router.push("/");
 			return null;
 		}
-	}, [testId, hasActiveSubscription, user]);
+	}, [testId, hasAccess, user, router]);
 	
 	// Periodically update the test duration in the database
 	useEffect(() => {
@@ -138,7 +151,7 @@ export default function PracticeTestPage() {
 	// Create a new test - only once on mount
 	useEffect(() => {
 		// Skip if already mounted or if we don't have user data
-		if (mountedRef.current || !hasActiveSubscription || !user) return;
+		if (mountedRef.current || !hasAccess || !user) return;
 
 		// Mark as mounted to prevent duplicate calls
 		mountedRef.current = true;
@@ -148,6 +161,7 @@ export default function PracticeTestPage() {
 				// Check if there's already a test ID in the URL
 				const urlParams = new URLSearchParams(window.location.search);
 				const urlTestId = urlParams.get("test");
+				const isReview = urlParams.get("review") === "true";
 
 				// If URL already has a test ID, use that instead of creating a new one
 				if (urlTestId) {
@@ -160,11 +174,21 @@ export default function PracticeTestPage() {
 				setIsCreatingTest(true);
 				const response = await fetch("/api/tests", {
 					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
 				});
 
-				if (!response.ok) throw new Error("Failed to create test");
+				if (!response.ok) {
+					throw new Error("Failed to create test");
+				}
 
 				const { test } = await response.json();
+				
+				if (!test || !test.id) {
+					throw new Error("Invalid test data received");
+				}
+
 				setTestId(test.id);
 				setStartTime(new Date());
 
@@ -175,19 +199,21 @@ export default function PracticeTestPage() {
 					`/practice?test=${test.id}`,
 				);
 			} catch (error) {
-				console.error("Error creating test:", error);
+				console.error("Error creating/loading test:", error);
+				// Redirect back to home on error
+				router.push("/");
 			} finally {
 				setIsCreatingTest(false);
 			}
 		};
 
 		createTest();
-	}, [hasActiveSubscription, user, router]); // Add router to dependencies
+	}, [hasAccess, user, router]);
 
 	// Fetch existing test details and questions if we have a testId
 	useEffect(() => {
 		const loadInitialTestData = async () => {
-			if (!testId || !hasActiveSubscription || !user) return;
+			if (!testId || !hasAccess || !user) return;
 
 			setIsLoadingQuestions(true);
 			try {
@@ -200,14 +226,14 @@ export default function PracticeTestPage() {
 		};
 
 		loadInitialTestData();
-	}, [testId, hasActiveSubscription, user, fetchTestData]); // Add fetchTestData to dependencies
+	}, [testId, hasAccess, user, fetchTestData]); // Add fetchTestData to dependencies
 
 	useEffect(() => {
-		// Redirect if not subscribed
-		if (isLoaded && !isLoading && !hasActiveSubscription) {
+		// Redirect if not subscribed or not admin
+		if (isLoaded && !isLoading && !hasAccess) {
 			router.push("/");
 		}
-	}, [isLoaded, isLoading, hasActiveSubscription, router]);
+	}, [isLoaded, isLoading, hasAccess, router]);
 
 	// Save answer to the test
 	const saveAnswer = useCallback(async (questionId: string, selectedAnswer: string) => {
@@ -371,7 +397,7 @@ export default function PracticeTestPage() {
 		);
 	}
 
-	if (!hasActiveSubscription) {
+	if (!hasAccess) {
 		return null; // Will be redirected by the useEffect
 	}
 
