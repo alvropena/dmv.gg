@@ -4,6 +4,7 @@ import { Lock, FileText, Play, PlayCircle, PlusCircle } from "lucide-react";
 import type { UserResource } from "@clerk/types";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 type UserWelcomeCardProps = {
 	user: UserResource;
@@ -31,6 +32,7 @@ export function UserWelcomeCard({
 	onStartTestClick,
 }: UserWelcomeCardProps) {
 	const router = useRouter();
+	const { dbUser } = useAuthContext();
 	const [progress, setProgress] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
 	const [hasExistingTests, setHasExistingTests] = useState(false);
@@ -40,6 +42,7 @@ export function UserWelcomeCard({
 	const [remainingQuestions, setRemainingQuestions] = useState(0);
 
 	const displayName = user.firstName || user.fullName?.split(" ")[0] || "User";
+	const hasAccess = hasActiveSubscription || dbUser?.role === "ADMIN";
 
 	useEffect(() => {
 		const fetchUserProgress = async () => {
@@ -113,7 +116,7 @@ export function UserWelcomeCard({
 	}, []);
 
 	const handleContinueTest = () => {
-		if (!hasActiveSubscription) {
+		if (!hasAccess) {
 			if (onStartTestClick) {
 				onStartTestClick();
 			}
@@ -125,7 +128,7 @@ export function UserWelcomeCard({
 	};
 
 	const handleStartNewTest = async () => {
-		if (!hasActiveSubscription) {
+		if (!hasAccess) {
 			if (onStartTestClick) {
 				onStartTestClick();
 			}
@@ -159,6 +162,11 @@ export function UserWelcomeCard({
 			<div className="px-1">
 				<h2 className="text-2xl font-bold mb-1">
 					Welcome back, {displayName}!
+					{dbUser?.role === "ADMIN" && (
+						<span className="ml-2 text-sm bg-amber-100 text-amber-800 px-2 py-1 rounded-full">
+							Admin
+						</span>
+					)}
 				</h2>
 				<p className="text-muted-foreground mb-5 text-sm">
 					Ready to continue your DMV test preparation? You&apos;re making

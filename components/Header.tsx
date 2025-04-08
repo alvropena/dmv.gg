@@ -15,7 +15,7 @@ import Link from "next/link";
 export function Header() {
   const router = useRouter();
   const { isSignedIn } = useAuth();
-  const { hasActiveSubscription } = useAuthContext();
+  const { dbUser, hasActiveSubscription } = useAuthContext();
   const [isPricingOpen, setIsPricingOpen] = useState(false);
   const [isSubscriptionDetailsOpen, setIsSubscriptionDetailsOpen] =
     useState(false);
@@ -38,7 +38,7 @@ export function Header() {
     setIsPricingOpen(true);
   };
 
-  const handlePlanSelect = async (plan: "daily" | "weekly" | "monthly" | "lifetime") => {
+  const handlePlanSelect = async (plan: "weekly" | "monthly" | "lifetime") => {
     try {
       const response = await fetch("/api/create-checkout-session", {
         method: "POST",
@@ -115,14 +115,23 @@ export function Header() {
                 </Button>
               </SignedOut>
               <SignedIn>
-                {hasActiveSubscription ? (
+                {hasActiveSubscription || dbUser?.role === "ADMIN" ? (
                   <Button
                     variant="outline"
                     className="mr-2 h-[34px] flex items-center gap-1 bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100 hover:text-amber-800"
                     onClick={() => setIsSubscriptionDetailsOpen(true)}
                   >
-                    <Crown className="h-4 w-4 text-amber-500" />
-                    <span>Premium</span>
+                    {dbUser?.role === "ADMIN" ? (
+                      <>
+                        <Crown className="h-4 w-4 text-amber-500" />
+                        <span>Admin</span>
+                      </>
+                    ) : (
+                      <>
+                        <Crown className="h-4 w-4 text-amber-500" />
+                        <span>Premium</span>
+                      </>
+                    )}
                   </Button>
                 ) : (
                   <Button

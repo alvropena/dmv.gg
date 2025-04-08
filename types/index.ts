@@ -1,3 +1,5 @@
+export type UserRole = 'STUDENT' | 'ADMIN';
+
 export type Subscription = {
   id: string;
   userId: string;
@@ -19,6 +21,7 @@ export type User = {
   firstName: string | null;
   lastName: string | null;
   birthday?: Date | null;
+  role: UserRole;
   createdAt: Date;
   updatedAt: Date;
   subscriptions: Subscription[];

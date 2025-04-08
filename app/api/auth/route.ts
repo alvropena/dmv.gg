@@ -20,7 +20,16 @@ export async function GET() {
         where: {
             clerkId: userId,
         },
-        include: {
+        select: {
+            id: true,
+            clerkId: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            birthday: true,
+            role: true,
+            createdAt: true,
+            updatedAt: true,
             subscriptions: true
         }
     });
@@ -32,8 +41,18 @@ export async function GET() {
                 email: user.emailAddresses[0]?.emailAddress || "",
                 firstName: user.firstName || null,
                 lastName: user.lastName || null,
+                role: "STUDENT", // Set default role
             },
-            include: {
+            select: {
+                id: true,
+                clerkId: true,
+                email: true,
+                firstName: true,
+                lastName: true,
+                birthday: true,
+                role: true,
+                createdAt: true,
+                updatedAt: true,
                 subscriptions: true
             }
         });

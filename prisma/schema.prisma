@@ -13,6 +13,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  STUDENT
+  ADMIN
+}
+
 model User {
   id        String        @id @default(uuid())
   clerkId   String        @unique
@@ -20,6 +25,7 @@ model User {
   firstName String?
   lastName  String?
   birthday  DateTime?     @db.Date
+  role      UserRole      @default(STUDENT)
   createdAt DateTime      @default(now()) @db.Timestamptz
   updatedAt DateTime      @default(now()) @db.Timestamptz
   subscriptions Subscription[]

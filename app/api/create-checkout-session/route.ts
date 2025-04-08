@@ -3,7 +3,6 @@ import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 const PRICE_IDS = {
-  daily: process.env.STRIPE_PRICE_ID_DAILY,
   weekly: process.env.STRIPE_PRICE_ID_WEEKLY,
   monthly: process.env.STRIPE_PRICE_ID_MONTHLY,
   lifetime: process.env.STRIPE_PRICE_ID_LIFETIME,
@@ -21,7 +20,7 @@ export async function POST(req: Request) {
     }
 
     if (!plan || !(plan in PRICE_IDS)) {
-      return new NextResponse('Invalid plan type. Must be one of: daily, weekly, monthly, lifetime', { status: 400 });
+      return new NextResponse('Invalid plan type. Must be one of: weekly, monthly, lifetime', { status: 400 });
     }
 
     const priceId = PRICE_IDS[plan as PlanType];
