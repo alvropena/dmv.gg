@@ -10,14 +10,12 @@ type UserProfileCardProps = {
 
 type UserStatsData = {
 	studyStreak: number;
-	studyTime: string;
 };
 
 export function UserProfileCard({ user }: UserProfileCardProps) {
 	const { dbUser, hasActiveSubscription } = useAuthContext();
 	const [stats, setStats] = useState<UserStatsData>({
 		studyStreak: 0,
-		studyTime: "0 mins",
 	});
 	const [isLoading, setIsLoading] = useState(true);
 	const [userBirthday, setUserBirthday] = useState<string | null>(null);
@@ -46,38 +44,13 @@ export function UserProfileCard({ user }: UserProfileCardProps) {
 				// Get streak directly from the API
 				const streak = data.streak || 0;
 
-				// Get study time in seconds from the API
-				const totalStudyTimeSeconds = data.totalStudyTimeSeconds || 0;
-
-				// Format the study time in a more readable format
-				const totalMinutes = Math.floor(totalStudyTimeSeconds / 60);
-				const hours = Math.floor(totalMinutes / 60);
-				const minutes = totalMinutes % 60;
-
-				let formattedStudyTime = "";
-
-				if (hours > 0) {
-					formattedStudyTime = `${hours} ${hours === 1 ? "hour" : "hours"}`;
-					if (minutes > 0) {
-						formattedStudyTime += ` ${minutes} ${minutes === 1 ? "min" : "mins"}`;
-					}
-				} else {
-					formattedStudyTime = `${totalMinutes} ${totalMinutes === 1 ? "min" : "mins"}`;
-				}
-
-				// If no time recorded yet, show 0 mins
-				if (totalStudyTimeSeconds === 0) {
-					formattedStudyTime = "0 mins";
-				}
-
 				setStats({
 					studyStreak: streak,
-					studyTime: formattedStudyTime,
 				});
 			} catch (error) {
 				console.error("Error fetching user stats:", error);
 				// Use defaults if there's an error
-				setStats({ studyStreak: 0, studyTime: "0 mins" });
+				setStats({ studyStreak: 0 });
 			} finally {
 				setIsLoading(false);
 			}
@@ -96,13 +69,15 @@ export function UserProfileCard({ user }: UserProfileCardProps) {
 			// Create a new Date object with the UTC time
 			const birthdayDate = new Date(dbUser.birthday);
 			// Add the timezone offset to get the correct local date
-			birthdayDate.setMinutes(birthdayDate.getMinutes() + birthdayDate.getTimezoneOffset());
-			
+			birthdayDate.setMinutes(
+				birthdayDate.getMinutes() + birthdayDate.getTimezoneOffset(),
+			);
+
 			const formattedBirthday = birthdayDate.toLocaleDateString("en-US", {
 				month: "long",
 				day: "numeric",
 				year: "numeric",
-				timeZone: "UTC"
+				timeZone: "UTC",
 			});
 			setUserBirthday(formattedBirthday);
 		} else {
@@ -149,10 +124,6 @@ export function UserProfileCard({ user }: UserProfileCardProps) {
 									{stats.studyStreak} {stats.studyStreak === 1 ? "day" : "days"}
 								</span>
 							</p>
-							<p className="text-xs">
-								Time studied:{" "}
-								<span className="font-bold">{stats.studyTime}</span>
-							</p>
 						</div>
 
 						{/* Desktop view */}
@@ -162,10 +133,6 @@ export function UserProfileCard({ user }: UserProfileCardProps) {
 								<p className="font-semibold">
 									{stats.studyStreak} {stats.studyStreak === 1 ? "day" : "days"}
 								</p>
-							</div>
-							<div className="text-right">
-								<p className="text-sm text-muted-foreground">Time studied</p>
-								<p className="font-semibold">{stats.studyTime}</p>
 							</div>
 						</div>
 					</>

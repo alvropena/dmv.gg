@@ -10,7 +10,6 @@ import { QuestionCard } from "@/components/practice/QuestionCard";
 import { ProgressBar } from "@/components/practice/ProgressBar";
 import { CompletionCard } from "@/components/practice/CompletionCard";
 import { PracticeHeader } from "@/components/practice/PracticeHeader";
-import { useTimer } from "@/hooks/useTimer";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { Loader2 } from "lucide-react";
 
@@ -38,14 +37,10 @@ export default function TestPage({ params }: TestPageProps) {
 	const [isLoadingQuestions, setIsLoadingQuestions] = useState(true);
 	const [showCongratulations, setShowCongratulations] = useState(false);
 	const [testId, setTestId] = useState<string | null>(null);
-	const [startTime, setStartTime] = useState<Date>(new Date());
 	const mountedRef = useRef(false);
 
 	// Add hasAccess check
 	const hasAccess = hasActiveSubscription || dbUser?.role === "ADMIN";
-
-	// Use the custom timer hook
-	const elapsedTime = useTimer(startTime);
 
 	// Function to fetch test data and update local state
 	const fetchTestData = useCallback(async () => {
@@ -72,11 +67,6 @@ export default function TestPage({ params }: TestPageProps) {
 
 			// Set the questions for the test
 			setQuestions(questions);
-
-			// If this is a test being restored, set the start time
-			if (test.startedAt) {
-				setStartTime(new Date(test.startedAt));
-			}
 
 			// If test is completed, show congratulations
 			if (test.status === "completed") {
@@ -125,109 +115,6 @@ export default function TestPage({ params }: TestPageProps) {
 			return null;
 		}
 	}, [testId, hasAccess, user, router]);
-
-	// Periodically update the test duration in the database
-	useEffect(() => {
-		// Don't update if the test is not started or is already completed
-		if (!testId || showCongratulations) return;
-
-		// Update duration every 30 seconds
-		const updateInterval = 30 * 1000; // 30 seconds
-		let lastUpdateTime = new Date();
-		let isUserActive = true;
-		let inactivityTimeout: NodeJS.Timeout | null = null;
-		const INACTIVITY_THRESHOLD = 60000; // 1 minute of inactivity
-
-		// Function to handle user activity
-		const handleUserActivity = () => {
-			// Clear any existing timeout
-			if (inactivityTimeout) {
-				clearTimeout(inactivityTimeout);
-			}
-
-			// If user was inactive, mark them as active again
-			if (!isUserActive) {
-				isUserActive = true;
-				lastUpdateTime = new Date(); // Reset the last update time
-			}
-
-			// Set a new timeout to mark user as inactive after threshold
-			inactivityTimeout = setTimeout(() => {
-				isUserActive = false;
-			}, INACTIVITY_THRESHOLD);
-		};
-
-		// Add event listeners for user activity
-		document.addEventListener("mousemove", handleUserActivity);
-		document.addEventListener("keydown", handleUserActivity);
-		document.addEventListener("click", handleUserActivity);
-		document.addEventListener("scroll", handleUserActivity);
-		document.addEventListener("touchstart", handleUserActivity);
-
-		// Also handle visibility changes
-		const handleVisibilityChange = () => {
-			if (document.visibilityState === "hidden") {
-				isUserActive = false;
-			} else {
-				// When page becomes visible again, trigger activity handler
-				handleUserActivity();
-			}
-		};
-
-		document.addEventListener("visibilitychange", handleVisibilityChange);
-
-		const updateDuration = async () => {
-			// Only update if the user is active
-			if (!isUserActive) return;
-
-			try {
-				const now = new Date();
-				const durationMs = now.getTime() - lastUpdateTime.getTime();
-				const durationSecs = Math.floor(durationMs / 1000);
-
-				// Only update if there's actual time to add
-				if (durationSecs > 0) {
-					await fetch(`/api/tests/testId?testId=${testId}`, {
-						method: "PATCH",
-						headers: {
-							"Content-Type": "application/json",
-						},
-						body: JSON.stringify({
-							status: "in_progress",
-							durationSeconds: durationSecs,
-						}),
-					});
-
-					// Update the last update time
-					lastUpdateTime = now;
-				}
-			} catch (error) {
-				console.error("Error updating test duration:", error);
-			}
-		};
-
-		// Initial update
-		updateDuration();
-
-		// Set up periodic updates
-		const intervalId = setInterval(updateDuration, updateInterval);
-
-		return () => {
-			clearInterval(intervalId);
-			if (inactivityTimeout) {
-				clearTimeout(inactivityTimeout);
-			}
-			document.removeEventListener("mousemove", handleUserActivity);
-			document.removeEventListener("keydown", handleUserActivity);
-			document.removeEventListener("click", handleUserActivity);
-			document.removeEventListener("scroll", handleUserActivity);
-			document.removeEventListener("touchstart", handleUserActivity);
-			document.removeEventListener("visibilitychange", handleVisibilityChange);
-
-			// Final update when component unmounts
-			updateDuration();
-		};
-	}, [testId, showCongratulations]);
 
 	// Initialize test with the testId from the URL params
 	useEffect(() => {
@@ -319,10 +206,6 @@ export default function TestPage({ params }: TestPageProps) {
 	const completeTest = useCallback(async () => {
 		if (!testId) return;
 
-		const now = new Date();
-		const durationMs = now.getTime() - startTime.getTime();
-		const durationSecs = Math.floor(durationMs / 1000);
-
 		try {
 			const response = await fetch(`/api/tests/testId?testId=${testId}`, {
 				method: "PATCH",
@@ -331,8 +214,7 @@ export default function TestPage({ params }: TestPageProps) {
 				},
 				body: JSON.stringify({
 					status: "completed",
-					completedAt: now.toISOString(),
-					durationSeconds: durationSecs,
+					completedAt: new Date().toISOString(),
 				}),
 			});
 
@@ -342,7 +224,7 @@ export default function TestPage({ params }: TestPageProps) {
 		} catch (error) {
 			console.error("Error completing test:", error);
 		}
-	}, [testId, startTime]);
+	}, [testId]);
 
 	// Add a new function to handle checking answers
 	const handleCheckAnswer = useCallback(async () => {
@@ -479,7 +361,6 @@ export default function TestPage({ params }: TestPageProps) {
 				<ProgressBar
 					totalQuestions={questions.length}
 					questionsAnswered={questionsAnswered}
-					elapsedTime={elapsedTime}
 				/>
 
 				<QuestionCard

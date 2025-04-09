@@ -77,7 +77,6 @@ model Test {
   user        User      @relation(fields: [userId], references: [id])
   startedAt   DateTime  @default(now()) @db.Timestamptz
   completedAt DateTime? @db.Timestamptz
-  durationSeconds Int?  // Duration of the test in seconds
   score       Int       @default(0)
   totalQuestions Int    @default(0)
   status      String    @default("in_progress") // "in_progress", "completed", "abandoned"

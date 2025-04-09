@@ -57,7 +57,6 @@ CREATE TABLE "Test" (
     "userId" TEXT NOT NULL,
     "startedAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "completedAt" TIMESTAMPTZ,
-    "durationSeconds" INT,
     "score" INT NOT NULL DEFAULT 0,
     "totalQuestions" INT NOT NULL DEFAULT 0,
     "status" TEXT NOT NULL DEFAULT 'in_progress',
