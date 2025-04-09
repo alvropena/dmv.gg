@@ -5,7 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Header } from "@/components/Header";
 import { Providers } from "@/components/Providers";
 import { Toaster } from "@/components/ui/sonner";
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,17 +20,17 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en" suppressHydrationWarning>
-			<body className={inter.className}>
-				<ClerkProvider>
+		<ClerkProvider>
+			<html lang="en" suppressHydrationWarning>
+				<body className={inter.className}>
 					<Providers>
 						<Header />
-						<main className="h-fit">{children}</main>
+						{children}
 						<Toaster />
 						<Analytics />
 					</Providers>
-				</ClerkProvider>
-			</body>
-		</html>
+				</body>
+			</html>
+		</ClerkProvider>
 	);
 }

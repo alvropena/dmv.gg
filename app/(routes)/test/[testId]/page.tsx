@@ -9,7 +9,6 @@ import type { Question } from "@/types";
 import { QuestionCard } from "@/components/practice/QuestionCard";
 import { ProgressBar } from "@/components/practice/ProgressBar";
 import { CompletionCard } from "@/components/practice/CompletionCard";
-import { PracticeHeader } from "@/components/practice/PracticeHeader";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { Loader2 } from "lucide-react";
 
@@ -37,6 +36,8 @@ export default function TestPage({ params }: TestPageProps) {
 	const [isLoadingQuestions, setIsLoadingQuestions] = useState(true);
 	const [showCongratulations, setShowCongratulations] = useState(false);
 	const [testId, setTestId] = useState<string | null>(null);
+	const [isReviewMode, setIsReviewMode] = useState(false);
+	const [reviewQuestionsAnswered, setReviewQuestionsAnswered] = useState(0);
 	const mountedRef = useRef(false);
 
 	// Add hasAccess check
@@ -68,49 +69,25 @@ export default function TestPage({ params }: TestPageProps) {
 			// Set the questions for the test
 			setQuestions(questions);
 
-			// If test is completed, show congratulations
-			if (test.status === "completed") {
+			// Check if this is a review
+			const isReview = window.location.search.includes("review=true");
+
+			// If test is completed and not in review mode, show congratulations
+			if (test.status === "completed" && !isReview) {
 				setShowCongratulations(true);
 			}
 
-			// Restore the user's progress in the test
+			// Count answered questions
 			if (test.answers && Array.isArray(test.answers)) {
-				// Create a map of question IDs to their answers for quick lookup
-				const answerMap = new Map();
-				for (const answer of test.answers) {
-					answerMap.set(answer.questionId, answer);
-				}
-
-				// Count how many questions have been answered
 				const answeredCount = test.answers.filter(
 					(answer: TestAnswer) => answer.selectedAnswer !== null,
 				).length;
 				setQuestionsAnswered(answeredCount);
-
-				// Find the first unanswered question to set the currentQuestionIndex
-				if (answeredCount < test.totalQuestions) {
-					// Find the first unanswered question by checking each question in order
-					let firstUnansweredIndex = -1;
-					for (let i = 0; i < questions.length; i++) {
-						const questionId = questions[i].id;
-						const answer = answerMap.get(questionId);
-						if (!answer || answer.selectedAnswer === null) {
-							firstUnansweredIndex = i;
-							break;
-						}
-					}
-
-					// If we found an unanswered question, set the current index to it
-					if (firstUnansweredIndex !== -1) {
-						setCurrentQuestionIndex(firstUnansweredIndex);
-					}
-				}
 			}
 
 			return test;
 		} catch (error) {
 			console.error("Error fetching test data:", error);
-			// On error, redirect back to home
 			router.push("/");
 			return null;
 		}
@@ -131,7 +108,9 @@ export default function TestPage({ params }: TestPageProps) {
 			// Check if this is a review
 			const isReview = window.location.search.includes("review=true");
 			if (isReview) {
-				setShowCongratulations(true);
+				setIsReviewMode(true);
+				setShowCongratulations(false);
+				setCurrentQuestionIndex(0);
 			}
 		}
 	}, [hasAccess, user, params.testId]);
@@ -226,7 +205,7 @@ export default function TestPage({ params }: TestPageProps) {
 		}
 	}, [testId]);
 
-	// Add a new function to handle checking answers
+	// Add a new function to handle checking answers in review mode
 	const handleCheckAnswer = useCallback(async () => {
 		if (!selectedOption || isAnswerRevealed || questions.length === 0) return;
 
@@ -235,12 +214,14 @@ export default function TestPage({ params }: TestPageProps) {
 
 		setIsAnswerRevealed(true);
 
-		// Save answer to test
-		if (testId && currentQuestion.id) {
-			await saveAnswer(currentQuestion.id, selectedOption);
-			// We don't need to refresh test data after saving an answer
-			// This was causing an unnecessary API call
-			// await fetchTestData();
+		// In review mode, increment reviewQuestionsAnswered instead
+		if (isReviewMode) {
+			setReviewQuestionsAnswered((prev) => prev + 1);
+		} else {
+			// Save answer to test
+			if (testId && currentQuestion.id) {
+				await saveAnswer(currentQuestion.id, selectedOption);
+			}
 		}
 	}, [
 		selectedOption,
@@ -249,14 +230,20 @@ export default function TestPage({ params }: TestPageProps) {
 		questions,
 		currentQuestionIndex,
 		saveAnswer,
+		isReviewMode,
 	]);
 
-	// Define goToNextQuestion before it's used in handleKeyDown
+	// Reset review progress when starting review mode
+	useEffect(() => {
+		if (isReviewMode) {
+			setReviewQuestionsAnswered(0);
+		}
+	}, [isReviewMode]);
+
+	// Modify goToNextQuestion
 	const goToNextQuestion = useCallback(() => {
 		if (currentQuestionIndex < questions.length - 1) {
-			// Use a functional update to ensure we're working with the latest state
 			setCurrentQuestionIndex((prev) => {
-				// Double-check that we're not going beyond the array bounds
 				const nextIndex = prev + 1;
 				return nextIndex < questions.length ? nextIndex : prev;
 			});
@@ -264,10 +251,24 @@ export default function TestPage({ params }: TestPageProps) {
 			setIsAnswerRevealed(false);
 		} else {
 			// Last question reviewed
-			setShowCongratulations(true);
-			completeTest();
+			const isReview = window.location.search.includes("review=true");
+			if (isReview) {
+				setShowCongratulations(true);
+			} else {
+				setShowCongratulations(true);
+				completeTest();
+			}
 		}
 	}, [currentQuestionIndex, questions.length, completeTest]);
+
+	// Modify goToPreviousQuestion
+	const goToPreviousQuestion = useCallback(() => {
+		if (currentQuestionIndex > 0) {
+			setCurrentQuestionIndex((prev) => prev - 1);
+			setSelectedOption(null);
+			setIsAnswerRevealed(false);
+		}
+	}, [currentQuestionIndex]);
 
 	const handleKeyDown = useCallback(
 		(e: KeyboardEvent) => {
@@ -284,6 +285,18 @@ export default function TestPage({ params }: TestPageProps) {
 				questions[currentQuestionIndex]?.optionD
 			) {
 				setSelectedOption("D");
+			}
+
+			// Left arrow to go to previous question
+			if (e.key === "ArrowLeft" && currentQuestionIndex > 0) {
+				e.preventDefault();
+				goToPreviousQuestion();
+			}
+
+			// Right arrow to go to next question (only if answer is revealed)
+			if (e.key === "ArrowRight" && isAnswerRevealed) {
+				e.preventDefault();
+				goToNextQuestion();
 			}
 
 			// Space or Enter to check answer or continue
@@ -303,6 +316,7 @@ export default function TestPage({ params }: TestPageProps) {
 			currentQuestionIndex,
 			questions,
 			handleCheckAnswer,
+			goToPreviousQuestion,
 		],
 	);
 
@@ -354,46 +368,90 @@ export default function TestPage({ params }: TestPageProps) {
 	const currentQuestion = questions[currentQuestionIndex];
 
 	return (
-		<div className="w-full">
-			<div className="max-w-3xl mx-auto">
-				<PracticeHeader onBackToHome={() => router.push("/")} />
+		<div className="relative min-h-screen bg-background">
+			<div className="w-full h-full flex items-center justify-center overflow-hidden px-4">
+				<div className="max-w-3xl w-full">
+					<ProgressBar
+						totalQuestions={questions.length}
+						questionsAnswered={
+							isReviewMode ? reviewQuestionsAnswered : questionsAnswered
+						}
+						currentQuestionIndex={currentQuestionIndex}
+						isReviewMode={isReviewMode}
+						currentQuestion={{
+							title: currentQuestion.title,
+							id: currentQuestion.id,
+						}}
+					/>
 
-				<ProgressBar
-					totalQuestions={questions.length}
-					questionsAnswered={questionsAnswered}
-				/>
+					<QuestionCard
+						question={currentQuestion}
+						selectedOption={selectedOption}
+						isAnswerRevealed={isAnswerRevealed}
+						onOptionSelect={selectOption}
+					/>
 
-				<QuestionCard
-					question={currentQuestion}
-					selectedOption={selectedOption}
-					isAnswerRevealed={isAnswerRevealed}
-					onOptionSelect={selectOption}
-				/>
+					<div className="flex justify-between gap-4 sm:mx-0">
+						{currentQuestionIndex > 0 && (
+							<Button
+								onClick={goToPreviousQuestion}
+								variant="outline"
+								className="w-full"
+							>
+								Previous Question
+							</Button>
+						)}
+						{isReviewMode ? (
+							<>
+								{!isAnswerRevealed ? (
+									<Button
+										onClick={handleCheckAnswer}
+										disabled={selectedOption === null}
+										className="w-full"
+									>
+										Check Answer{!isMobile && " (Space/Enter)"}
+									</Button>
+								) : (
+									<div className="flex gap-2 w-full">
+										<Button onClick={goToNextQuestion} className="w-full">
+											{currentQuestionIndex < questions.length - 1 ? (
+												<>Next Question{!isMobile && " (Space/Enter)"}</>
+											) : (
+												"Finish Review"
+											)}
+										</Button>
+									</div>
+								)}
+							</>
+						) : (
+							<>
+								{!isAnswerRevealed ? (
+									<Button
+										onClick={handleCheckAnswer}
+										disabled={selectedOption === null}
+										className="w-full"
+									>
+										Check Answer{!isMobile && " (Space/Enter)"}
+									</Button>
+								) : (
+									<Button onClick={goToNextQuestion} className="w-full">
+										Next Question{!isMobile && " (Space/Enter)"}
+									</Button>
+								)}
+							</>
+						)}
+					</div>
 
-				<div className="flex justify-between mx-3 sm:mx-0">
-					{!isAnswerRevealed ? (
-						<Button
-							onClick={handleCheckAnswer}
-							disabled={selectedOption === null}
-							className="w-full"
-						>
-							Check Answer{!isMobile && " (Space/Enter)"}
-						</Button>
-					) : (
-						<Button onClick={goToNextQuestion} className="w-full">
-							Next Question{!isMobile && " (Space/Enter)"}
-						</Button>
+					{!isMobile && (
+						<div className="mt-6 text-center text-sm text-muted-foreground">
+							<p>
+								Keyboard shortcuts: Press 1-4 to select an option, Space or
+								Enter to check/continue, Left/Right arrows to navigate between
+								questions
+							</p>
+						</div>
 					)}
 				</div>
-
-				{!isMobile && (
-					<div className="mt-6 text-center text-sm text-muted-foreground mx-3 sm:mx-0">
-						<p>
-							Keyboard shortcuts: Press 1-4 to select an option, Space or Enter
-							to check/continue
-						</p>
-					</div>
-				)}
 			</div>
 		</div>
 	);
