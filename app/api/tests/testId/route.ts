@@ -135,8 +135,19 @@ export async function GET(
     // Extract the ordered list of questions from the test
     const orderedQuestions = test.questions.map((tq: { question: unknown }) => tq.question);
 
+    // Ensure answers are properly formatted with questionId and selectedAnswer
+    const formattedAnswers = test.answers.map((answer) => ({
+      questionId: answer.questionId,
+      selectedAnswer: answer.selectedAnswer,
+      isCorrect: answer.isCorrect,
+      answeredAt: answer.answeredAt,
+    }));
+
     return NextResponse.json({
-      test,
+      test: {
+        ...test,
+        answers: formattedAnswers,
+      },
       questions: orderedQuestions,
     });
 

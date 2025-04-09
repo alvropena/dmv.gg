@@ -77,10 +77,10 @@ export function RecentSessions({
 	const handleTestNavigation = (testId: string, isCompleted: boolean) => {
 		if (isCompleted) {
 			// Navigate to review page
-			router.push(`/test=${testId}&review=true`);
+			router.push(`/test/${testId}?review=true`);
 		} else {
 			// Continue the test
-			router.push(`/test=${testId}`);
+			router.push(`/test/${testId}`);
 		}
 	};
 

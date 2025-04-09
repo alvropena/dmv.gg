@@ -123,7 +123,7 @@ export function UserWelcomeCard({
 			return;
 		}
 		if (latestTestId) {
-			router.push(`/test=${latestTestId}`);
+			router.push(`/test/${latestTestId}`);
 		}
 	};
 
@@ -149,7 +149,7 @@ export function UserWelcomeCard({
 			}
 
 			const data = await response.json();
-			router.push(`/test=${data.test.id}`);
+			router.push(`/test/${data.test.id}`);
 		} catch (error) {
 			console.error("Error creating new test:", error);
 		} finally {
