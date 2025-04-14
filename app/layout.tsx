@@ -17,14 +17,6 @@ export const metadata: Metadata = {
 		description: "Ace your DMV test with our comprehensive question bank",
 		url: "https://dmv.gg",
 		siteName: "DMV.gg",
-		images: [
-			{
-				url: "/twitter-preview.png",
-				width: 1200,
-				height: 630,
-				alt: "DMV.gg Logo and Slogan",
-			},
-		],
 		locale: "en_US",
 		type: "website",
 	},
@@ -32,7 +24,6 @@ export const metadata: Metadata = {
 		card: "summary_large_image",
 		title: "DMV.gg - Ace Your DMV Test",
 		description: "Ace your DMV test with our comprehensive question bank",
-		images: ["/twitter-preview.png"],
 	},
 };
 
