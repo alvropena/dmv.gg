@@ -25,7 +25,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
       <div
         style={{
           fontSize: 128,
-          background: 'linear-gradient(to bottom right, #3b82f6, #1e3a8a)',
+          background: '#2852E2',
           width: '100%',
           height: '100%',
           display: 'flex',
@@ -34,6 +34,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
           justifyContent: 'center',
           color: 'white',
           padding: '60px',
+          fontFamily: 'Arial Rounded MT Bold, Arial Rounded, Arial, sans-serif',
         }}
       >
         <div style={{ 
