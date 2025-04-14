@@ -16,135 +16,135 @@ import { BirthdayDialog } from "@/components/BirthdayDialog";
 import LandingPage from "@/components/landing";
 
 export default function Home() {
-  const [isPricingOpen, setIsPricingOpen] = useState(false);
-  const [isBirthdayDialogOpen, setIsBirthdayDialogOpen] = useState(false);
+	const [isPricingOpen, setIsPricingOpen] = useState(false);
+	const [isBirthdayDialogOpen, setIsBirthdayDialogOpen] = useState(false);
 
-  const { user, isLoaded } = useUser();
-  const router = useRouter();
-  const { dbUser, isLoading, hasActiveSubscription } = useAuthContext();
+	const { user, isLoaded } = useUser();
+	const router = useRouter();
+	const { dbUser, isLoading, hasActiveSubscription } = useAuthContext();
 
-  const handleStudyClick = () => {
-    window.open(
-      "https://www.dmv.ca.gov/portal/file/california-driver-handbook-pdf/",
-      "_blank"
-    );
-  };
+	const handleStudyClick = () => {
+		window.open(
+			"https://www.dmv.ca.gov/portal/file/california-driver-handbook-pdf/",
+			"_blank",
+		);
+	};
 
-  const handlePracticeClick = () => {
-    if (!hasActiveSubscription) {
-      setIsPricingOpen(true);
-      return;
-    }
-    router.push("/practice");
-  };
+	const handlePracticeClick = () => {
+		if (!hasActiveSubscription) {
+			setIsPricingOpen(true);
+			return;
+		}
+		router.push("/test");
+	};
 
-  // Add handlePlanSelect function
-  const handlePlanSelect = async (plan: "weekly" | "monthly" | "lifetime") => {
-    try {
-      const response = await fetch("/api/create-checkout-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          plan,
-        }),
-      });
+	// Add handlePlanSelect function
+	const handlePlanSelect = async (plan: "weekly" | "monthly" | "lifetime") => {
+		try {
+			const response = await fetch("/api/create-checkout-session", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					plan,
+				}),
+			});
 
-      const data = await response.json();
+			const data = await response.json();
 
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error("Error creating checkout session:", error);
-    }
-  };
+			if (data.url) {
+				window.location.href = data.url;
+			}
+		} catch (error) {
+			console.error("Error creating checkout session:", error);
+		}
+	};
 
-  // Check if user has birthday set
-  useEffect(() => {
-    if (!isLoading && dbUser && !dbUser.birthday) {
-      setIsBirthdayDialogOpen(true);
-    }
-  }, [dbUser, isLoading]);
+	// Check if user has birthday set
+	useEffect(() => {
+		if (!isLoading && dbUser && !dbUser.birthday) {
+			setIsBirthdayDialogOpen(true);
+		}
+	}, [dbUser, isLoading]);
 
-  // Handle saving birthday
-  const handleSaveBirthday = async (birthday: Date) => {
-    try {
-      const response = await fetch("/api/user/birthday", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ birthday }),
-      });
+	// Handle saving birthday
+	const handleSaveBirthday = async (birthday: Date) => {
+		try {
+			const response = await fetch("/api/user/birthday", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ birthday }),
+			});
 
-      if (response.ok) {
-        setIsBirthdayDialogOpen(false);
-        // Force a refresh of the auth context to get the updated user data
-        router.refresh();
-      }
-    } catch (error) {
-      console.error("Error saving birthday:", error);
-    }
-  };
+			if (response.ok) {
+				setIsBirthdayDialogOpen(false);
+				// Force a refresh of the auth context to get the updated user data
+				router.refresh();
+			}
+		} catch (error) {
+			console.error("Error saving birthday:", error);
+		}
+	};
 
-  if (!isLoaded || isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
+	if (!isLoaded || isLoading) {
+		return (
+			<div className="flex items-center justify-center h-screen">
+				<Loader2 className="h-8 w-8 animate-spin text-primary" />
+			</div>
+		);
+	}
 
-  // Add PricingDialog component that will be used across all views
-  const pricingDialog = (
-    <PricingDialog
-      isOpen={isPricingOpen}
-      onClose={() => setIsPricingOpen(false)}
-      onPlanSelect={(plan) => {
-        handlePlanSelect(plan);
-        setIsPricingOpen(false);
-      }}
-    />
-  );
+	// Add PricingDialog component that will be used across all views
+	const pricingDialog = (
+		<PricingDialog
+			isOpen={isPricingOpen}
+			onClose={() => setIsPricingOpen(false)}
+			onPlanSelect={(plan) => {
+				handlePlanSelect(plan);
+				setIsPricingOpen(false);
+			}}
+		/>
+	);
 
-  // Render dashboard if user is authenticated
-  if (user) {
-    return (
-      <>
-        <div className="container mx-auto p-4">
-          {/* User profile card */}
-          <UserProfileCard user={user} />
+	// Render dashboard if user is authenticated
+	if (user) {
+		return (
+			<>
+				<div className="container mx-auto p-4">
+					{/* User profile card */}
+					<UserProfileCard user={user} />
 
-          {/* Top welcome section */}
-          <UserWelcomeCard
-            user={user}
-            hasActiveSubscription={hasActiveSubscription}
-            onStartTestClick={handlePracticeClick}
-            onStudyClick={handleStudyClick}
-          />
+					{/* Top welcome section */}
+					<UserWelcomeCard
+						user={user}
+						hasActiveSubscription={hasActiveSubscription}
+						onStartTestClick={handlePracticeClick}
+						onStudyClick={handleStudyClick}
+					/>
 
-          {/* Stats cards */}
-          <UserStats />
+					{/* Stats cards */}
+					<UserStats />
 
-          {/* User Activity Section */}
-          <UserActivitySection />
+					{/* User Activity Section */}
+					<UserActivitySection />
 
-          {/* Study Tips Section */}
-          <StudyTips />
-        </div>
-        {pricingDialog}
-        <BirthdayDialog
-          isOpen={isBirthdayDialogOpen}
-          onSave={handleSaveBirthday}
-          onClose={() => setIsBirthdayDialogOpen(false)}
-        />
-        <SupportButton />
-      </>
-    );
-  }
+					{/* Study Tips Section */}
+					<StudyTips />
+				</div>
+				{pricingDialog}
+				<BirthdayDialog
+					isOpen={isBirthdayDialogOpen}
+					onSave={handleSaveBirthday}
+					onClose={() => setIsBirthdayDialogOpen(false)}
+				/>
+				<SupportButton />
+			</>
+		);
+	}
 
-  // If not authenticated, render the landing page
-  return <LandingPage />;
+	// If not authenticated, render the landing page
+	return <LandingPage />;
 }

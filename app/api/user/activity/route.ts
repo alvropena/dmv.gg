@@ -29,15 +29,6 @@ export async function GET() {
       }
     });
 
-    // Calculate total study time from all tests (including in-progress)
-    let totalStudyTimeSeconds = 0;
-
-    for (const test of allTests) {
-      if (test.durationSeconds) {
-        totalStudyTimeSeconds += test.durationSeconds;
-      }
-    }
-
     // Calculate study streak
     // A streak is the number of consecutive days with activity (both completed and in-progress tests)
     let streak = 0;
@@ -80,28 +71,13 @@ export async function GET() {
       }
     }
 
-    // Format total study time
-    let totalStudyTimeFormatted = "";
-    const totalMinutes = Math.floor(totalStudyTimeSeconds / 60);
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-
-    if (hours > 0) {
-      totalStudyTimeFormatted = `${hours}h ${minutes}m`;
-    } else {
-      totalStudyTimeFormatted = `${minutes}m`;
-    }
-
     return NextResponse.json({
       streak,
-      totalStudyTimeSeconds,
-      totalStudyTimeFormatted,
       tests: allTests.map(test => ({
         id: test.id,
         status: test.status,
         startedAt: test.startedAt,
         completedAt: test.completedAt,
-        durationSeconds: test.durationSeconds,
         score: test.score,
         totalQuestions: test.totalQuestions
       }))

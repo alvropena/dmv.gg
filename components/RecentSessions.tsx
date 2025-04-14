@@ -28,7 +28,7 @@ export function RecentSessions({
 		const fetchTests = async () => {
 			// Don't fetch if user is not initialized yet
 			if (isUserLoading || !dbUser) return;
-			
+
 			setIsLoading(true);
 			setError(null);
 			try {
@@ -77,10 +77,10 @@ export function RecentSessions({
 	const handleTestNavigation = (testId: string, isCompleted: boolean) => {
 		if (isCompleted) {
 			// Navigate to review page
-			router.push(`/practice?test=${testId}&review=true`);
+			router.push(`/test/${testId}?review=true`);
 		} else {
 			// Continue the test
-			router.push(`/practice?test=${testId}`);
+			router.push(`/test/${testId}`);
 		}
 	};
 

@@ -37,7 +37,7 @@ export interface Question {
   optionC: string;
   optionD?: string | null;
   correctAnswer: string;
-  explanation: string;
+  explanation: string
   createdAt: Date;
   updatedAt: Date;
 }
@@ -53,7 +53,6 @@ export type Test = {
   userId: string;
   startedAt: Date;
   completedAt: Date | null;
-  durationSeconds?: number | null;
   score: number;
   totalQuestions: number;
   status: string; // "in_progress", "completed", "abandoned"
