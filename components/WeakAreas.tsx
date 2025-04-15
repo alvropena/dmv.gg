@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2, RefreshCw } from "lucide-react";
 
 type WeakArea = {
   question: {
@@ -24,43 +24,45 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
   const [weakAreas, setWeakAreas] = useState<WeakArea[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [creatingTest, setCreatingTest] = useState<boolean>(false);
+  const [refreshKey, setRefreshKey] = useState<number>(0);
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchWeakAreas = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch("/api/user/weak-areas");
+  const fetchWeakAreas = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/user/weak-areas?t=${Date.now()}`);
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch weak areas");
-        }
-
-        const data = await response.json();
-        setWeakAreas(data.weakAreas || []);
-      } catch (error) {
-        console.error("Error fetching weak areas:", error);
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error("Failed to fetch weak areas");
       }
-    };
 
+      const data = await response.json();
+      setWeakAreas(data.weakAreas || []);
+    } catch (error) {
+      console.error("Error fetching weak areas:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchWeakAreas();
-  }, []);
+  }, [refreshKey]);
+
+  const handleRefresh = () => {
+    setRefreshKey(prev => prev + 1);
+  };
 
   const handleReviewQuestion = async () => {
     if (weakAreas.length === 0) {
-      // If no weak areas, just navigate to the test page to take a regular test
       router.push("/test");
       return;
     }
 
     try {
       setCreatingTest(true);
-      // Get the question IDs from the weak areas
       const questionIds = weakAreas.map(area => area.question.id);
       
-      // Create a new test with the weak area question IDs
       const response = await fetch("/api/tests/custom", {
         method: "POST",
         headers: {
@@ -74,7 +76,6 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
       }
 
       const data = await response.json();
-      // Navigate to the test with the review flag
       router.push(`/test/${data.test.id}?review=true`);
     } catch (error) {
       console.error("Error creating test for weak areas:", error);
@@ -84,7 +85,6 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
     }
   };
 
-  // Show loading indicator while fetching data
   if (loading || isLoading) {
     return (
       <div className="mb-6">
@@ -103,12 +103,15 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
     );
   }
 
-  // Show empty state if no weak areas found
   if (weakAreas.length === 0) {
     return (
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Weak Areas</h2>
+          <Button variant="outline" size="sm" onClick={handleRefresh} className="flex items-center gap-1">
+            <RefreshCw className="h-4 w-4" />
+            <span>Refresh</span>
+          </Button>
         </div>
         <Card>
           <CardContent className="pt-6">
@@ -131,6 +134,10 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
     <div className="mb-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Weak Areas</h2>
+        <Button variant="outline" size="sm" onClick={handleRefresh} className="flex items-center gap-1">
+          <RefreshCw className="h-4 w-4" />
+          <span>Refresh</span>
+        </Button>
       </div>
       <Card>
         <CardHeader className="pb-2">

@@ -11,6 +11,7 @@ import { PricingDialog } from "@/components/PricingDialog";
 import { SubscriptionDetailsDialog } from "@/components/SubscriptionDetailsDialog";
 import { SignInDialog } from "@/components/SignInDialog";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 
 export function Header() {
   const router = useRouter();
@@ -118,9 +119,12 @@ export function Header() {
                 {hasActiveSubscription || dbUser?.role === "ADMIN" ? (
                   <>
                     {dbUser?.role === "ADMIN" ? (
-                      <div className="mr-2 px-3 py-1 bg-zinc-900 text-zinc-100 font-bold rounded flex items-center">
-                        <span>ADMIN</span>
-                      </div>
+                      <Badge 
+                        variant="outline" 
+                        className="mr-2 font-bold"
+                      >
+                        ADMIN
+                      </Badge>
                     ) : (
                       <Button
                         variant="outline"

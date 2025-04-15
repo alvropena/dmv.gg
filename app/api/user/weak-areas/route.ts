@@ -19,11 +19,11 @@ export async function GET() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Get all of the user's tests, regardless of completion status
+    // Get all of the user's tests, regardless of completion status or type
     const userTests = await db.test.findMany({
       where: {
         userId: dbUser.id,
-        // Removed the "status: 'completed'" filter to include all tests
+        // Include all tests - regular and custom review
       },
       select: {
         id: true

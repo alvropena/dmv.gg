@@ -214,12 +214,21 @@ export default function TestPage({ params }: TestPageProps) {
 
 		setIsAnswerRevealed(true);
 
+		// Determine if the answer is correct
+		const isCorrect = selectedOption === currentQuestion.correctAnswer;
+		
 		// In review mode, increment reviewQuestionsAnswered instead
 		if (isReviewMode) {
 			setReviewQuestionsAnswered((prev) => prev + 1);
+			// Also save answers in review mode to track weak areas
+			if (testId && currentQuestion.id) {
+				console.log(`Saving review answer - Question: ${currentQuestion.id}, Answer: ${selectedOption}, Correct: ${isCorrect}`);
+				await saveAnswer(currentQuestion.id, selectedOption);
+			}
 		} else {
 			// Save answer to test
 			if (testId && currentQuestion.id) {
+				console.log(`Saving regular answer - Question: ${currentQuestion.id}, Answer: ${selectedOption}, Correct: ${isCorrect}`);
 				await saveAnswer(currentQuestion.id, selectedOption);
 			}
 		}
@@ -254,6 +263,8 @@ export default function TestPage({ params }: TestPageProps) {
 			const isReview = window.location.search.includes("review=true");
 			if (isReview) {
 				setShowCongratulations(true);
+				// Also complete the review test so it's marked as finished in the database
+				completeTest();
 			} else {
 				setShowCongratulations(true);
 				completeTest();
