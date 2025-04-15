@@ -133,7 +133,7 @@ export function PricingDialog({
 								? "default"
 								: "outline"
 					}
-					className="mt-6"
+					className={`mt-6 rounded-full ${isSelected ? "bg-blue-600" : ""}`}
 					onClick={() => {
 						setSelectedPlan(planType);
 						onPlanSelect(planType);
@@ -246,7 +246,7 @@ export function PricingDialog({
 
 						{/* Continue button */}
 						<Button
-							className="w-full mb-2"
+							className="w-full mb-2 rounded-full"
 							onClick={() => {
 								if (selectedPlan) {
 									onPlanSelect(selectedPlan);
@@ -300,7 +300,7 @@ export function PricingDialog({
 				>
 					<div className="flex flex-col items-center h-64 justify-center">
 						<p className="text-red-500">Error: {error}</p>
-						<Button onClick={() => window.location.reload()} className="mt-4">
+						<Button onClick={() => window.location.reload()} className="mt-4 rounded-full">
 							Try Again
 						</Button>
 					</div>

@@ -248,11 +248,8 @@ export default function Pricing() {
 	return (
 		<section id="pricing" className="w-full py-16 md:py-20 lg:py-24">
 			<div className="container mx-auto px-4">
-				<div className="flex flex-col items-center justify-center space-y-4 text-center">
+				<div className="flex flex-col items-start justify-center space-y-4 text-left">
 					<div className="space-y-2">
-						<Badge variant="outline" className="w-fit mx-auto">
-							Pricing
-						</Badge>
 						<h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
 							Choose Your Plan
 						</h2>

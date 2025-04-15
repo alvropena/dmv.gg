@@ -1,6 +1,5 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import {
 	Accordion,
 	AccordionItem,
@@ -12,12 +11,12 @@ const faqItems = [
 	{
 		question: "Is DMV.gg free to use?",
 		answer:
-			"Yes, DMV.gg offers a free version with limited questions. For full access to all questions and features, we offer affordable premium plans.",
+			"Yes, DMV.gg offers one free practice test. After that, you can upgrade to a premium plan for full access to all questions and features.",
 	},
 	{
 		question: "Are these the actual questions from the California DMV test?",
 		answer:
-			"Our questions are based on the official California DMV handbook and are similar to those you'll encounter on the actual test. Many users report seeing identical questions.",
+			"Yes, all our questions are based on the official California DMV handbook and are similar to those you'll encounter on the actual test. Many users report seeing identical questions.",
 	},
 	{
 		question: "How often is the content updated?",
@@ -45,14 +44,8 @@ export default function FAQ() {
 	return (
 		<section id="faq" className="w-full py-16 md:py-20 lg:py-24">
 			<div className="container mx-auto px-4">
-				<div className="flex flex-col items-center justify-center space-y-4 text-center">
+				<div className="flex flex-col items-start justify-center space-y-4 text-left">
 					<div className="space-y-2">
-						<Badge
-							variant="outline"
-							className="w-fit mx-auto border-blue-200 bg-blue-100 text-blue-800 hover:bg-blue-100"
-						>
-							FAQ
-						</Badge>
 						<h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
 							Frequently Asked Questions
 						</h2>

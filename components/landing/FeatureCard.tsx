@@ -9,12 +9,17 @@ interface FeatureCardProps {
 
 export default function FeatureCard({ icon, title, description }: FeatureCardProps) {
   return (
-    <Card className="overflow-hidden">
-      <CardContent className="p-6">
-        <div className="flex flex-col space-y-2">
-          <div className="mb-2">{icon}</div>
-          <h3 className="font-bold">{title}</h3>
-          <p className="text-sm text-gray-500">{description}</p>
+    <Card className="overflow-hidden h-full rounded-xl">
+      <CardContent className="p-8 flex flex-col justify-between h-full min-h-[400px]">
+        <div className="mb-auto">
+          <h3 className="font-bold text-2xl leading-tight">{title}</h3>
+          <p className="mt-4 text-sm">{description}</p>
+        </div>
+
+        <div className="mt-auto pt-8 flex justify-center items-end h-[180px]">
+          <div className="w-full h-full flex items-end justify-center">
+            {icon}
+          </div>
         </div>
       </CardContent>
     </Card>

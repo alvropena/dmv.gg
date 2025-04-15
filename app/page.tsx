@@ -35,6 +35,7 @@ export default function Home() {
 			setIsPricingOpen(true);
 			return;
 		}
+		
 		router.push("/test");
 	};
 
@@ -49,6 +50,7 @@ export default function Home() {
 				body: JSON.stringify({
 					plan,
 				}),
+
 			});
 
 			const data = await response.json();
