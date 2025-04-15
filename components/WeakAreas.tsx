@@ -23,6 +23,7 @@ type WeakAreasProps = {
 export function WeakAreas({ isLoading = false }: WeakAreasProps) {
   const [weakAreas, setWeakAreas] = useState<WeakArea[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [creatingTest, setCreatingTest] = useState<boolean>(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -47,10 +48,40 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
     fetchWeakAreas();
   }, []);
 
-  const handleReviewQuestion = () => {
-    // In a real implementation, you would navigate to a page that focuses on these weak areas
-    // For now, we'll just navigate to the test page
-    router.push("/test");
+  const handleReviewQuestion = async () => {
+    if (weakAreas.length === 0) {
+      // If no weak areas, just navigate to the test page to take a regular test
+      router.push("/test");
+      return;
+    }
+
+    try {
+      setCreatingTest(true);
+      // Get the question IDs from the weak areas
+      const questionIds = weakAreas.map(area => area.question.id);
+      
+      // Create a new test with the weak area question IDs
+      const response = await fetch("/api/tests/custom", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ questionIds }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create test");
+      }
+
+      const data = await response.json();
+      // Navigate to the test with the review flag
+      router.push(`/test/${data.test.id}?review=true`);
+    } catch (error) {
+      console.error("Error creating test for weak areas:", error);
+      router.push("/");
+    } finally {
+      setCreatingTest(false);
+    }
   };
 
   // Show loading indicator while fetching data
@@ -123,8 +154,16 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
             onClick={handleReviewQuestion}
             className="w-full mt-4"
             variant="outline"
+            disabled={creatingTest}
           >
-            Practice These Questions
+            {creatingTest ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                Creating Practice...
+              </>
+            ) : (
+              "Practice These Questions"
+            )}
           </Button>
         </CardContent>
       </Card>
