@@ -12,12 +12,13 @@ import {
 	CarouselContent,
 	CarouselItem,
 } from "@/components/ui/carousel";
+import type { CarouselApi } from "@/components/ui/carousel";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { SignInDialog } from "@/components/SignInDialog";
 
 export default function Features() {
-	const [api, setApi] = useState<any>(null);
+	const [api, setApi] = useState<CarouselApi | null>(null);
 	const [current, setCurrent] = useState(0);
 	const [isSignInOpen, setIsSignInOpen] = useState(false);
 
@@ -25,43 +26,55 @@ export default function Features() {
 		e.preventDefault();
 		setIsSignInOpen(true);
 	};
-	
+
 	const features = [
 		{
+			id: "practice",
 			icon: <BookOpen className="h-24 w-24 text-blue-600" />,
 			title: "Use one-off card details online",
-			description: "Practice with actual questions from your state's DMV test to ensure you're fully prepared.",
+			description:
+				"Practice with actual questions from your state's DMV test to ensure you're fully prepared.",
 		},
 		{
+			id: "progress",
 			icon: <BarChart2 className="h-24 w-24 text-blue-600" />,
 			title: "Progress Tracking",
-			description: "Monitor your improvement over time and focus on areas where you need more practice.",
+			description:
+				"Monitor your improvement over time and focus on areas where you need more practice.",
 		},
 		{
+			id: "guarantee",
 			icon: <Award className="h-24 w-24 text-blue-600" />,
 			title: "Pass Guarantee",
-			description: "Our users are 3x more likely to pass their test on the first attempt.",
+			description:
+				"Our users are 3x more likely to pass their test on the first attempt.",
 		},
 		{
+			id: "efficient",
 			icon: <Clock className="h-24 w-24 text-blue-600" />,
 			title: "Study Efficiently",
-			description: "Our algorithm focuses on your weak areas to maximize your study time.",
+			description:
+				"Our algorithm focuses on your weak areas to maximize your study time.",
 		},
 		{
+			id: "feedback",
 			icon: <CheckCircle className="h-24 w-24 text-blue-600" />,
 			title: "Instant Feedback",
-			description: "Get immediate explanations for every question to understand the correct answers.",
+			description:
+				"Get immediate explanations for every question to understand the correct answers.",
 		},
 		{
+			id: "mobile",
 			icon: <ArrowRight className="h-24 w-24 text-blue-600" />,
 			title: "Mobile Friendly",
-			description: "Study anywhere, anytime on your phone, tablet, or computer.",
+			description:
+				"Study anywhere, anytime on your phone, tablet, or computer.",
 		},
 	];
 
 	useEffect(() => {
 		if (!api) return;
-		
+
 		const onSelect = () => {
 			setCurrent(api.selectedScrollSnap());
 		};
@@ -95,7 +108,7 @@ export default function Features() {
 						</div>
 					</div>
 				</div>
-				
+
 				<div className="w-full px-0 mx-auto relative">
 					<Carousel
 						setApi={setApi}
@@ -107,9 +120,9 @@ export default function Features() {
 						className="w-full"
 					>
 						<CarouselContent className="-ml-4">
-							{features.map((feature, index) => (
-								<CarouselItem 
-									key={index} 
+							{features.map((feature) => (
+								<CarouselItem
+									key={feature.id}
 									className="pl-4 w-[75%] basis-auto"
 								>
 									<FeatureCard
@@ -121,22 +134,25 @@ export default function Features() {
 							))}
 						</CarouselContent>
 					</Carousel>
-					
+
 					<div className="flex justify-center gap-2 mt-8">
-						{features.map((_, index) => (
+						{features.map((feature) => (
 							<button
-								key={index}
+								type="button"
+								key={feature.id}
 								className={`w-2 h-2 rounded-full transition-all ${
-									current === index ? "bg-blue-600 w-4" : "bg-gray-300"
+									current === features.indexOf(feature)
+										? "bg-blue-600 w-4"
+										: "bg-gray-300"
 								}`}
-								onClick={() => api?.scrollTo(index)}
-								aria-label={`Go to slide ${index + 1}`}
+								onClick={() => api?.scrollTo(features.indexOf(feature))}
+								aria-label={`Go to slide ${features.indexOf(feature) + 1}`}
 							/>
 						))}
 					</div>
 				</div>
 			</div>
-			
+
 			<SignInDialog
 				isOpen={isSignInOpen}
 				onClose={() => setIsSignInOpen(false)}
