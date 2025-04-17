@@ -101,6 +101,75 @@ export function Header() {
     </>
   );
 
+  // Extracted desktop navigation component for signed out users
+  const SignedOutDesktopNav = () => (
+    <nav className="hidden md:flex gap-6">
+      <NavLinks />
+    </nav>
+  );
+
+  // Extracted desktop call-to-action component for signed out users
+  const SignedOutDesktopCTA = () => (
+    <div className="hidden md:block">
+      <Button onClick={handleGetStarted}>
+        Get Started
+        <ArrowRight className="h-4 w-4 ml-1" />
+      </Button>
+    </div>
+  );
+
+  // Extracted mobile menu component for signed out users
+  const SignedOutMobileMenu = () => (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="ghost" size="icon" className="md:hidden">
+          <Menu className="h-6 w-6" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="right">
+        <div className="flex flex-col gap-6 mt-8">
+          <NavLinks />
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+
+  // Extracted status display component for signed in users
+  const SignedInUserStatus = () => (
+    <div className="hidden md:flex items-center">
+      {hasActiveSubscription || dbUser?.role === "ADMIN" ? (
+        <>
+          {dbUser?.role === "ADMIN" ? (
+            <Badge 
+              variant="outline" 
+              className="mr-2 font-bold"
+            >
+              ADMIN
+            </Badge>
+          ) : (
+            <Button
+              variant="outline"
+              className="mr-2 h-[38px] flex items-center gap-1 bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100 hover:text-amber-800"
+              onClick={() => setIsSubscriptionDetailsOpen(true)}
+            >
+              <Crown className="h-4 w-4 text-amber-500" />
+              <span>Premium</span>
+            </Button>
+          )}
+        </>
+      ) : (
+        <Button
+          onClick={handleUpgrade}
+          className="mr-2 h-[38px] bg-amber-500 text-white hover:bg-amber-600"
+          variant="default"
+        >
+          <Sparkles className="h-4 w-4" />
+          Upgrade
+        </Button>
+      )}
+    </div>
+  );
+
   return (
     <>
       <header className="sticky top-0 w-full z-50 backdrop-blur-md bg-background/80 border-b">
@@ -113,105 +182,23 @@ export function Header() {
             </Link>
 
             <SignedOut>
-              <nav className="hidden md:flex gap-6">
-                <NavLinks />
-              </nav>
+              <SignedOutDesktopNav />
             </SignedOut>
 
             <div className="flex items-center gap-2">
               <div className="hidden md:block">
                 <ThemeToggle />
               </div>
+              
               <SignedOut>
-                <div className="hidden md:block">
-                  <Button onClick={handleGetStarted}>
-                    Get Started
-                    <ArrowRight className="h-4 w-4 ml-1" />
-                  </Button>
-                </div>
+                <SignedOutDesktopCTA />
+                <SignedOutMobileMenu />
               </SignedOut>
+              
               <SignedIn>
-                <div className="hidden md:flex items-center">
-                  {hasActiveSubscription || dbUser?.role === "ADMIN" ? (
-                    <>
-                      {dbUser?.role === "ADMIN" ? (
-                        <Badge 
-                          variant="outline" 
-                          className="mr-2 font-bold"
-                        >
-                          ADMIN
-                        </Badge>
-                      ) : (
-                        <Button
-                          variant="outline"
-                          className="mr-2 h-[38px] flex items-center gap-1 bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100 hover:text-amber-800"
-                          onClick={() => setIsSubscriptionDetailsOpen(true)}
-                        >
-                          <Crown className="h-4 w-4 text-amber-500" />
-                          <span>Premium</span>
-                        </Button>
-                      )}
-                    </>
-                  ) : (
-                    <Button
-                      onClick={handleUpgrade}
-                      className="mr-2 h-[38px] bg-amber-500 text-white hover:bg-amber-600"
-                      variant="default"
-                    >
-                      <Sparkles className="h-4 w-4" />
-                      Upgrade
-                    </Button>
-                  )}
-                </div>
+                <SignedInUserStatus />
                 <UserButton afterSignOutUrl="/" />
               </SignedIn>
-              
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="md:hidden">
-                    <Menu className="h-6 w-6" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right">
-                  <div className="flex flex-col gap-6 mt-8">
-                    <SignedOut>
-                      <NavLinks />
-                    </SignedOut>
-                    <SignedIn>
-                      {hasActiveSubscription || dbUser?.role === "ADMIN" ? (
-                        <>
-                          {dbUser?.role === "ADMIN" ? (
-                            <Badge 
-                              variant="outline" 
-                              className="font-bold"
-                            >
-                              ADMIN
-                            </Badge>
-                          ) : (
-                            <Button
-                              variant="outline"
-                              className="flex items-center gap-1 bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100 hover:text-amber-800"
-                              onClick={() => setIsSubscriptionDetailsOpen(true)}
-                            >
-                              <Crown className="h-4 w-4 text-amber-500" />
-                              <span>Premium</span>
-                            </Button>
-                          )}
-                        </>
-                      ) : (
-                        <Button
-                          onClick={handleUpgrade}
-                          className="bg-amber-500 text-white hover:bg-amber-600"
-                          variant="default"
-                        >
-                          <Sparkles className="h-4 w-4" />
-                          Upgrade
-                        </Button>
-                      )}
-                    </SignedIn>
-                  </div>
-                </SheetContent>
-              </Sheet>
             </div>
           </div>
         </div>
