@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { Providers } from "@/components/Providers";
 import { Toaster } from "@/components/ui/sonner";
 import { Analytics } from "@vercel/analytics/react";
+import { CookieConsentDialog } from "@/components/CookieConsentDialog";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,11 +36,14 @@ export default function RootLayout({
 	return (
 		<ClerkProvider>
 			<html lang="en" suppressHydrationWarning>
-				<body className={inter.className}>
+				<body className={`${inter.className} bg-blue-700`}>
 					<Providers>
 						<Header />
 						{children}
-						<Toaster />
+						<div className="relative z-[120]">
+							<Toaster />
+						</div>
+						<CookieConsentDialog />
 						<Analytics />
 					</Providers>
 				</body>

@@ -2,8 +2,7 @@
 
 import { SignedIn, SignedOut, UserButton, useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Crown, Menu } from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { Sparkles, Crown, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useState } from "react";
@@ -12,11 +11,7 @@ import { SubscriptionDetailsDialog } from "@/components/SubscriptionDetailsDialo
 import { SignInDialog } from "@/components/SignInDialog";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export function Header() {
   const router = useRouter();
@@ -70,31 +65,31 @@ export function Header() {
     <>
       <Link
         href="#features"
-        className="text-sm font-medium hover:underline underline-offset-4"
+        className="text-base font-medium hover:underline underline-offset-4"
       >
         Features
       </Link>
       <Link
         href="#how-it-works"
-        className="text-sm font-medium hover:underline underline-offset-4"
+        className="text-base font-medium hover:underline underline-offset-4"
       >
         How It Works
       </Link>
       <Link
         href="#pricing"
-        className="text-sm font-medium hover:underline underline-offset-4"
+        className="text-base font-medium hover:underline underline-offset-4"
       >
         Pricing
       </Link>
       <Link
         href="#testimonials"
-        className="text-sm font-medium hover:underline underline-offset-4"
+        className="text-base font-medium hover:underline underline-offset-4"
       >
         Testimonials
       </Link>
       <Link
         href="#faq"
-        className="text-sm font-medium hover:underline underline-offset-4"
+        className="text-base font-medium hover:underline underline-offset-4"
       >
         FAQ
       </Link>
@@ -103,17 +98,26 @@ export function Header() {
 
   // Extracted desktop navigation component for signed out users
   const SignedOutDesktopNav = () => (
-    <nav className="hidden md:flex gap-6">
+    <nav className="hidden md:flex gap-6 ml-8">
       <NavLinks />
     </nav>
   );
 
   // Extracted desktop call-to-action component for signed out users
   const SignedOutDesktopCTA = () => (
-    <div className="hidden md:block">
-      <Button onClick={handleGetStarted}>
-        Get Started
-        <ArrowRight className="h-4 w-4 ml-1" />
+    <div className="hidden md:flex items-center gap-3">
+      <Button
+        onClick={handleGetStarted}
+        variant="outline"
+        className="rounded-full text-base px-6 py-3 h-auto"
+      >
+        Log In
+      </Button>
+      <Button
+        onClick={handleGetStarted}
+        className="rounded-full text-base px-6 py-3 h-auto"
+      >
+        Sign Up
       </Button>
     </div>
   );
@@ -122,9 +126,7 @@ export function Header() {
   const SignedOutMobileMenu = () => (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden">
-          <Menu className="h-6 w-6" />
-        </Button>
+        <Menu className="h-6 w-6" />
       </SheetTrigger>
       <SheetContent side="right">
         <div className="flex flex-col gap-6 mt-8">
@@ -140,10 +142,7 @@ export function Header() {
       {hasActiveSubscription || dbUser?.role === "ADMIN" ? (
         <>
           {dbUser?.role === "ADMIN" ? (
-            <Badge 
-              variant="outline" 
-              className="mr-2 font-bold"
-            >
+            <Badge variant="outline" className="mr-2 font-bold">
               ADMIN
             </Badge>
           ) : (
@@ -172,29 +171,27 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 w-full z-50 backdrop-blur-md bg-background/80 border-b">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" onClick={handleLogoClick}>
-              <h1 className="text-xl font-bold bg-blue-600 text-white px-3 py-1 rounded">
-                DMV.gg
-              </h1>
-            </Link>
+      <header className="sticky top-0 w-full z-50 p-4 pt-6 md:pt-12">
+        <div className="container mx-auto px-2 md:px-6">
+          <div className="flex items-center justify-between bg-white rounded-full border shadow-sm px-8 py-4 md:py-4">
+            <div className="flex items-center">
+              <Link href="/" onClick={handleLogoClick}>
+                <h1 className="flex items-center text-xl md:text-2xl font-bold py-1 rounded-full">
+                  DMV.gg
+                </h1>
+              </Link>
 
-            <SignedOut>
-              <SignedOutDesktopNav />
-            </SignedOut>
+              <SignedOut>
+                <SignedOutDesktopNav />
+              </SignedOut>
+            </div>
 
-            <div className="flex items-center gap-2">
-              <div className="hidden md:block">
-                <ThemeToggle />
-              </div>
-              
+            <div className="flex items-center gap-3 md:gap-4">
               <SignedOut>
                 <SignedOutDesktopCTA />
                 <SignedOutMobileMenu />
               </SignedOut>
-              
+
               <SignedIn>
                 <SignedInUserStatus />
                 <UserButton afterSignOutUrl="/" />
@@ -204,23 +201,18 @@ export function Header() {
         </div>
       </header>
 
-      <PricingDialog
-        isOpen={isPricingOpen}
-        onClose={() => setIsPricingOpen(false)}
-        onPlanSelect={(plan) => {
-          handlePlanSelect(plan);
-          setIsPricingOpen(false);
-        }}
-      />
-
-      <SubscriptionDetailsDialog
-        isOpen={isSubscriptionDetailsOpen}
-        onClose={() => setIsSubscriptionDetailsOpen(false)}
-      />
-
       <SignInDialog
         isOpen={isSignInOpen}
         onClose={() => setIsSignInOpen(false)}
+      />
+      <PricingDialog
+        isOpen={isPricingOpen}
+        onClose={() => setIsPricingOpen(false)}
+        onPlanSelect={handlePlanSelect}
+      />
+      <SubscriptionDetailsDialog
+        isOpen={isSubscriptionDetailsOpen}
+        onClose={() => setIsSubscriptionDetailsOpen(false)}
       />
     </>
   );
