@@ -77,13 +77,13 @@ const SheetContent = React.forwardRef<
         <div className="border-t w-full"></div>
         <div className="flex flex-row gap-2 p-6 px-8">
           <Button
+            variant="outline"
             className="rounded-full flex-1" 
             onClick={() => window.location.href = "/sign-in"}
           >
             Log In
           </Button>
           <Button
-            variant="outline"
             className="rounded-full flex-1"
             onClick={() => window.location.href = "/sign-up"}
           >

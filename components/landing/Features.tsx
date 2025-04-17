@@ -13,7 +13,7 @@ import {
 	CarouselItem,
 } from "@/components/ui/carousel";
 import type { CarouselApi } from "@/components/ui/carousel";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { SignInDialog } from "@/components/SignInDialog";
 
@@ -21,6 +21,8 @@ export default function Features() {
 	const [api, setApi] = useState<CarouselApi | null>(null);
 	const [current, setCurrent] = useState(0);
 	const [isSignInOpen, setIsSignInOpen] = useState(false);
+	const [autoplay, setAutoplay] = useState(true);
+	const AUTOPLAY_INTERVAL = 5000; // 5 seconds
 
 	const handleStartPracticing = (e: React.MouseEvent) => {
 		e.preventDefault();
@@ -85,31 +87,56 @@ export default function Features() {
 		};
 	}, [api]);
 
+	// Add autoplay functionality
+	const scrollToNextItem = useCallback(() => {
+		if (!api) return;
+		
+		const nextIndex = (current + 1) % features.length;
+		api.scrollTo(nextIndex);
+	}, [api, current, features.length]);
+
+	useEffect(() => {
+		let intervalId: NodeJS.Timeout;
+		
+		if (autoplay && api) {
+			intervalId = setInterval(scrollToNextItem, AUTOPLAY_INTERVAL);
+		}
+		
+		return () => {
+			if (intervalId) clearInterval(intervalId);
+		};
+	}, [autoplay, api, scrollToNextItem]);
+
+	// Pause autoplay on hover/interaction
+	const handleMouseEnter = () => setAutoplay(false);
+	const handleMouseLeave = () => setAutoplay(true);
+
 	return (
-		<section id="features" className="w-full py-16 md:py-20 lg:py-24">
+		<section id="features" className="w-full py-16 md:py-20 lg:py-24 bg-yellow-300">
 			<div className="container mx-auto px-4">
-				<div className="flex flex-col items-start justify-center space-y-4 text-left mb-10">
-					<div className="space-y-2">
-						<h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
-							Everything You Need to Pass Your Test
-						</h2>
-						<p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-							Our platform is designed to help you learn efficiently and pass
-							your DMV knowledge test on the first try.
-						</p>
-						<div className="flex gap-2">
-							<Button
-								size="lg"
-								className="rounded-full px-6 inline-flex"
-								onClick={handleStartPracticing}
-							>
-								Get started
-							</Button>
+				<div className="grid gap-6 lg:grid-cols-[1fr_600px] lg:gap-12 xl:grid-cols-[1fr_700px]">
+					<div className="flex flex-col justify-center space-y-4 md:space-y-8">
+						<div className="space-y-2 md:space-y-6">
+							<h2 className="text-4xl font-bold tracking-tighter text-black sm:text-5xl md:text-5xl lg:text-6xl">
+								Everything You Need to Pass Your Test
+							</h2>
+							<p className="max-w-[600px] text-black md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+								Our platform is designed to help you learn efficiently and pass
+								your DMV knowledge test on the first try.
+							</p>
+							<div className="flex gap-2">
+								<Button
+									className="rounded-full text-base px-6 py-3 h-auto bg-blue-600 text-white hover:bg-blue-700 hover:text-white"
+									onClick={handleStartPracticing}
+								>
+									Get started
+								</Button>
+							</div>
 						</div>
 					</div>
 				</div>
 
-				<div className="w-full px-0 mx-auto relative">
+				<div className="w-full px-0 mx-auto relative mt-10">
 					<Carousel
 						setApi={setApi}
 						opts={{
@@ -118,6 +145,8 @@ export default function Features() {
 							containScroll: false,
 						}}
 						className="w-full"
+						onMouseEnter={handleMouseEnter}
+						onMouseLeave={handleMouseLeave}
 					>
 						<CarouselContent className="-ml-4">
 							{features.map((feature) => (
