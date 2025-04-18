@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Baloo_Bhai_2 } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Header } from "@/components/Header";
@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Analytics } from "@vercel/analytics/react";
 import { CookieConsentDialog } from "@/components/CookieConsentDialog";
 
-const inter = Inter({ subsets: ["latin"] });
+const balooBhai2 = Baloo_Bhai_2({ weight: ["400", "700"], subsets: ["latin"] });
 
 export const metadata: Metadata = {
 	title: "DMV.gg - Ace Your DMV Test",
@@ -36,7 +36,7 @@ export default function RootLayout({
 	return (
 		<ClerkProvider>
 			<html lang="en" suppressHydrationWarning>
-				<body className={`${inter.className} bg-[#000099]`}>
+				<body className={`${balooBhai2.className} bg-[#000099]`}>
 					<Providers>
 						<Header />
 						{children}

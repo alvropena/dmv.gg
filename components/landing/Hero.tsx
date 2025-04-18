@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { SignInDialog } from "@/components/SignInDialog";
-
+import { ArrowRight } from "lucide-react";
 export default function Hero() {
 	const [isSignInOpen, setIsSignInOpen] = useState(false);
 
@@ -18,8 +18,8 @@ export default function Hero() {
 				<div className="grid gap-6 lg:grid-cols-[1fr_600px] lg:gap-12 xl:grid-cols-[1fr_700px]">
 					<div className="flex flex-col justify-center space-y-4 md:space-y-8">
 						<div className="space-y-2 md:space-y-6">
-							<h1 className="text-4xl font-bold tracking-tighter text-[#B6DBFF] sm:text-5xl md:text-5xl lg:text-6xl">
-								Ace Your DMV Knowledge Test
+							<h1 className="text-4xl font-extrabold tracking-tighter text-[#B6DBFF] sm:text-5xl md:text-5xl lg:text-7xl xl:text-8xl">
+								Ace your DMV Knowledge Test
 							</h1>
 							<p className="max-w-[600px] text-[#B6DBFF] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
 								Practice with real questions from the California DMV, track your
@@ -28,10 +28,11 @@ export default function Hero() {
 						</div>
 						<div className="flex gap-2">
 							<Button
-								className="rounded-full text-base font-bold px-6 py-3 h-auto bg-[#FFF25F] text-black hover:bg-[#FFF25F]/90 hover:text-black"
+								className="rounded-full text-lg px-6 py-4 h-auto bg-[#FFF25F] text-black hover:bg-[#FFF25F]/90 hover:text-black"
 								onClick={handleStartPracticing}
 							>
-								Get started
+								Get the app 
+								<ArrowRight className="w-4 h-4" />
 							</Button>
 						</div>
 					</div>

@@ -65,35 +65,35 @@ export function Header() {
     <>
       <Button
         variant="ghost"
-        className="text-md font-light px-6 py-3 h-auto rounded-full"
+        className="text-lg font-light px-6 py-4 h-auto rounded-full"
         onClick={() => window.location.href = '#features'}
       >
         Features
       </Button>
       <Button
         variant="ghost"
-        className="text-md font-light px-6 py-3 h-auto rounded-full"
+        className="text-lg font-light px-6 py-4 h-auto rounded-full"
         onClick={() => window.location.href = '#how-it-works'}
       >
         How It Works
       </Button>
       <Button
         variant="ghost"
-        className="text-md font-light px-6 py-3 h-auto rounded-full"
+        className="text-lg font-light px-6 py-4 h-auto rounded-full"
         onClick={() => window.location.href = '#pricing'}
       >
         Pricing
       </Button>
       <Button
         variant="ghost"
-        className="text-md font-light px-6 py-3 h-auto rounded-full"
+        className="text-lg font-light px-6 py-4 h-auto rounded-full"
         onClick={() => window.location.href = '#testimonials'}
       >
         Testimonials
       </Button>
       <Button
         variant="ghost"
-        className="text-md font-light px-6 py-3 h-auto rounded-full"
+        className="text-lg font-light px-6 py-4 h-auto rounded-full"
         onClick={() => window.location.href = '#faq'}
       >
         FAQ
@@ -114,13 +114,13 @@ export function Header() {
       <Button
         onClick={handleGetStarted}
         variant="outline"
-        className="rounded-full text-base px-6 py-3 h-auto"
+        className="rounded-full text-lg px-6 py-4 h-auto"
       >
         Log In
       </Button>
       <Button
         onClick={handleGetStarted}
-        className="rounded-full text-base px-6 py-3 h-auto"
+        className="rounded-full text-lg px-6 py-4 h-auto"
       >
         Sign Up
       </Button>
