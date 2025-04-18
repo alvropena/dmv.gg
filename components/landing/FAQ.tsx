@@ -46,7 +46,7 @@ export default function FAQ() {
 			<div className="container mx-auto px-6">
 				<div className="flex flex-col items-center justify-center space-y-4 text-center">
 					<div className="space-y-2">
-						<h2 className="text-3xl font-bold tracking-tighter md:text-6xl/tight text-white">
+						<h2 className="text-5xl font-extrabold tracking-tighter text-[#9E2A2B] sm:text-5xl md:text-5xl lg:text-7xl xl:text-8xl">
 							Got questions?
 						</h2>
 					</div>
@@ -61,10 +61,10 @@ export default function FAQ() {
 							>
 								{faqItems.map((item) => (
 									<AccordionItem key={item.question} value={item.question} className="border-b border-white/20">
-										<AccordionTrigger className="text-left text-xl font-semibold px-6 text-white hover:text-white/90">
+										<AccordionTrigger className="text-left text-xl font-semibold px-6 text-[#9E2A2B] hover:text-[#9E2A2B]/90">
 											{item.question}
 										</AccordionTrigger>
-										<AccordionContent className="text-white/90 px-6">
+										<AccordionContent className="text-[#9E2A2B] px-6">
 											{item.answer}
 										</AccordionContent>
 									</AccordionItem>
