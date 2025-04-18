@@ -11,22 +11,22 @@ export default function Footer() {
 								DMV.gg
 							</div>
 						</Link>
-						<p className="text-sm text-muted-foreground">
+						<p className="text-sm text-[#B6DBFF]">
 							Helping drivers pass their DMV knowledge test since 2025.
 						</p>
-						<p className="text-sm text-muted-foreground">
+						<p className="text-sm text-[#B6DBFF]">
 							© {new Date().getFullYear()} Latino Excellence. All rights
 							reserved.
 						</p>
 					</div>
 					<div className="grid grid-cols-2 gap-10 sm:grid-cols-4">
 						<div className="space-y-3">
-							<h3 className="text-sm font-medium">Platform</h3>
+							<h3 className="text-sm font-medium text-[#B6DBFF]">Platform</h3>
 							<ul className="space-y-2">
 								<li>
 									<Link
 										href="#features"
-										className="text-sm text-muted-foreground hover:underline"
+										className="text-sm text-[#B6DBFF] hover:underline"
 									>
 										Features
 									</Link>
@@ -34,7 +34,7 @@ export default function Footer() {
 								<li>
 									<Link
 										href="#pricing"
-										className="text-sm text-muted-foreground hover:underline"
+										className="text-sm text-[#B6DBFF] hover:underline"
 									>
 										Pricing
 									</Link>
@@ -42,12 +42,12 @@ export default function Footer() {
 							</ul>
 						</div>
 						<div className="space-y-3">
-							<h3 className="text-sm font-medium">Resources</h3>
+							<h3 className="text-sm font-medium text-[#B6DBFF]">Resources</h3>
 							<ul className="space-y-2">
 								<li>
 									<Link
 										href="/blog"
-										className="text-sm text-muted-foreground hover:underline"
+										className="text-sm text-[#B6DBFF] hover:underline"
 									>
 										Blog
 									</Link>
@@ -55,7 +55,7 @@ export default function Footer() {
 								<li>
 									<Link
 										href="https://www.dmv.ca.gov/portal/locations/"
-										className="text-sm text-muted-foreground hover:underline"
+										className="text-sm text-[#B6DBFF] hover:underline"
 										target="_blank"
 										rel="noopener noreferrer"
 									>
@@ -65,7 +65,7 @@ export default function Footer() {
 								<li>
 									<Link
 										href="https://www.dmv.ca.gov/portal/file/california-driver-handbook-pdf/"
-										className="text-sm text-muted-foreground hover:underline"
+										className="text-sm text-[#B6DBFF] hover:underline"
 										target="_blank"
 										rel="noopener noreferrer"
 									>
@@ -75,12 +75,12 @@ export default function Footer() {
 							</ul>
 						</div>
 						<div className="space-y-3">
-							<h3 className="text-sm font-medium">Company</h3>
+							<h3 className="text-sm font-medium text-[#B6DBFF]">Company</h3>
 							<ul className="space-y-2">
 								<li>
 									<Link
 										href="https://excellence.lat/about"
-										className="text-sm text-muted-foreground hover:underline"
+										className="text-sm text-[#B6DBFF] hover:underline"
 										target="_blank"
 										rel="noopener noreferrer"
 									>
@@ -90,7 +90,7 @@ export default function Footer() {
 								<li>
 									<Link
 										href="https://excellence.lat/careers"
-										className="text-sm text-muted-foreground hover:underline"
+										className="text-sm text-[#B6DBFF] hover:underline"
 										target="_blank"
 										rel="noopener noreferrer"
 									>
@@ -100,7 +100,7 @@ export default function Footer() {
 								<li>
 									<Link
 										href="mailto:support@dmv.gg"
-										className="text-sm text-muted-foreground hover:underline"
+										className="text-sm text-[#B6DBFF] hover:underline"
 									>
 										Contact
 									</Link>
@@ -108,12 +108,12 @@ export default function Footer() {
 							</ul>
 						</div>
 						<div className="space-y-3">
-							<h3 className="text-sm font-medium">Legal</h3>
+							<h3 className="text-sm font-medium text-[#B6DBFF]">Legal</h3>
 							<ul className="space-y-2">
 								<li>
 									<Link
 										href="/privacy"
-										className="text-sm text-muted-foreground hover:underline"
+										className="text-sm text-[#B6DBFF] hover:underline"
 									>
 										Privacy Policy
 									</Link>
@@ -121,7 +121,7 @@ export default function Footer() {
 								<li>
 									<Link
 										href="/terms"
-										className="text-sm text-muted-foreground hover:underline"
+										className="text-sm text-[#B6DBFF] hover:underline"
 									>
 										Terms of Service
 									</Link>
@@ -129,7 +129,7 @@ export default function Footer() {
 								<li>
 									<Link
 										href="/cookies"
-										className="text-sm text-muted-foreground hover:underline"
+										className="text-sm text-[#B6DBFF] hover:underline"
 									>
 										Cookie Policy
 									</Link>

@@ -112,13 +112,13 @@ export default function Features() {
 	const handleMouseLeave = () => setAutoplay(true);
 
 	return (
-		<section id="features" className="w-full py-8 min-h-screen flex items-center md:min-h-[85vh] md:py-12 lg:py-52 bg-[#FFF25F]">
+		<section id="features" className="w-full py-28 min-h-screen flex items-center md:min-h-[85vh] md:py-12 lg:py-52 bg-[#FFF25F]">
 			<div className="container mx-auto px-6">
 				<div className="grid gap-6 lg:gap-12">
 					<div className="flex flex-col justify-center items-center text-center space-y-4 md:space-y-8">
 						<div className="space-y-2 md:space-y-6 max-w-5xl mx-auto">
-							<h2 className="text-4xl font-extrabold tracking-tighter text-[#3F3500] sm:text-5xl md:text-5xl lg:text-7xl xl:text-8xl">
-								Everything You Need to Pass Your Test
+							<h2 className="text-5xl font-extrabold tracking-tighter text-[#3F3500] sm:text-5xl md:text-5xl lg:text-7xl xl:text-8xl">
+								Pass Your Test With Confidence
 							</h2>
 							<p className="text-[#3F3500] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
 								Our platform is designed to help you learn efficiently and pass

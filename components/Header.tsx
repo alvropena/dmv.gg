@@ -109,13 +109,13 @@ export function Header() {
         variant="outline"
         className="rounded-full text-lg px-6 py-4 h-auto"
       >
-        Log In
+        Log in
       </Button>
       <Button
         onClick={handleGetStarted}
         className="rounded-full text-lg px-6 py-4 h-auto"
       >
-        Sign Up
+        Sign up
       </Button>
     </div>
   );
@@ -129,12 +129,46 @@ export function Header() {
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="right">
-        <div className="flex flex-col gap-6 mt-8">
-          <NavLinks />
+      <SheetContent side="left">
+        <div className="flex flex-col justify-end h-full pb-6">
+          <div className="flex flex-col gap-6 items-center w-full">
+            <NavLinks />
+            <Button
+              onClick={handleGetStarted}
+              variant="outline"
+              className="w-full rounded-full text-lg font-light px-6 py-4 h-auto text-center"
+            >
+              Log in
+            </Button>
+            <Button
+              onClick={handleGetStarted}
+              className="w-full rounded-full text-lg font-light px-6 py-4 h-auto text-center"
+            >
+              Sign up
+            </Button>
+          </div>
         </div>
       </SheetContent>
     </Sheet>
+  );
+
+  // Mobile login button
+  const MobileLoginButton = () => (
+    <div className="md:hidden flex items-center gap-2">
+      <Button
+        onClick={handleGetStarted}
+        variant="outline"
+        className="rounded-full text-base px-4 py-2 h-auto"
+      >
+        Log in
+      </Button>
+      <Button
+        onClick={handleGetStarted}
+        className="rounded-full text-base px-4 py-2 h-auto"
+      >
+        Sign up
+      </Button>
+    </div>
   );
 
   // Extracted status display component for signed in users
@@ -174,9 +208,13 @@ export function Header() {
     <>
       <header className="sticky top-0 w-full z-50 p-4 pt-6 md:pt-12">
         <div className="container mx-auto px-2 md:px-6">
-          <div className="flex items-center justify-between bg-white rounded-full border shadow-sm px-8 py-4 md:py-4">
+          <div className="flex items-center justify-between bg-white rounded-full border shadow-sm px-4 md:px-8 py-3 md:py-4">
             <div className="flex items-center">
-              <Link href="/" onClick={handleLogoClick}>
+              <div className="block md:hidden">
+                <SignedOutMobileMenu />
+              </div>
+              
+              <Link href="/" onClick={handleLogoClick} className="hidden md:block">
                 <h1 className="flex items-center text-xl md:text-2xl py-1 rounded-full font-bold">
                   DMV.gg
                 </h1>
@@ -190,9 +228,7 @@ export function Header() {
             <div className="flex items-center gap-3 md:gap-4">
               <SignedOut>
                 <SignedOutDesktopCTA />
-                <div className="block md:hidden">
-                  <SignedOutMobileMenu />
-                </div>
+                <MobileLoginButton />
               </SignedOut>
 
               <SignedIn>
