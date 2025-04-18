@@ -112,24 +112,24 @@ export default function Features() {
 	const handleMouseLeave = () => setAutoplay(true);
 
 	return (
-		<section id="features" className="w-full py-16 md:py-20 lg:py-24 bg-[#FFF25F]">
+		<section id="features" className="w-full py-8 min-h-screen flex items-center md:min-h-[85vh] md:py-12 lg:py-52 bg-[#FFF25F]">
 			<div className="container mx-auto px-6">
-				<div className="grid gap-6 lg:grid-cols-[1fr_600px] lg:gap-12 xl:grid-cols-[1fr_700px]">
-					<div className="flex flex-col justify-center space-y-4 md:space-y-8">
-						<div className="space-y-2 md:space-y-6">
-							<h2 className="text-4xl font-bold tracking-tighter text-black sm:text-5xl md:text-5xl lg:text-6xl">
+				<div className="grid gap-6 lg:gap-12">
+					<div className="flex flex-col justify-center items-center text-center space-y-4 md:space-y-8">
+						<div className="space-y-2 md:space-y-6 max-w-5xl mx-auto">
+							<h2 className="text-4xl font-extrabold tracking-tighter text-[#3F3500] sm:text-5xl md:text-5xl lg:text-7xl xl:text-8xl">
 								Everything You Need to Pass Your Test
 							</h2>
-							<p className="max-w-[600px] text-black md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+							<p className="text-[#3F3500] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
 								Our platform is designed to help you learn efficiently and pass
 								your DMV knowledge test on the first try.
 							</p>
-							<div className="flex gap-2">
+							<div className="flex gap-2 justify-center">
 								<Button
-									className="rounded-full text-base px-6 py-3 h-auto bg-[#000099] text-white hover:bg-[#000099]/90 hover:text-white"
+									className="rounded-full text-lg px-6 py-4 h-auto bg-[#3F3500] text-white hover:bg-[#3F3500]/90 hover:text-white"
 									onClick={handleStartPracticing}
 								>
-									Get started
+									Get started for free
 								</Button>
 							</div>
 						</div>

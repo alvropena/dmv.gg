@@ -78,21 +78,23 @@ export default function Testimonials() {
 	);
 
 	return (
-		<section id="testimonials" className="w-full py-16 md:py-20 lg:py-24">
-			<div className="container mx-auto px-4">
-				<div className="flex flex-col items-start justify-center space-y-4 text-left">
-					<div className="space-y-2">
-						<h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
-							Hear From Our Users
-						</h2>
-						<p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-							Thousands of drivers have used DMV.gg to pass their knowledge test
-							on the first try.
-						</p>
+		<section id="testimonials" className="w-full py-8 min-h-screen flex items-center md:min-h-[85vh] md:py-12 lg:py-24">
+			<div className="container mx-auto px-6">
+				<div className="grid gap-6 lg:gap-12">
+					<div className="flex flex-col justify-center items-center text-center space-y-4 md:space-y-8">
+						<div className="space-y-2 md:space-y-6 max-w-5xl mx-auto">
+							<h2 className="text-4xl font-extrabold tracking-tighter text-[#93BBFF] sm:text-5xl md:text-5xl lg:text-7xl xl:text-8xl">
+								Hear From Our Users
+							</h2>
+							<p className="text-[#93BBFF] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+								Thousands of drivers have used DMV.gg to pass their knowledge test
+								on the first try.
+							</p>
+						</div>
 					</div>
 				</div>
 
-				<div className="mx-auto max-w-5xl mt-8">
+				<div className="mx-auto max-w-5xl mt-12 md:mt-16">
 					<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 						{visibleTestimonials.map((testimonial) => (
 							<Card

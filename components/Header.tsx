@@ -73,13 +73,6 @@ export function Header() {
       <Button
         variant="ghost"
         className="text-lg font-light px-6 py-4 h-auto rounded-full"
-        onClick={() => window.location.href = '#how-it-works'}
-      >
-        How It Works
-      </Button>
-      <Button
-        variant="ghost"
-        className="text-lg font-light px-6 py-4 h-auto rounded-full"
         onClick={() => window.location.href = '#pricing'}
       >
         Pricing
@@ -184,7 +177,7 @@ export function Header() {
           <div className="flex items-center justify-between bg-white rounded-full border shadow-sm px-8 py-4 md:py-4">
             <div className="flex items-center">
               <Link href="/" onClick={handleLogoClick}>
-                <h1 className="flex items-center text-xl md:text-2xl font-bold py-1 rounded-full">
+                <h1 className="flex items-center text-xl md:text-2xl py-1 rounded-full font-bold">
                   DMV.gg
                 </h1>
               </Link>
