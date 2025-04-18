@@ -112,8 +112,8 @@ export default function Features() {
 	const handleMouseLeave = () => setAutoplay(true);
 
 	return (
-		<section id="features" className="w-full py-16 md:py-20 lg:py-24 bg-yellow-300">
-			<div className="container mx-auto px-4">
+		<section id="features" className="w-full py-16 md:py-20 lg:py-24 bg-[#FFF25F]">
+			<div className="container mx-auto px-6">
 				<div className="grid gap-6 lg:grid-cols-[1fr_600px] lg:gap-12 xl:grid-cols-[1fr_700px]">
 					<div className="flex flex-col justify-center space-y-4 md:space-y-8">
 						<div className="space-y-2 md:space-y-6">
@@ -126,7 +126,7 @@ export default function Features() {
 							</p>
 							<div className="flex gap-2">
 								<Button
-									className="rounded-full text-base px-6 py-3 h-auto bg-blue-600 text-white hover:bg-blue-700 hover:text-white"
+									className="rounded-full text-base px-6 py-3 h-auto bg-[#000099] text-white hover:bg-[#000099]/90 hover:text-white"
 									onClick={handleStartPracticing}
 								>
 									Get started

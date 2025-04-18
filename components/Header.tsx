@@ -63,42 +63,47 @@ export function Header() {
 
   const NavLinks = () => (
     <>
-      <Link
-        href="#features"
-        className="text-base font-medium hover:underline underline-offset-4"
+      <Button
+        variant="ghost"
+        className="text-md font-light px-6 py-3 h-auto rounded-full"
+        onClick={() => window.location.href = '#features'}
       >
         Features
-      </Link>
-      <Link
-        href="#how-it-works"
-        className="text-base font-medium hover:underline underline-offset-4"
+      </Button>
+      <Button
+        variant="ghost"
+        className="text-md font-light px-6 py-3 h-auto rounded-full"
+        onClick={() => window.location.href = '#how-it-works'}
       >
         How It Works
-      </Link>
-      <Link
-        href="#pricing"
-        className="text-base font-medium hover:underline underline-offset-4"
+      </Button>
+      <Button
+        variant="ghost"
+        className="text-md font-light px-6 py-3 h-auto rounded-full"
+        onClick={() => window.location.href = '#pricing'}
       >
         Pricing
-      </Link>
-      <Link
-        href="#testimonials"
-        className="text-base font-medium hover:underline underline-offset-4"
+      </Button>
+      <Button
+        variant="ghost"
+        className="text-md font-light px-6 py-3 h-auto rounded-full"
+        onClick={() => window.location.href = '#testimonials'}
       >
         Testimonials
-      </Link>
-      <Link
-        href="#faq"
-        className="text-base font-medium hover:underline underline-offset-4"
+      </Button>
+      <Button
+        variant="ghost"
+        className="text-md font-light px-6 py-3 h-auto rounded-full"
+        onClick={() => window.location.href = '#faq'}
       >
         FAQ
-      </Link>
+      </Button>
     </>
   );
 
   // Extracted desktop navigation component for signed out users
   const SignedOutDesktopNav = () => (
-    <nav className="hidden md:flex gap-6 ml-8">
+    <nav className="hidden md:flex gap-2 ml-8">
       <NavLinks />
     </nav>
   );
@@ -126,7 +131,10 @@ export function Header() {
   const SignedOutMobileMenu = () => (
     <Sheet>
       <SheetTrigger asChild>
-        <Menu className="h-6 w-6" />
+        <Button variant="ghost" size="icon" className="md:hidden">
+          <Menu className="h-6 w-6" />
+          <span className="sr-only">Toggle menu</span>
+        </Button>
       </SheetTrigger>
       <SheetContent side="right">
         <div className="flex flex-col gap-6 mt-8">
@@ -189,7 +197,9 @@ export function Header() {
             <div className="flex items-center gap-3 md:gap-4">
               <SignedOut>
                 <SignedOutDesktopCTA />
-                <SignedOutMobileMenu />
+                <div className="block md:hidden">
+                  <SignedOutMobileMenu />
+                </div>
               </SignedOut>
 
               <SignedIn>

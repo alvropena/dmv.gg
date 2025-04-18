@@ -36,7 +36,7 @@ export default function RootLayout({
 	return (
 		<ClerkProvider>
 			<html lang="en" suppressHydrationWarning>
-				<body className={`${inter.className} bg-blue-700`}>
+				<body className={`${inter.className} bg-[#000099]`}>
 					<Providers>
 						<Header />
 						{children}

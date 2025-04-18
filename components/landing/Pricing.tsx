@@ -88,24 +88,24 @@ export default function Pricing() {
 						<Badge variant="default">Most Popular</Badge>
 					</div>
 				)}
-				<h3 className="font-semibold text-3xl text-center">
+				<h3 className="font-semibold text-3xl text-center text-white">
 					{price.name.replace("DMV.gg ", "")}
 				</h3>
 				<div className="flex items-baseline mt-4">
-					<span className="text-3xl font-bold">{amount}</span>
-					<span className="ml-1 text-xs">{interval}</span>
+					<span className="text-3xl font-bold text-white">{amount}</span>
+					<span className="ml-1 text-xs text-white">{interval}</span>
 				</div>
-				<p className="text-sm mt-2">{price.description}</p>
+				<p className="text-sm mt-2 text-white">{price.description}</p>
 				<div className="flex-grow mt-6 space-y-4">
 					{price.features && price.features.length > 0 ? (
 						price.features.map((feature) => (
 							<div key={feature} className="flex items-center gap-2">
-								<Check className="h-4 w-4 flex-shrink-0" />
-								<span className="text-sm">{feature}</span>
+								<Check className="h-4 w-4 flex-shrink-0 text-white" />
+								<span className="text-sm text-white">{feature}</span>
 							</div>
 						))
 					) : (
-						<div className="text-sm">No features specified</div>
+						<div className="text-sm text-white">No features specified</div>
 					)}
 				</div>
 				<Button
@@ -140,9 +140,9 @@ export default function Pricing() {
 							}`}
 							onClick={() => setSelectedPlan("weekly")}
 						>
-							<div className="text-xs text-center">Weekly</div>
+							<div className="text-xs text-center text-white">Weekly</div>
 							{prices.find((p) => getPlanType(p) === "weekly") && (
-								<div className="font-bold text-sm text-center">
+								<div className="font-bold text-sm text-center text-white">
 									{formatCurrency(
 										prices.find((p) => getPlanType(p) === "weekly")
 											?.unitAmount || 0,
@@ -161,9 +161,9 @@ export default function Pricing() {
 						}`}
 						onClick={() => setSelectedPlan("monthly")}
 					>
-						<div className="text-xs text-center">Monthly</div>
+						<div className="text-xs text-center text-white">Monthly</div>
 						{prices.find((p) => getPlanType(p) === "monthly") && (
-							<div className="font-bold text-sm text-center">
+							<div className="font-bold text-sm text-center text-white">
 								{formatCurrency(
 									prices.find((p) => getPlanType(p) === "monthly")
 										?.unitAmount || 0,
@@ -181,9 +181,9 @@ export default function Pricing() {
 						}`}
 						onClick={() => setSelectedPlan("lifetime")}
 					>
-						<div className="text-xs text-center">Lifetime</div>
+						<div className="text-xs text-center text-white">Lifetime</div>
 						{prices.find((p) => getPlanType(p) === "lifetime") && (
-							<div className="font-bold text-sm text-center">
+							<div className="font-bold text-sm text-center text-white">
 								{formatCurrency(
 									prices.find((p) => getPlanType(p) === "lifetime")
 										?.unitAmount || 0,
@@ -198,14 +198,14 @@ export default function Pricing() {
 				{/* Selected plan features */}
 				{selectedPlan && prices.length > 0 && (
 					<Card className="p-6">
-						<h3 className="font-semibold mb-4">Included Features:</h3>
+						<h3 className="font-semibold mb-4 text-white">Included Features:</h3>
 						<div className="space-y-2">
 							{prices
 								.find((p) => getPlanType(p) === selectedPlan)
 								?.features?.map((feature) => (
 									<div key={feature} className="flex items-center gap-2">
-										<Check className="h-4 w-4 flex-shrink-0" />
-										<span className="text-sm">{feature}</span>
+										<Check className="h-4 w-4 flex-shrink-0 text-white" />
+										<span className="text-sm text-white">{feature}</span>
 									</div>
 								))}
 						</div>
@@ -250,10 +250,10 @@ export default function Pricing() {
 			<div className="container mx-auto px-4">
 				<div className="flex flex-col items-start justify-center space-y-4 text-left">
 					<div className="space-y-2">
-						<h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
+						<h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight text-white">
 							Choose Your Plan
 						</h2>
-						<p className="max-w-[900px] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+						<p className="max-w-[900px] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed text-white">
 							Select the plan that works best for you. Cancel anytime.
 						</p>
 					</div>

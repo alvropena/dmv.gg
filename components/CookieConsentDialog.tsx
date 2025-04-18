@@ -174,16 +174,21 @@ export function CookieConsentDialog() {
             </p>
           </CardContent>
           <CardFooter className="flex flex-col items-stretch space-y-2 px-4 pb-4 pt-0">
-            <Button className="w-full rounded-full px-6" onClick={acceptAllCookies}>
-              Allow all cookies
-            </Button>
-            <Button
-              variant="outline"
-              className="w-full rounded-full px-6"
-              onClick={rejectAllCookies}
-            >
-              Reject all cookies
-            </Button>
+            <div className="flex w-full gap-2">
+              <Button 
+                className="w-1/2 rounded-full px-6 bg-[#000099] hover:bg-[#000099]/90" 
+                onClick={acceptAllCookies}
+              >
+                Allow all cookies
+              </Button>
+              <Button
+                variant="outline"
+                className="w-1/2 rounded-full px-6"
+                onClick={rejectAllCookies}
+              >
+                Reject all cookies
+              </Button>
+            </div>
             <Button
               variant="ghost"
               className="w-full rounded-full px-6"

@@ -1,6 +1,5 @@
 import Hero from "./Hero"
 import Features from "./Features"
-import Pricing from "./Pricing"
 import HowItWorks from "./HowItWorks"
 import Testimonials from "./Testimonials"
 import FAQ from "./FAQ"
@@ -13,7 +12,6 @@ export default function LandingPage() {
       <main className="flex-1">
         <Hero />
         <Features />
-        <Pricing />
         <HowItWorks />
         <Testimonials />
         <FAQ />
