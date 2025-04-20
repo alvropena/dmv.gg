@@ -228,7 +228,7 @@ export function SubscriptionDetailsDialog({
 															Canceled
 														</Badge>
 													) : (
-														<Badge variant="success" className="rounded-full">
+														<Badge variant="secondary" className="rounded-full">
 															<CheckCircle className="h-3 w-3 mr-1" />
 															Active
 														</Badge>

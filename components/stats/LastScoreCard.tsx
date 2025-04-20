@@ -27,7 +27,7 @@ export function LastScoreCard({
           <>
             <span className="text-4xl font-bold">{lastScore}%</span>
             <div className="mt-1">
-              <Badge variant={lastScore >= 70 ? "success" : "destructive"}>
+              <Badge variant={lastScore >= 70 ? "secondary" : "destructive"}>
                 {lastScore >= 70 ? 'Passing' : 'Failed'}
               </Badge>
             </div>
