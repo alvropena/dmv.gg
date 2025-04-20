@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 
 const testimonials = [
 	{
@@ -65,7 +64,7 @@ export default function Testimonials() {
 
 					<div className="text-center space-y-6 max-w-[75%] mx-auto">
 						<p className="text-2xl md:text-3xl lg:text-4xl font-light leading-relaxed">
-							"{currentTestimonial.quote}"
+							&ldquo;{currentTestimonial.quote}&rdquo;
 						</p>
 
 						<div className="space-y-2">
