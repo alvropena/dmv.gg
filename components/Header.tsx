@@ -132,7 +132,7 @@ export function Header() {
       <SheetContent side="left">
         <div className="flex flex-col h-full py-6">
           <div className="flex flex-col gap-6 items-center w-full">
-            <div className="bg-[#3FA7D6] text-white font-bold px-6 py-4 rounded-full text-lg">
+            <div className="w-full bg-[#000099] text-white font-bold px-6 py-4 rounded-full text-lg text-center">
               DMV.gg
             </div>
             <div className="w-full flex flex-col gap-6">
