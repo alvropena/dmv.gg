@@ -1,167 +1,105 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 const testimonials = [
 	{
-		name: "Sarah J.",
-		state: "California",
-		avatar: "SJ",
-		content:
-			"I was so nervous about my DMV test, but after practicing with DMV.gg for just a week, I passed with a perfect score! The questions were almost identical to the real test.",
-		rating: 5,
+		name: "Sarah Johnson",
+		role: "Student Driver",
+		image: "/testimonials/sarah.jpg",
+		quote: "DMV.gg simplifies the process for new drivers to learn and practice their knowledge test in one inclusive platform.",
+		description: "Passed on first attempt with 98% score"
 	},
 	{
-		name: "Michael T.",
-		state: "California",
-		avatar: "MT",
-		content:
-			"This site saved me so much time. Instead of reading the entire California handbook, I could focus on practicing real questions. Passed on my first try!",
-		rating: 5,
+		name: "Michael Thompson",
+		role: "Recent Graduate",
+		image: "/testimonials/michael.jpg",
+		quote: "The practice tests and study materials helped me feel confident and prepared for my actual DMV test.",
+		description: "Studied for just 2 weeks"
 	},
 	{
-		name: "Jessica L.",
-		state: "California",
-		avatar: "JL",
-		content:
-			"The progress tracking feature helped me identify my weak areas. I focused on those topics and felt super confident on test day. Highly recommend!",
-		rating: 5,
-	},
-	{
-		name: "David R.",
-		state: "California",
-		avatar: "DR",
-		content:
-			"After failing my first attempt, I found DMV.gg and studied for just 3 days. Passed with flying colors on my second try. Wish I had found this sooner!",
-		rating: 5,
-	},
-	{
-		name: "Emily W.",
-		state: "California",
-		avatar: "EW",
-		content:
-			"The mobile app made it so easy to study during my commute. The interface is clean and user-friendly. Worth every penny!",
-		rating: 4,
-	},
-	{
-		name: "Robert K.",
-		state: "California",
-		avatar: "RK",
-		content:
-			"As someone who gets test anxiety, the realistic practice tests helped me feel prepared and confident. No surprises on test day at the California DMV!",
-		rating: 5,
-	},
+		name: "Jessica Lee",
+		role: "International Student",
+		image: "/testimonials/jessica.jpg",
+		quote: "As an international student, DMV.gg made it easy to understand California's driving rules and regulations.",
+		description: "Successfully got her license in 3 weeks"
+	}
 ];
 
 export default function Testimonials() {
 	const [currentIndex, setCurrentIndex] = useState(0);
-	const [isMobile, setIsMobile] = useState(false);
-
-	useEffect(() => {
-		const checkMobile = () => {
-			setIsMobile(window.innerWidth < 768);
-		};
-
-		checkMobile();
-		window.addEventListener('resize', checkMobile);
-
-		return () => window.removeEventListener('resize', checkMobile);
-	}, []);
-
-	const increment = isMobile ? 1 : 3;
 
 	const nextTestimonial = () => {
 		setCurrentIndex((prevIndex) => 
-			prevIndex + increment >= testimonials.length ? 0 : prevIndex + increment
+			prevIndex + 1 >= testimonials.length ? 0 : prevIndex + 1
 		);
 	};
 
 	const prevTestimonial = () => {
 		setCurrentIndex((prevIndex) => 
-			prevIndex - increment < 0 
-				? Math.max(testimonials.length - increment, 0) 
-				: prevIndex - increment
+			prevIndex - 1 < 0 ? testimonials.length - 1 : prevIndex - 1
 		);
 	};
 
-	const visibleTestimonials = testimonials.slice(
-		currentIndex,
-		currentIndex + increment
-	);
+	const currentTestimonial = testimonials[currentIndex];
 
 	return (
-		<section id="testimonials" className="w-full py-8 min-h-screen flex items-center md:min-h-[85vh] md:py-12 lg:py-24">
+		<section id="testimonials" className="w-full py-16 md:py-20 lg:py-24 bg-white">
 			<div className="container mx-auto px-6">
-				<div className="grid gap-6 lg:gap-12">
-					<div className="flex flex-col justify-center items-center text-center space-y-4 md:space-y-8">
-						<div className="space-y-2 md:space-y-6 max-w-5xl mx-auto">
-							<h2 className="text-4xl font-extrabold tracking-tighter text-[#93BBFF] sm:text-5xl md:text-5xl lg:text-7xl xl:text-8xl">
-								Hear From Our Users
-							</h2>
-							<p className="text-[#93BBFF] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-								Thousands of drivers have used DMV.gg to pass their knowledge test
-								on the first try.
+				<div className="flex flex-col items-center max-w-4xl mx-auto">
+					<div className="w-[280px] aspect-square relative rounded-full overflow-hidden mb-8 bg-black/20 backdrop-blur-sm flex items-center justify-center">
+						<div className="text-center">
+							<p className="text-4xl font-medium">{currentTestimonial.name.split(' ').map(n => n[0]).join('')}</p>
+						</div>
+						{/* <Image
+							src={currentTestimonial.image}
+							alt={currentTestimonial.name}
+							fill
+							className="object-cover"
+							priority
+						/> */}
+					</div>
+
+					<div className="text-center space-y-6 max-w-[75%] mx-auto">
+						<p className="text-2xl md:text-3xl lg:text-4xl font-light leading-relaxed">
+							"{currentTestimonial.quote}"
+						</p>
+
+						<div className="space-y-2">
+							<h3 className="text-xl md:text-2xl font-bold">
+								{currentTestimonial.name}
+							</h3>
+							<p className="text-gray-600">
+								{currentTestimonial.role}
+							</p>
+							<p className="text-sm text-gray-500">
+								{currentTestimonial.description}
 							</p>
 						</div>
-					</div>
-				</div>
 
-				<div className="mx-auto max-w-5xl mt-12 md:mt-16">
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-						{visibleTestimonials.map((testimonial) => (
-							<Card
-								key={`${testimonial.name}-${testimonial.avatar}`}
-								className="overflow-hidden"
+						<div className="flex justify-center gap-4 pt-4">
+							<Button
+								variant="outline"
+								size="icon"
+								onClick={prevTestimonial}
+								className="rounded-full h-12 w-12 border-2"
 							>
-								<CardContent className="p-6">
-									<div className="flex flex-col space-y-4">
-										<div className="flex items-center space-x-2">
-											<Avatar className="h-10 w-10 border bg-gray-100">
-												<AvatarFallback>{testimonial.avatar}</AvatarFallback>
-											</Avatar>
-											<div>
-												<div className="font-medium">{testimonial.name}</div>
-												<div className="text-xs">{testimonial.state}</div>
-											</div>
-										</div>
-										<div className="flex">
-											{[...Array(5)].map((_, i) => (
-												<Star
-													key={`${testimonial.name}-${testimonial.avatar}-star-${i}`}
-													className={`h-4 w-4 ${i < testimonial.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
-												/>
-											))}
-										</div>
-										<p className="text-sm">{testimonial.content}</p>
-									</div>
-								</CardContent>
-							</Card>
-						))}
-					</div>
-
-					<div className="flex justify-center mt-8 gap-2">
-						<Button
-							variant="outline"
-							size="icon"
-							onClick={prevTestimonial}
-							className="rounded-full"
-						>
-							<ChevronLeft className="h-4 w-4" />
-							<span className="sr-only">Previous</span>
-						</Button>
-						<Button
-							variant="outline"
-							size="icon"
-							onClick={nextTestimonial}
-							className="rounded-full"
-						>
-							<ChevronRight className="h-4 w-4" />
-							<span className="sr-only">Next</span>
-						</Button>
+								<ChevronLeft className="h-6 w-6" />
+								<span className="sr-only">Previous testimonial</span>
+							</Button>
+							<Button
+								variant="outline"
+								size="icon"
+								onClick={nextTestimonial}
+								className="rounded-full h-12 w-12 border-2"
+							>
+								<ChevronRight className="h-6 w-6" />
+								<span className="sr-only">Next testimonial</span>
+							</Button>
+						</div>
 					</div>
 				</div>
 			</div>
