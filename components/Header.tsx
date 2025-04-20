@@ -65,28 +65,28 @@ export function Header() {
     <>
       <Button
         variant="ghost"
-        className="text-lg font-light px-6 py-4 h-auto rounded-full"
+        className="w-full text-lg font-light px-6 py-4 h-auto rounded-full text-center"
         onClick={() => window.location.href = '#features'}
       >
         Features
       </Button>
       <Button
         variant="ghost"
-        className="text-lg font-light px-6 py-4 h-auto rounded-full"
+        className="w-full text-lg font-light px-6 py-4 h-auto rounded-full text-center"
         onClick={() => window.location.href = '#pricing'}
       >
         Pricing
       </Button>
       <Button
         variant="ghost"
-        className="text-lg font-light px-6 py-4 h-auto rounded-full"
+        className="w-full text-lg font-light px-6 py-4 h-auto rounded-full text-center"
         onClick={() => window.location.href = '#testimonials'}
       >
         Testimonials
       </Button>
       <Button
         variant="ghost"
-        className="text-lg font-light px-6 py-4 h-auto rounded-full"
+        className="w-full text-lg font-light px-6 py-4 h-auto rounded-full text-center"
         onClick={() => window.location.href = '#faq'}
       >
         FAQ
@@ -130,22 +130,36 @@ export function Header() {
         </Button>
       </SheetTrigger>
       <SheetContent side="left">
-        <div className="flex flex-col justify-end h-full pb-6">
+        <div className="flex flex-col h-full py-6">
           <div className="flex flex-col gap-6 items-center w-full">
-            <NavLinks />
-            <Button
-              onClick={handleGetStarted}
-              variant="outline"
-              className="w-full rounded-full text-lg font-light px-6 py-4 h-auto text-center"
-            >
-              Log in
-            </Button>
-            <Button
-              onClick={handleGetStarted}
-              className="w-full rounded-full text-lg font-light px-6 py-4 h-auto text-center"
-            >
-              Sign up
-            </Button>
+            <div className="bg-[#3FA7D6] text-white font-bold px-6 py-4 rounded-full text-lg">
+              DMV.gg
+            </div>
+            <div className="w-full flex flex-col gap-6">
+              <NavLinks />
+            </div>
+          </div>
+          
+          <div className="flex-1 flex flex-col justify-center w-full gap-6 my-6">
+            <div className="w-full h-[1px] bg-border" />
+          </div>
+
+          <div className="w-full">
+            <div className="w-full flex flex-col gap-6 items-center">
+              <Button
+                onClick={handleGetStarted}
+                variant="outline"
+                className="w-full rounded-full text-lg font-light px-6 py-4 h-auto text-center"
+              >
+                Log in
+              </Button>
+              <Button
+                onClick={handleGetStarted}
+                className="w-full rounded-full text-lg font-light px-6 py-4 h-auto text-center"
+              >
+                Sign up
+              </Button>
+            </div>
           </div>
         </div>
       </SheetContent>
