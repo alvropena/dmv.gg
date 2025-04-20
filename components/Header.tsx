@@ -153,7 +153,7 @@ export function Header() {
 				variant="ghost"
 				className="w-full text-lg font-light px-6 py-4 h-auto rounded-full text-center"
 				onClick={() => {
-					window.location.href = "#pricing";
+					window.location.href = "/pricing";
 				}}
 			>
 				Pricing
@@ -208,11 +208,8 @@ export function Header() {
 	// Extracted mobile menu component for signed out users
 	const SignedOutMobileMenu = () => (
 		<Sheet>
-			<SheetTrigger asChild>
-				<Button variant="ghost" size="icon" className="lg:hidden">
-					<Menu className="h-6 w-6" />
-					<span className="sr-only">Toggle menu</span>
-				</Button>
+			<SheetTrigger asChild className="lg:hidden">
+				<Menu className="h-6 w-6" />
 			</SheetTrigger>
 			<SheetContent side="left">
 				<div className="flex flex-col h-full py-6">

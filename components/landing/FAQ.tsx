@@ -44,26 +44,27 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 		<div className="mb-4">
 			<div className="w-full bg-[#3D0A0C] rounded-[40px]">
 				<button
+					type="button"
 					onClick={() => setIsOpen(!isOpen)}
 					className="w-full flex items-center justify-between p-6 md:p-8 text-left"
 				>
-					<span className="text-lg md:text-xl lg:text-2xl font-light text-[#FFB5C2] pr-4 flex-1 font-bold">
+					<span className="text-lg md:text-xl lg:text-2xl font-bold text-[#FFB5C2] pr-4 flex-1">
 						{question}
 					</span>
 					<ChevronDown
 						className={cn(
 							"h-6 w-6 text-[#FFB5C2] transition-transform duration-200 flex-shrink-0",
-							isOpen && "rotate-180"
+							isOpen && "rotate-180",
 						)}
 					/>
 				</button>
 				<div
 					className={cn(
 						"overflow-hidden transition-all duration-200 ease-in-out w-full",
-						isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+						isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0",
 					)}
 				>
-					<div className="px-6 pb-6 text-[#FFB5C2] text-lg md:text-xl lg:text-2xl leading-[1.6] font-light">
+					<div className="px-6 md:px-8 pb-6 md:pb-8 text-[#FFB5C2] text-lg md:text-xl lg:text-2xl leading-[1.6] font-light">
 						{answer}
 					</div>
 				</div>
@@ -83,8 +84,12 @@ export default function FAQ() {
 				</div>
 				<div className="w-full md:max-w-[75%] mx-auto">
 					<div className="space-y-4">
-						{faqItems.map((item, index) => (
-							<FAQItem key={index} question={item.question} answer={item.answer} />
+						{faqItems.map((item) => (
+							<FAQItem
+								key={item.question}
+								question={item.question}
+								answer={item.answer}
+							/>
 						))}
 					</div>
 				</div>

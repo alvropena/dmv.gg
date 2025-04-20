@@ -33,7 +33,7 @@ export default function Footer() {
 								</li>
 								<li>
 									<Link
-										href="#pricing"
+										href="/pricing"
 										className="text-base text-[#B6DBFF] hover:underline"
 									>
 										Pricing
@@ -42,7 +42,9 @@ export default function Footer() {
 							</ul>
 						</div>
 						<div className="space-y-3">
-							<h3 className="text-base font-medium text-[#B6DBFF]">Resources</h3>
+							<h3 className="text-base font-medium text-[#B6DBFF]">
+								Resources
+							</h3>
 							<ul className="space-y-2">
 								<li>
 									<Link
