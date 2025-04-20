@@ -6,13 +6,25 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { X } from "lucide-react";
 
+// Helper function to get cookie value
+function getCookie(name: string) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift();
+  return null;
+}
+
 export function CookieConsentDialog() {
   const [isVisible, setIsVisible] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') return;
+
     // Check if user has already accepted cookies
-    const cookiesAccepted = document.cookie.includes("cookies_accepted=true");
+    const cookiesAccepted = getCookie('cookies_accepted') === 'true';
+    
     if (!cookiesAccepted) {
       // Show dialog after a short delay
       const timer = setTimeout(() => {
@@ -22,52 +34,39 @@ export function CookieConsentDialog() {
     }
   }, []);
 
+  const saveCookiePreference = async (name: string, value: string) => {
+    try {
+      const response = await fetch("/api/cookies", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          value,
+          options: {
+            maxAge: 60 * 60 * 24 * 365, // 1 year
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save cookie preference');
+      }
+    } catch (error) {
+      console.error(`Error saving ${name} preference:`, error);
+      throw error;
+    }
+  };
+
   const acceptAllCookies = async () => {
     try {
-      // Save cookie acceptance
-      await fetch("/api/cookies", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: "cookies_accepted",
-          value: "true",
-          options: {
-            maxAge: 60 * 60 * 24 * 365, // 1 year
-          },
-        }),
-      });
-
-      // Save analytics preference
-      await fetch("/api/cookies", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: "analytics_enabled",
-          value: "true",
-          options: {
-            maxAge: 60 * 60 * 24 * 365, // 1 year
-          },
-        }),
-      });
-
-      // Save marketing preference
-      await fetch("/api/cookies", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: "marketing_enabled",
-          value: "true",
-          options: {
-            maxAge: 60 * 60 * 24 * 365, // 1 year
-          },
-        }),
-      });
+      // Save all cookie preferences
+      await Promise.all([
+        saveCookiePreference('cookies_accepted', 'true'),
+        saveCookiePreference('analytics_enabled', 'true'),
+        saveCookiePreference('marketing_enabled', 'true'),
+      ]);
 
       toast({
         title: "Preferences saved",
@@ -88,59 +87,26 @@ export function CookieConsentDialog() {
 
   const rejectAllCookies = async () => {
     try {
-      // Save cookie acceptance but disable analytics and marketing
-      await fetch("/api/cookies", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: "cookies_accepted",
-          value: "true",
-          options: {
-            maxAge: 60 * 60 * 24 * 365, // 1 year
-          },
-        }),
-      });
+      // Save cookie preferences with analytics and marketing disabled
+      await Promise.all([
+        saveCookiePreference('cookies_accepted', 'true'),
+        saveCookiePreference('analytics_enabled', 'false'),
+        saveCookiePreference('marketing_enabled', 'false'),
+      ]);
 
-      // Disable analytics
-      await fetch("/api/cookies", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: "analytics_enabled",
-          value: "false",
-          options: {
-            maxAge: 60 * 60 * 24 * 365, // 1 year
-          },
-        }),
-      });
-
-      // Disable marketing
-      await fetch("/api/cookies", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: "marketing_enabled",
-          value: "false",
-          options: {
-            maxAge: 60 * 60 * 24 * 365, // 1 year
-          },
-        }),
-      });
-
+      // Hide dialog
       setIsVisible(false);
     } catch (error) {
       console.error("Error saving cookie preferences:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save cookie preferences. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
   const openManageCookies = () => {
-    // For now just navigate to the cookies page
     window.location.href = "/preferences";
   };
 

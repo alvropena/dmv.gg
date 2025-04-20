@@ -19,12 +19,12 @@ export default function Hero() {
         <div className="grid gap-4 md:grid-cols-2 md:gap-12">
           <div className="flex flex-col justify-start md:justify-center space-y-3 md:space-y-6 text-center md:text-left">
             <div className="space-y-2 md:space-y-4">
-              <h1 className="text-6xl font-extrabold tracking-tighter text-[#B6DBFF] md:text-6xl lg:text-7xl xl:text-8xl">
+              <h1 className="text-5xl font-extrabold tracking-tighter text-[#B6DBFF] md:text-6xl lg:text-7xl xl:text-8xl">
                 Ace your DMV Knowledge Test
               </h1>
               <p className="text-[#B6DBFF] md:text-md/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                 Practice with real questions from the California DMV, track your
-                progress, and pass your test with confidence.
+                progress, and ace your test.
               </p>
             </div>
             <div className="flex gap-2 justify-center md:justify-start">
