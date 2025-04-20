@@ -82,8 +82,7 @@ export function BirthdayDialog({ isOpen, onSave, onClose }: BirthdayDialogProps)
 	return (
 		<Dialog open={isOpen} onOpenChange={onClose}>
 			<DialogContent
-				className="sm:max-w-[400px] w-[90%] mx-auto rounded-md"
-				showCloseButton={false}
+				className="sm:max-w-[400px] w-[90%] mx-auto rounded-md [&_.close-button]:hidden"
 				onEscapeKeyDown={onClose}
 				onInteractOutside={(e) => {
 					e.preventDefault();
