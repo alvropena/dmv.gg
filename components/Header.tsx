@@ -96,14 +96,14 @@ export function Header() {
 
   // Extracted desktop navigation component for signed out users
   const SignedOutDesktopNav = () => (
-    <nav className="hidden md:flex gap-2 ml-8">
+    <nav className="hidden lg:flex gap-2 ml-8">
       <NavLinks />
     </nav>
   );
 
   // Extracted desktop call-to-action component for signed out users
   const SignedOutDesktopCTA = () => (
-    <div className="hidden md:flex items-center gap-3">
+    <div className="hidden lg:flex items-center gap-3">
       <Button
         onClick={handleGetStarted}
         variant="outline"
@@ -124,7 +124,7 @@ export function Header() {
   const SignedOutMobileMenu = () => (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden">
+        <Button variant="ghost" size="icon" className="lg:hidden">
           <Menu className="h-6 w-6" />
           <span className="sr-only">Toggle menu</span>
         </Button>
@@ -154,17 +154,17 @@ export function Header() {
 
   // Mobile login button
   const MobileLoginButton = () => (
-    <div className="md:hidden flex items-center gap-2">
+    <div className="lg:hidden flex items-center gap-2">
       <Button
         onClick={handleGetStarted}
         variant="outline"
-        className="rounded-full text-base px-4 py-2 h-auto"
+        className="rounded-full text-lg px-6 py-4 h-auto"
       >
         Log in
       </Button>
       <Button
         onClick={handleGetStarted}
-        className="rounded-full text-base px-4 py-2 h-auto"
+        className="rounded-full text-lg px-6 py-4 h-auto"
       >
         Sign up
       </Button>
@@ -173,7 +173,7 @@ export function Header() {
 
   // Extracted status display component for signed in users
   const SignedInUserStatus = () => (
-    <div className="hidden md:flex items-center">
+    <div className="hidden lg:flex items-center">
       {hasActiveSubscription || dbUser?.role === "ADMIN" ? (
         <>
           {dbUser?.role === "ADMIN" ? (
@@ -210,11 +210,11 @@ export function Header() {
         <div className="container mx-auto px-2 md:px-6">
           <div className="flex items-center justify-between bg-white rounded-full border shadow-sm px-4 md:px-8 py-3 md:py-4">
             <div className="flex items-center">
-              <div className="block md:hidden">
+              <div className="block lg:hidden">
                 <SignedOutMobileMenu />
               </div>
               
-              <Link href="/" onClick={handleLogoClick} className="hidden md:block">
+              <Link href="/" onClick={handleLogoClick} className="hidden lg:block">
                 <h1 className="flex items-center text-xl md:text-2xl py-1 rounded-full font-bold">
                   DMV.gg
                 </h1>
