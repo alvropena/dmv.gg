@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
@@ -59,22 +59,38 @@ const testimonials = [
 
 export default function Testimonials() {
 	const [currentIndex, setCurrentIndex] = useState(0);
+	const [isMobile, setIsMobile] = useState(false);
+
+	useEffect(() => {
+		const checkMobile = () => {
+			setIsMobile(window.innerWidth < 768);
+		};
+
+		checkMobile();
+		window.addEventListener('resize', checkMobile);
+
+		return () => window.removeEventListener('resize', checkMobile);
+	}, []);
+
+	const increment = isMobile ? 1 : 3;
 
 	const nextTestimonial = () => {
-		setCurrentIndex((prevIndex) =>
-			prevIndex + 3 >= testimonials.length ? 0 : prevIndex + 3,
+		setCurrentIndex((prevIndex) => 
+			prevIndex + increment >= testimonials.length ? 0 : prevIndex + increment
 		);
 	};
 
 	const prevTestimonial = () => {
-		setCurrentIndex((prevIndex) =>
-			prevIndex - 3 < 0 ? Math.max(testimonials.length - 3, 0) : prevIndex - 3,
+		setCurrentIndex((prevIndex) => 
+			prevIndex - increment < 0 
+				? Math.max(testimonials.length - increment, 0) 
+				: prevIndex - increment
 		);
 	};
 
 	const visibleTestimonials = testimonials.slice(
 		currentIndex,
-		currentIndex + 3,
+		currentIndex + increment
 	);
 
 	return (
@@ -95,7 +111,7 @@ export default function Testimonials() {
 				</div>
 
 				<div className="mx-auto max-w-5xl mt-12 md:mt-16">
-					<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 						{visibleTestimonials.map((testimonial) => (
 							<Card
 								key={`${testimonial.name}-${testimonial.avatar}`}

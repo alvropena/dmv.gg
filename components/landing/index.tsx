@@ -1,10 +1,9 @@
-import Hero from "./Hero"
-import Features from "./Features"
-import HowItWorks from "./HowItWorks"
-import Testimonials from "./Testimonials"
-import FAQ from "./FAQ"
-import CTA from "./CTA"
-import Footer from "./Footer"
+import Hero from "./Hero";
+import Features from "./Features";
+import Testimonials from "./Testimonials";
+import FAQ from "./FAQ";
+import CTA from "./CTA";
+import Footer from "./Footer";
 
 export default function LandingPage() {
   return (
@@ -12,13 +11,11 @@ export default function LandingPage() {
       <main className="flex-1">
         <Hero />
         <Features />
-        <HowItWorks />
         <Testimonials />
         <FAQ />
         <CTA />
       </main>
       <Footer />
     </div>
-  )
+  );
 }
-
