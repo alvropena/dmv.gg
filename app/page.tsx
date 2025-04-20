@@ -6,8 +6,6 @@ import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Loader2 } from "lucide-react";
 import { UserStats } from "@/components/UserStats";
-import { UserProfileCard } from "@/components/UserProfileCard";
-import { UserWelcomeCard } from "@/components/UserWelcomeCard";
 import { StudyTips } from "@/components/StudyTips";
 import { UserActivitySection } from "@/components/UserActivitySection";
 import { SupportButton } from "@/components/SupportButton";
@@ -21,23 +19,7 @@ export default function Home() {
 
 	const { user, isLoaded } = useUser();
 	const router = useRouter();
-	const { dbUser, isLoading, hasActiveSubscription } = useAuthContext();
-
-	const handleStudyClick = () => {
-		window.open(
-			"https://www.dmv.ca.gov/portal/file/california-driver-handbook-pdf/",
-			"_blank",
-		);
-	};
-
-	const handlePracticeClick = () => {
-		if (!hasActiveSubscription) {
-			setIsPricingOpen(true);
-			return;
-		}
-		
-		router.push("/test");
-	};
+	const { dbUser, isLoading } = useAuthContext();
 
 	// Add handlePlanSelect function
 	const handlePlanSelect = async (plan: "weekly" | "monthly" | "lifetime") => {
@@ -50,7 +32,6 @@ export default function Home() {
 				body: JSON.stringify({
 					plan,
 				}),
-
 			});
 
 			const data = await response.json();
@@ -117,15 +98,6 @@ export default function Home() {
 			<>
 				<div className="container mx-auto p-4">
 					{/* User profile card */}
-					<UserProfileCard user={user} />
-
-					{/* Top welcome section */}
-					<UserWelcomeCard
-						user={user}
-						hasActiveSubscription={hasActiveSubscription}
-						onStartTestClick={handlePracticeClick}
-						onStudyClick={handleStudyClick}
-					/>
 
 					{/* Stats cards */}
 					<UserStats />

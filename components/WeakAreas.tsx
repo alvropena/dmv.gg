@@ -7,173 +7,186 @@ import { useRouter } from "next/navigation";
 import { AlertCircle, Loader2, RefreshCw } from "lucide-react";
 
 type WeakArea = {
-  question: {
-    id: string;
-    title: string;
-    correctAnswer: string;
-    explanation: string;
-  };
-  incorrectCount: number;
+	question: {
+		id: string;
+		title: string;
+		correctAnswer: string;
+		explanation: string;
+	};
+	incorrectCount: number;
 };
 
 type WeakAreasProps = {
-  isLoading?: boolean;
+	isLoading?: boolean;
 };
 
 export function WeakAreas({ isLoading = false }: WeakAreasProps) {
-  const [weakAreas, setWeakAreas] = useState<WeakArea[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [creatingTest, setCreatingTest] = useState<boolean>(false);
-  const [refreshKey, setRefreshKey] = useState<number>(0);
-  const router = useRouter();
+	const [weakAreas, setWeakAreas] = useState<WeakArea[]>([]);
+	const [loading, setLoading] = useState<boolean>(true);
+	const [creatingTest, setCreatingTest] = useState<boolean>(false);
+	const [refreshKey, setRefreshKey] = useState<number>(0);
+	const router = useRouter();
 
-  const fetchWeakAreas = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`/api/user/weak-areas?t=${Date.now()}`);
+	const fetchWeakAreas = async () => {
+		try {
+			setLoading(true);
+			const response = await fetch(`/api/user/weak-areas?t=${Date.now()}`);
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch weak areas");
-      }
+			if (!response.ok) {
+				throw new Error("Failed to fetch weak areas");
+			}
 
-      const data = await response.json();
-      setWeakAreas(data.weakAreas || []);
-    } catch (error) {
-      console.error("Error fetching weak areas:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+			const data = await response.json();
+			setWeakAreas(data.weakAreas || []);
+		} catch (error) {
+			console.error("Error fetching weak areas:", error);
+		} finally {
+			setLoading(false);
+		}
+	};
 
-  useEffect(() => {
-    fetchWeakAreas();
-  }, [refreshKey]);
+	useEffect(() => {
+		fetchWeakAreas();
+	}, [refreshKey]);
 
-  const handleRefresh = () => {
-    setRefreshKey(prev => prev + 1);
-  };
+	const handleRefresh = () => {
+		setRefreshKey((prev) => prev + 1);
+	};
 
-  const handleReviewQuestion = async () => {
-    if (weakAreas.length === 0) {
-      router.push("/test");
-      return;
-    }
+	const handleReviewQuestion = async () => {
+		if (weakAreas.length === 0) {
+			router.push("/test");
+			return;
+		}
 
-    try {
-      setCreatingTest(true);
-      const questionIds = weakAreas.map(area => area.question.id);
-      
-      const response = await fetch("/api/tests/custom", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ questionIds }),
-      });
+		try {
+			setCreatingTest(true);
+			const questionIds = weakAreas.map((area) => area.question.id);
 
-      if (!response.ok) {
-        throw new Error("Failed to create test");
-      }
+			const response = await fetch("/api/tests/custom", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ questionIds }),
+			});
 
-      const data = await response.json();
-      router.push(`/test/${data.test.id}?review=true`);
-    } catch (error) {
-      console.error("Error creating test for weak areas:", error);
-      router.push("/");
-    } finally {
-      setCreatingTest(false);
-    }
-  };
+			if (!response.ok) {
+				throw new Error("Failed to create test");
+			}
 
-  if (loading || isLoading) {
-    return (
-      <div className="mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Weak Areas</h2>
-        </div>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
-              <p className="text-muted-foreground">Loading weak areas...</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+			const data = await response.json();
+			router.push(`/test/${data.test.id}?review=true`);
+		} catch (error) {
+			console.error("Error creating test for weak areas:", error);
+			router.push("/");
+		} finally {
+			setCreatingTest(false);
+		}
+	};
 
-  if (weakAreas.length === 0) {
-    return (
-      <div className="mb-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Weak Areas</h2>
-          <Button variant="outline" size="sm" onClick={handleRefresh} className="flex items-center gap-1">
-            <RefreshCw className="h-4 w-4" />
-            <span>Refresh</span>
-          </Button>
-        </div>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex flex-col items-center justify-center py-6 text-center">
-              <AlertCircle className="h-10 w-10 text-muted-foreground mb-2" />
-              <p className="text-muted-foreground mb-4">
-                Complete more tests to identify your weak areas
-              </p>
-              <Button onClick={handleReviewQuestion} variant="outline">
-                Take a Test
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+	if (loading || isLoading) {
+		return (
+			<div className="mb-6">
+				<div className="flex justify-between items-center mb-4">
+					<h2 className="text-xl font-semibold">Weak Areas</h2>
+				</div>
+				<Card className="bg-white dark:bg-slate-950 rounded-[40px]">
+					<CardContent className="pt-6">
+						<div className="flex flex-col items-center justify-center py-8 text-center">
+							<Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
+							<p className="text-muted-foreground">Loading weak areas...</p>
+						</div>
+					</CardContent>
+				</Card>
+			</div>
+		);
+	}
 
-  return (
-    <div className="mb-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Weak Areas</h2>
-        <Button variant="outline" size="sm" onClick={handleRefresh} className="flex items-center gap-1">
-          <RefreshCw className="h-4 w-4" />
-          <span>Refresh</span>
-        </Button>
-      </div>
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg">Questions to Review</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {weakAreas.map((weakArea) => (
-              <div key={weakArea.question.id} className="border-b pb-3 last:border-b-0">
-                <p className="font-medium text-sm line-clamp-2">{weakArea.question.title}</p>
-                <div className="flex justify-between items-center mt-1">
-                  <p className="text-xs text-muted-foreground">
-                    Incorrect {weakArea.incorrectCount} time{weakArea.incorrectCount !== 1 ? "s" : ""}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+	if (weakAreas.length === 0) {
+		return (
+			<div className="mb-6">
+				<div className="flex justify-between items-center mb-4">
+					<h2 className="text-xl font-semibold">Weak Areas</h2>
+					<Button
+						onClick={handleRefresh}
+						className="flex items-center gap-1 rounded-[40px] bg-white"
+					>
+						<RefreshCw className="h-4 w-4" />
+						<span>Refresh</span>
+					</Button>
+				</div>
+				<Card className="bg-white dark:bg-slate-950 rounded-[40px]">
+					<CardContent className="pt-6">
+						<div className="flex flex-col items-center justify-center py-6 text-center">
+							<AlertCircle className="h-10 w-10 text-muted-foreground mb-2" />
+							<p className="text-muted-foreground mb-4">
+								Complete more tests to identify your weak areas
+							</p>
+							<Button onClick={handleReviewQuestion} variant="outline">
+								Take a Test
+							</Button>
+						</div>
+					</CardContent>
+				</Card>
+			</div>
+		);
+	}
 
-          <Button
-            onClick={handleReviewQuestion}
-            className="w-full mt-4"
-            variant="outline"
-            disabled={creatingTest}
-          >
-            {creatingTest ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Creating Practice...
-              </>
-            ) : (
-              "Practice These Questions"
-            )}
-          </Button>
-        </CardContent>
-      </Card>
-    </div>
-  );
-} 
+	return (
+		<div className="mb-6">
+			<div className="flex justify-between items-center mb-4">
+				<h2 className="text-xl font-semibold text-white">Weak Areas</h2>
+				<Button
+					variant="outline"
+					size="sm"
+					onClick={handleRefresh}
+					className="flex items-center gap-1 rounded-40px bg-white"
+				>
+					<RefreshCw className="h-4 w-4" />
+					<span>Refresh</span>
+				</Button>
+			</div>
+			<Card className="bg-white dark:bg-slate-950 rounded-[40px]">
+				<CardHeader className="pb-2">
+					<CardTitle className="text-lg">Questions to Review</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<div className="space-y-4">
+						{weakAreas.map((weakArea) => (
+							<div
+								key={weakArea.question.id}
+								className="border-b pb-3 last:border-b-0"
+							>
+								<p className="font-medium text-sm line-clamp-2">
+									{weakArea.question.title}
+								</p>
+								<div className="flex justify-between items-center mt-1">
+									<p className="text-xs text-muted-foreground">
+										Incorrect {weakArea.incorrectCount} time
+										{weakArea.incorrectCount !== 1 ? "s" : ""}
+									</p>
+								</div>
+							</div>
+						))}
+					</div>
+
+					<Button
+						onClick={handleReviewQuestion}
+						className="w-full mt-4 rounded-[40px]"
+						disabled={creatingTest}
+					>
+						{creatingTest ? (
+							<>
+								<Loader2 className="h-4 w-4 animate-spin mr-2" />
+								Creating Practice...
+							</>
+						) : (
+							"Practice These Questions"
+						)}
+					</Button>
+				</CardContent>
+			</Card>
+		</div>
+	);
+}
