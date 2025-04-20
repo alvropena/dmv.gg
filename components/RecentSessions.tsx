@@ -117,7 +117,7 @@ export function RecentSessions({
 								<div className="flex items-center justify-between mb-4">
 									<div className="flex items-center gap-3">
 										{test.status === "completed" && (
-											<Badge variant="success">Completed</Badge>
+											<Badge variant="secondary">Completed</Badge>
 										)}
 										<h3 className="font-semibold text-lg">
 											{test.status === "completed"
@@ -162,7 +162,7 @@ export function RecentSessions({
 												{test.totalQuestions} correct)
 											</span>
 											<Badge
-												variant={test.score >= 70 ? "success" : "destructive"}
+												variant={test.score >= 70 ? "secondary" : "destructive"}
 											>
 												{test.score >= 70 ? "Passing" : "Failed"}
 											</Badge>
