@@ -32,8 +32,8 @@ const blogPosts = [
 export default function BlogPage() {
 	return (
 		<div className="container mx-auto px-4 py-12 max-w-4xl">
-			<h1 className="text-3xl font-bold mb-8">DMV Knowledge Test Blog</h1>
-			<p className="text-lg text-muted-foreground mb-8">
+			<h1 className="text-3xl font-bold mb-8 text-white">DMV Knowledge Test Blog</h1>
+			<p className="text-lg text-white mb-8">
 				Insights, tips, and strategies to help you prepare for and pass your DMV
 				knowledge test.
 			</p>
@@ -42,7 +42,7 @@ export default function BlogPage() {
 				{blogPosts.map((post) => (
 					<article
 						key={post.id}
-						className="border rounded-lg p-6 hover:shadow-md transition-shadow"
+						className="border rounded-lg p-6 hover:shadow-md transition-shadow bg-white"
 					>
 						<Link href={`/blog/${post.id}`} className="block">
 							<h2 className="text-xl font-semibold mb-2 hover:text-blue-600 transition-colors">

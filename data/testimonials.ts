@@ -4,47 +4,41 @@ export const testimonials = [
 		role: "New Driver",
 		image: "/emma.png",
 		quote:
-			"DMV.gg made studying for my permit test so much easier! I was super nervous about the test, but the practice questions were exactly what I needed.",
-		description: "Got her permit at 16, passed with 100% score",
+			"DMV.gg made studying for my permit test so much easier. The practice questions helped me feel confident, and I was well-prepared for the actual test.",
 	},
 	{
 		name: "Rajesh Patel",
 		role: "College Student",
 		image: "/rajesh.png",
 		quote:
-			"As an international student, getting my California license seemed overwhelming at first. DMV.gg broke everything down into simple steps!",
-		description: "Got licensed while studying at UC Berkeley",
+			"As an international student, getting my California license seemed overwhelming. DMV.gg simplified the process with clear steps and helpful guidance.",
 	},
 	{
 		name: "Jin-Wei Zhang",
 		role: "First-Year Student",
 		image: "/jin-wei.png",
 		quote:
-			"The practice tests in both English and Chinese helped me ace my written test. Super grateful for the bilingual support!",
-		description: "Passed both tests on first try at 18",
+			"Having practice tests available in both English and Chinese was incredibly helpful. The bilingual support made studying much more comfortable and effective.",
 	},
 	{
 		name: "Isabella Rodriguez",
 		role: "Estudiante Universitaria",
 		image: "/isabella.png",
 		quote:
-			"¡DMV.gg hizo que todo el proceso fuera súper fácil! Los exámenes de práctica y los materiales en español me ayudaron muchísimo a prepararme para mi licencia.",
-		description: "Sacó su licencia en 3 semanas a los 19 años",
+			"Los materiales y exámenes de práctica en español de DMV.gg me ayudaron a prepararme. El proceso fue mucho más fácil de lo que esperaba.",
 	},
 	{
 		name: "Christopher Bennett",
 		role: "Trade School Student",
-		image: "/chris.png",
+		image: "/christopher.png",
 		quote:
-			"Started studying for my CDL right after high school. The practice tests on DMV.gg were a game-changer for understanding all the technical stuff.",
-		description: "Youngest CDL holder in his class at 21",
+			"The CDL practice tests on DMV.gg helped me understand all the technical requirements. The study materials were comprehensive and well-organized.",
 	},
 	{
 		name: "Marcus Johnson",
 		role: "DMV Test Instructor",
 		image: "/marcus.png",
 		quote:
-			"After 15 years of preparing students for their driver's tests, I can confidently say DMV.gg is the most comprehensive study platform I've seen.",
-		description: "Certified instructor with 15+ years experience",
+			"With 15 years of experience preparing students for driver's tests, I can say DMV.gg offers the most effective and thorough study resources available.",
 	}
 ]; 
