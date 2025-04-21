@@ -45,13 +45,13 @@ export default function Testimonials() {
 	return (
 		<section
 			id="testimonials"
-			className="w-full py-16 md:py-20 lg:py-24 bg-[#F1F1EF]"
+			className="w-full py-28 md:py-12 lg:py-52 bg-[#F1F1EF]"
 		>
 			<div className="container mx-auto px-2 md:px-6">
 				<div className="flex flex-col justify-center items-center text-center space-y-4 md:space-y-8 mb-8">
 					<div className="space-y-2 md:space-y-6 max-w-[90%] mx-auto">
 						<h2 className="text-5xl font-extrabold tracking-normal sm:text-5xl md:text-5xl lg:text-7xl xl:text-8xl text-[#1C1F2A]">
-							Trusted by 10,000+ students
+							Trusted by <span className="md:hidden">10k+</span><span className="hidden md:inline">10,000+</span> students
 						</h2>
 						<p className="md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed text-[#1C1F2A]/80">
 							Join thousands of successful drivers who started their journey with DMV.gg
@@ -89,26 +89,28 @@ export default function Testimonials() {
 						</div>
 
 						<div className="flex flex-col items-center max-w-6xl mx-auto">
-							<div className="w-[320px] md:w-[400px] lg:w-[480px] aspect-square relative rounded-full overflow-hidden mb-8">
-								<Image
-									src={currentTestimonial.image}
-									alt={currentTestimonial.name}
-									fill
-									className="object-cover object-top"
-									priority
-								/>
-							</div>
+							<div className="text-center space-y-6 w-full md:max-w-[80%] lg:max-w-[85%] mx-auto">
+								<div className="p-8 w-full flex flex-col items-center">
+									<div className="w-[280px] md:w-[400px] lg:w-[480px] aspect-square relative rounded-full overflow-hidden mb-8">
+										<Image
+											src={currentTestimonial.image}
+											alt={currentTestimonial.name}
+											fill
+											className="object-cover object-top"
+											priority
+										/>
+									</div>
 
-							<div className="text-center space-y-6 w-[90%] md:max-w-[80%] lg:max-w-[85%] mx-auto">
-								<p className="text-xl md:text-2xl lg:text-4xl font-light leading-relaxed text-[#1C1F2A]">
-									&ldquo;{currentTestimonial.quote}&rdquo;
-								</p>
+									<p className="text-xl md:text-2xl lg:text-4xl font-light leading-relaxed text-[#1C1F2A]">
+										&ldquo;{currentTestimonial.quote}&rdquo;
+									</p>
 
-								<div className="space-y-2">
-									<h3 className="text-xl md:text-2xl font-bold text-[#1C1F2A]">
-										{currentTestimonial.name}
-									</h3>
-									<p className="text-[#1C1F2A]/70">{currentTestimonial.role}</p>
+									<div className="space-y-2 mt-6">
+										<h3 className="text-xl md:text-2xl font-bold text-[#1C1F2A]">
+											{currentTestimonial.name}
+										</h3>
+										<p className="text-[#1C1F2A]/70">{currentTestimonial.role}</p>
+									</div>
 								</div>
 
 								<div className="flex lg:hidden justify-center gap-4 pt-4">

@@ -14,7 +14,7 @@ export default function CTA() {
   return (
     <section className="w-full pt-12 md:pt-16 lg:pt-24 text-white">
       <div className="container mx-auto px-6">
-        <div className="rounded-[40px] bg-[#3FA7D6]/90 py-16 md:py-32 px-6 md:px-8">
+        <div className="rounded-[40px] bg-[#3FA7D6]/90 py-32 md:py-32 px-6 md:px-8">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2 w-full">
               <h2 className="text-5xl font-extrabold tracking-tighter text-white sm:text-6xl md:text-7xl lg:text-8xl xl:text-8xl">
