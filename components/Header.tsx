@@ -138,46 +138,56 @@ export function Header() {
 		}
 	};
 
-	const NavLinks = () => (
-		<>
-			<Button
-				variant="ghost"
-				className="w-full text-lg font-light px-6 py-4 h-auto rounded-full text-center"
-				onClick={() => {
-					window.location.href = "#features";
-				}}
-			>
-				Features
-			</Button>
-			<Button
-				variant="ghost"
-				className="w-full text-lg font-light px-6 py-4 h-auto rounded-full text-center"
-				onClick={() => {
-					window.location.href = "/pricing";
-				}}
-			>
-				Pricing
-			</Button>
-			<Button
-				variant="ghost"
-				className="w-full text-lg font-light px-6 py-4 h-auto rounded-full text-center"
-				onClick={() => {
-					window.location.href = "#testimonials";
-				}}
-			>
-				Testimonials
-			</Button>
-			<Button
-				variant="ghost"
-				className="w-full text-lg font-light px-6 py-4 h-auto rounded-full text-center"
-				onClick={() => {
-					window.location.href = "#faq";
-				}}
-			>
-				FAQ
-			</Button>
-		</>
-	);
+	const NavLinks = () => {
+		const router = useRouter();
+
+		const handleNavigation = (path: string) => {
+			// If it's a hash link and we're not on the root path
+			if (path.startsWith('#') && window.location.pathname !== '/') {
+				router.push(`/${path}`);
+			} else if (path.startsWith('#')) {
+				const element = document.getElementById(path.substring(1));
+				if (element) {
+					element.scrollIntoView({ behavior: 'smooth' });
+				}
+			} else {
+				router.push(path);
+			}
+		};
+
+		return (
+			<>
+				<Button
+					variant="ghost"
+					className="w-full text-lg font-light px-6 py-4 h-auto rounded-full text-center"
+					onClick={() => handleNavigation('#features')}
+				>
+					Features
+				</Button>
+				<Button
+					variant="ghost"
+					className="w-full text-lg font-light px-6 py-4 h-auto rounded-full text-center"
+					onClick={() => handleNavigation('/pricing')}
+				>
+					Pricing
+				</Button>
+				<Button
+					variant="ghost"
+					className="w-full text-lg font-light px-6 py-4 h-auto rounded-full text-center"
+					onClick={() => handleNavigation('#testimonials')}
+				>
+					Testimonials
+				</Button>
+				<Button
+					variant="ghost"
+					className="w-full text-lg font-light px-6 py-4 h-auto rounded-full text-center"
+					onClick={() => handleNavigation('#faq')}
+				>
+					FAQ
+				</Button>
+			</>
+		);
+	};
 
 	// Extracted desktop navigation component for signed out users
 	const SignedOutDesktopNav = () => (

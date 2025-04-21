@@ -3,33 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-const testimonials = [
-	{
-		name: "Sarah Johnson",
-		role: "Student Driver",
-		image: "/testimonials/sarah.jpg",
-		quote:
-			"DMV.gg simplifies the process for new drivers to learn and practice their knowledge test in one inclusive platform.",
-		description: "Passed on first attempt with 98% score",
-	},
-	{
-		name: "Michael Thompson",
-		role: "Recent Graduate",
-		image: "/testimonials/michael.jpg",
-		quote:
-			"The practice tests and study materials helped me feel confident and prepared for my actual DMV test.",
-		description: "Studied for just 2 weeks",
-	},
-	{
-		name: "Jessica Lee",
-		role: "International Student",
-		image: "/testimonials/jessica.jpg",
-		quote:
-			"As an international student, DMV.gg made it easy to understand California's driving rules and regulations.",
-		description: "Successfully got her license in 3 weeks",
-	},
-];
+import { testimonials } from "@/data/testimonials";
+import Image from "next/image";
 
 export default function Testimonials() {
 	const [currentIndex, setCurrentIndex] = useState(0);
@@ -102,22 +77,14 @@ export default function Testimonials() {
 					</div>
 
 					<div className="flex flex-col items-center max-w-4xl mx-auto">
-						<div className="w-[280px] aspect-square relative rounded-full overflow-hidden mb-8 bg-black/20 backdrop-blur-sm flex items-center justify-center">
-							<div className="text-center">
-								<p className="text-4xl font-medium">
-									{currentTestimonial.name
-										.split(" ")
-										.map((n) => n[0])
-										.join("")}
-								</p>
-							</div>
-							{/* <Image
+						<div className="w-[280px] aspect-square relative rounded-full overflow-hidden mb-8">
+							<Image
 								src={currentTestimonial.image}
 								alt={currentTestimonial.name}
 								fill
 								className="object-cover"
 								priority
-							/> */}
+							/>
 						</div>
 
 						<div className="text-center space-y-6 max-w-[75%] mx-auto">
