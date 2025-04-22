@@ -1,7 +1,7 @@
 "use client";
 
 import { useClerk, useUser } from "@clerk/nextjs";
-import { Gift, LogOut, Sparkles, Zap } from "lucide-react";
+import { Gift, LogOut, Zap } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useState, useEffect } from "react";
 import { PricingDialog } from "@/components/PricingDialog";
@@ -20,42 +20,12 @@ export function UserHeader() {
   const [isPricingOpen, setIsPricingOpen] = useState(false);
   const [isSubscriptionDetailsOpen, setIsSubscriptionDetailsOpen] =
     useState(false);
-  const [stats, setStats] = useState<UserStatsData>({ studyStreak: 0 });
-  const [isLoading, setIsLoading] = useState(true);
   const [userBirthday, setUserBirthday] = useState<string | null>(null);
 
   const displayName =
     dbUser?.firstName && dbUser?.lastName
       ? `${dbUser.firstName} ${dbUser.lastName}`
       : dbUser?.firstName || "User";
-
-  useEffect(() => {
-    const fetchUserStats = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch("/api/user/activity");
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch user activity stats");
-        }
-
-        const data = await response.json();
-        const streak = data.streak || 0;
-        setStats({ studyStreak: streak });
-      } catch (error) {
-        console.error("Error fetching user stats:", error);
-        setStats({ studyStreak: 0 });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (hasActiveSubscription) {
-      fetchUserStats();
-    } else {
-      setIsLoading(false);
-    }
-  }, [hasActiveSubscription]);
 
   useEffect(() => {
     if (dbUser?.birthday) {

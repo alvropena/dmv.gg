@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { AlertCircle, Loader2, RefreshCw } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 type WeakArea = {
   question: {
@@ -48,10 +48,6 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
   useEffect(() => {
     fetchWeakAreas();
   }, [refreshKey]);
-
-  const handleRefresh = () => {
-    setRefreshKey((prev) => prev + 1);
-  };
 
   const handleReviewQuestion = async () => {
     if (weakAreas.length === 0) {
