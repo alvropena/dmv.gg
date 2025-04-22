@@ -30,23 +30,23 @@ export function QuestionCard({
   return (
     <Card className="mb-6 mx-3 sm:mx-0">
       <CardHeader>
-        <CardTitle>{question.title}</CardTitle>
+        <CardTitle className="text-xl">{question.title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3 mt-4">
+        <div className="space-y-3">
           {options.map((option) => (
             <Button
               key={option.key}
               variant={selectedOption === option.key ? "secondary" : "outline"}
               className={`w-full justify-between ${
                 isAnswerRevealed && option.key === question.correctAnswer
-                  ? "bg-green-50 border-green-500"
+                  ? "bg-green-200/60"
                   : ""
               } ${
                 isAnswerRevealed &&
                 selectedOption === option.key &&
                 option.key !== question.correctAnswer
-                  ? "bg-red-100 border-red-3600"
+                  ? "bg-red-200/60"
                   : ""
               }`}
               onClick={() => onOptionSelect(option.key)}
@@ -66,15 +66,8 @@ export function QuestionCard({
         </div>
 
         {isAnswerRevealed && (
-          <div
-            className={`mt-6 p-4 rounded-lg border ${
-              selectedOption && selectedOption === question.correctAnswer
-                ? "bg-green-100 border-green-500"
-                : "bg-red-100 border-red-500"
-            }`}
-          >
-            <h3 className="font-medium text-lg mb-2">Explanation:</h3>
-            <p>{question.explanation}</p>
+          <div className="mt-6 space-y-2 text-sm">
+            <p>Explanation: {question.explanation}</p>
           </div>
         )}
       </CardContent>

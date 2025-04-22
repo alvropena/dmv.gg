@@ -379,7 +379,7 @@ export default function TestPage({ params }: TestPageProps) {
 	const currentQuestion = questions[currentQuestionIndex];
 
 	return (
-		<div className="relative min-h-screen bg-background flex items-center justify-center">
+		<div className="relative min-h-screen bg-[#F1F1EF] flex items-center justify-center">
 			<div className="w-full flex items-center justify-center overflow-hidden px-4 py-8">
 				<div className="max-w-3xl w-full">
 					<ProgressBar
