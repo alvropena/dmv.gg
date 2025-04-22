@@ -102,18 +102,20 @@ export function UserHeader() {
     <>
       <header className="sticky top-0 w-full z-50 p-4 pt-6 md:pt-12">
         <div className="container mx-auto px-2 md:px-6">
-          <div className="flex items-center justify-between bg-white rounded-xl border shadow-sm px-4 md:px-8 py-3 md:py-4">
-            <div className="flex items-center gap-2">
-              <Avatar>
-                <AvatarImage src={user?.imageUrl} alt={displayName} />
-                <AvatarFallback>
-                  {displayName?.[0]?.toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col">
-                <span className="text-sm">{displayName}</span>
+          <div className="flex flex-row justify-between items-center sm:items-center bg-white rounded-xl border shadow-sm px-4 md:px-8 py-3 md:py-4">
+            <div className="flex flex-row sm:flex-row items-center gap-4 sm:gap-2">
+              <div>
+                <Avatar className="w-12 h-12 sm:w-10 sm:h-10">
+                  <AvatarImage src={user?.imageUrl} alt={displayName} />
+                  <AvatarFallback>
+                    {displayName?.[0]?.toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="flex flex-col items-start sm:items-start">
+                <span className="text-sm font-medium sm:text-sm sm:font-normal">{displayName}</span>
                 {userBirthday && (
-                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <span className="text-xs text-muted-foreground sm:text-xs flex items-center gap-1">
                     <Gift className="h-3 w-3" />
                     {userBirthday}
                   </span>
@@ -121,11 +123,11 @@ export function UserHeader() {
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-end justify-center sm:justify-start sm:items-center gap-2 sm:gap-4">
               {!hasActiveSubscription && (
                 <Button
                   onClick={() => setIsPricingOpen(true)}
-                  className="flex items-center gap-2"
+                  className="flex items-center justify-center gap-2 w-[100px] sm:w-auto"
                 >
                   <Zap className="h-4 w-4" />
                   Upgrade
@@ -135,7 +137,7 @@ export function UserHeader() {
                 onClick={() => {
                   signOut();
                 }}
-                className="flex items-center gap-2"
+                className="hidden sm:flex items-center justify-center gap-2 w-[100px] sm:w-auto"
                 variant="secondary"
               >
                 <LogOut className="h-4 w-4" />
