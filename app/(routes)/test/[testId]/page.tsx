@@ -379,8 +379,8 @@ export default function TestPage({ params }: TestPageProps) {
 	const currentQuestion = questions[currentQuestionIndex];
 
 	return (
-		<div className="relative min-h-screen bg-background">
-			<div className="w-full h-full flex items-center justify-center overflow-hidden px-4">
+		<div className="relative min-h-screen bg-background flex items-center justify-center">
+			<div className="w-full flex items-center justify-center overflow-hidden px-4 py-8">
 				<div className="max-w-3xl w-full">
 					<ProgressBar
 						totalQuestions={questions.length}

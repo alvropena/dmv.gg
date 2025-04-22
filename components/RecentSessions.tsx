@@ -87,7 +87,7 @@ export function RecentSessions({
 	return (
 		<div className="mb-6">
 			<div className="flex justify-between items-center mb-4">
-				<h2 className="text-xl font-semibold text-white">Recent Sessions</h2>
+				<h2 className="text-xl font-semibold">Recent Sessions</h2>
 				<Link
 					href="/tests"
 					className="text-primary flex items-center gap-1 text-sm font-medium"
@@ -105,14 +105,14 @@ export function RecentSessions({
 			) : (
 				<div>
 					{recentTests.length === 0 ? (
-						<div className="border border-slate-200 dark:border-slate-800 rounded-[40px] p-6 text-center text-muted-foreground bg-white dark:bg-slate-950">
+						<div className="border border-slate-200 dark:border-slate-800 rounded-xl p-6 text-center text-muted-foreground bg-white dark:bg-slate-950">
 							No tests found. Start a practice test to see your tests here.
 						</div>
 					) : (
 						recentTests.map((test) => (
 							<div
 								key={test.id}
-								className="border border-slate-200 dark:border-slate-800 rounded-[40px] p-6 mb-4 last:mb-0 bg-white dark:bg-slate-950"
+								className="border border-slate-200 dark:border-slate-800 rounded-xl p-6 mb-4 last:mb-0 bg-white dark:bg-slate-950"
 							>
 								<div className="flex items-center justify-between mb-4">
 									<div className="flex items-center gap-3">
@@ -128,8 +128,7 @@ export function RecentSessions({
 									<Button
 										variant={
 											test.status === "completed" ? "outline" : "default"
-										}
-										className="rounded-[40px]"
+										}										
 										onClick={() =>
 											handleTestNavigation(test.id, test.status === "completed")
 										}

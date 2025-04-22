@@ -133,7 +133,7 @@ export function PricingDialog({
 								? "default"
 								: "outline"
 					}
-					className={`mt-6 rounded-full ${isSelected ? "bg-blue-600" : ""}`}
+					className='mt-6 rounded-full'
 					onClick={() => {
 						setSelectedPlan(planType);
 						onPlanSelect(planType);

@@ -14,7 +14,7 @@ export function TestsCompletedCard({
 	error,
 }: TestsCompletedCardProps) {
 	return (
-		<div className="rounded-[40px] p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+		<div className="rounded-xl p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
 			<div className="flex items-center gap-3 mb-2">
 				<h3 className="text-lg font-medium">Tests Completed</h3>
 			</div>

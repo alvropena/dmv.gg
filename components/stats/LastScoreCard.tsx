@@ -13,7 +13,7 @@ export function LastScoreCard({
 	error,
 }: LastScoreCardProps) {
 	return (
-		<div className="rounded-[40px] p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+		<div className="rounded-xl p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
 			<h3 className="text-lg font-medium mb-2">Last Score</h3>
 			<div className="mt-2">
 				{isLoading ? (

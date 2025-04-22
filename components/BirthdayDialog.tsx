@@ -18,6 +18,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { LanguageDialog } from "@/components/LanguageDialog";
 
 interface BirthdayDialogProps {
 	isOpen: boolean;
@@ -30,6 +31,7 @@ export function BirthdayDialog({ isOpen, onSave, onClose }: BirthdayDialogProps)
 	const [month, setMonth] = useState<string | undefined>(undefined);
 	const [year, setYear] = useState<string | undefined>(undefined);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [showLanguageDialog, setShowLanguageDialog] = useState(false);
 
 	const handleSave = async () => {
 		if (!day || !month || !year) return;
@@ -44,11 +46,27 @@ export function BirthdayDialog({ isOpen, onSave, onClose }: BirthdayDialogProps)
 				Number.parseInt(day),
 			);
 			await onSave(date);
-			onClose(); // Close the dialog after successful save
+			setShowLanguageDialog(true); // Show language dialog after saving birthday
 		} catch (error) {
 			console.error("Error saving birthday:", error);
 		} finally {
 			setIsSubmitting(false);
+		}
+	};
+
+	const handleLanguageSave = async (language: string) => {
+		try {
+			// Here you would typically save the language preference to your backend
+			await fetch("/api/user/language", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ language }),
+			});
+			onClose(); // Close all dialogs after language is saved
+		} catch (error) {
+			console.error("Error saving language preference:", error);
 		}
 	};
 
@@ -80,85 +98,96 @@ export function BirthdayDialog({ isOpen, onSave, onClose }: BirthdayDialogProps)
 	const isSelectionComplete = day && month && year;
 
 	return (
-		<Dialog open={isOpen} onOpenChange={onClose}>
-			<DialogContent
-				className="sm:max-w-[400px] w-[90%] mx-auto rounded-md [&_.close-button]:hidden"
-				onEscapeKeyDown={onClose}
-				onInteractOutside={(e) => {
-					e.preventDefault();
-				}}
-			>
-				<DialogHeader>
-					<DialogTitle>Complete your profile</DialogTitle>
-					<DialogDescription>
-						Please enter your date of birth to continue.
-					</DialogDescription>
-				</DialogHeader>
-				<div className="flex flex-col">
-					<div className="grid grid-cols-3 w-full gap-2">
-						{/* Month Select */}
-						<div>
-							<Select value={month} onValueChange={setMonth}>
-								<SelectTrigger>
-									<SelectValue placeholder="Month" />
-								</SelectTrigger>
-								<SelectContent>
-									{months.map((item) => (
-										<SelectItem key={item.value} value={item.value}>
-											{item.label}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</div>
+		<>
+			<Dialog open={isOpen && !showLanguageDialog} onOpenChange={onClose}>
+				<DialogContent
+					className="sm:max-w-[400px] w-[90%] mx-auto rounded-md [&_.close-button]:hidden"
+					onEscapeKeyDown={onClose}
+					onInteractOutside={(e) => {
+						e.preventDefault();
+					}}
+				>
+					<DialogHeader>
+						<DialogTitle>Complete your profile</DialogTitle>
+						<DialogDescription>
+							Please enter your date of birth to continue.
+						</DialogDescription>
+					</DialogHeader>
+					<div className="flex flex-col">
+						<div className="grid grid-cols-3 w-full gap-2">
+							{/* Month Select */}
+							<div>
+								<Select value={month} onValueChange={setMonth}>
+									<SelectTrigger>
+										<SelectValue placeholder="Month" />
+									</SelectTrigger>
+									<SelectContent>
+										{months.map((item) => (
+											<SelectItem key={item.value} value={item.value}>
+												{item.label}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</div>
 
-						{/* Day Select */}
-						<div>
-							<Select value={day} onValueChange={setDay}>
-								<SelectTrigger>
-									<SelectValue placeholder="Day" />
-								</SelectTrigger>
-								<SelectContent>
-									{days.map((day) => (
-										<SelectItem key={day} value={day}>
-											{day}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</div>
+							{/* Day Select */}
+							<div>
+								<Select value={day} onValueChange={setDay}>
+									<SelectTrigger>
+										<SelectValue placeholder="Day" />
+									</SelectTrigger>
+									<SelectContent>
+										{days.map((day) => (
+											<SelectItem key={day} value={day}>
+												{day}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</div>
 
-						{/* Year Select */}
-						<div>
-							<Select value={year} onValueChange={setYear}>
-								<SelectTrigger>
-									<SelectValue placeholder="Year" />
-								</SelectTrigger>
-								<SelectContent>
-									{years.map((year) => (
-										<SelectItem key={year} value={year}>
-											{year}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
+							{/* Year Select */}
+							<div>
+								<Select value={year} onValueChange={setYear}>
+									<SelectTrigger>
+										<SelectValue placeholder="Year" />
+									</SelectTrigger>
+									<SelectContent>
+										{years.map((year) => (
+											<SelectItem key={year} value={year}>
+												{year}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</div>
 						</div>
 					</div>
-				</div>
-				<DialogFooter>
-					<Button
-						onClick={handleSave}
-						disabled={!isSelectionComplete || isSubmitting}
-						className="w-full sm:w-auto"
-					>
-						{isSubmitting ? (
-							<Loader2 className="h-4 w-4 animate-spin" />
-						) : (
-							"Save"
-						)}
-					</Button>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
+					<DialogFooter>
+						<Button
+							onClick={handleSave}
+							disabled={!isSelectionComplete || isSubmitting}
+							className="w-full sm:w-auto"
+						>
+							{isSubmitting ? (
+								<Loader2 className="h-4 w-4 animate-spin" />
+							) : (
+								"Continue"
+							)}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+
+			<LanguageDialog
+				isOpen={showLanguageDialog}
+				onSave={handleLanguageSave}
+				onClose={() => {
+					setShowLanguageDialog(false);
+					onClose();
+				}}
+			/>
+		</>
 	);
 }
