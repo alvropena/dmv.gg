@@ -9,10 +9,6 @@ import { SubscriptionDetailsDialog } from "@/components/SubscriptionDetailsDialo
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
-type UserStatsData = {
-  studyStreak: number;
-};
-
 export function UserHeader() {
   const { signOut } = useClerk();
   const { user } = useUser();

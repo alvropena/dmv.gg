@@ -24,7 +24,6 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
   const [weakAreas, setWeakAreas] = useState<WeakArea[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [creatingTest, setCreatingTest] = useState<boolean>(false);
-  const [refreshKey, setRefreshKey] = useState<number>(0);
   const router = useRouter();
 
   const fetchWeakAreas = async () => {
@@ -47,7 +46,7 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
 
   useEffect(() => {
     fetchWeakAreas();
-  }, [refreshKey]);
+  }, []);
 
   const handleReviewQuestion = async () => {
     if (weakAreas.length === 0) {
