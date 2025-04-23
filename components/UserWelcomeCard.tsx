@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { Lock, Play, PlayCircle, PlusCircle, FileText } from "lucide-react";
 
 type Test = {
@@ -143,53 +142,73 @@ export function UserWelcomeCard() {
 	};
 
 	return (
-		<div className="container mx-auto px-2 md:px-6">
-			<div className="rounded-xl p-8 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
-				<div className="px-1">
-					<h2 className="text-2xl font-bold mb-2">
-						Welcome back, {displayName}!
-					</h2>
-					<p className="text-muted-foreground mb-4 text-sm">
-						Ready to continue your DMV test preparation? You&apos;re making
-						{progress > 0 ? " great" : ""} progress!
-					</p>
+		<div className="w-full px-4">
+			<div className="container mx-auto px-2 md:px-6">
+				<div className="rounded-xl p-8 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+					<div className="px-1">
+						<h2 className="text-2xl font-bold mb-2">
+							Welcome back, {displayName}!
+						</h2>
+						<p className="text-muted-foreground mb-4 text-sm">
+							Ready to continue your DMV test preparation? You&apos;re making
+							{progress > 0 ? " great" : ""} progress!
+						</p>
 
-					<div className="mb-6">
-						<div className="flex justify-between mb-2">
-							<span className="text-sm">
-								Progress:{" "}
-								{isLoading ? (
-									"Loading..."
-								) : (
-									<span className="font-bold">
-										{completedQuestions} completed, {remainingQuestions} left
-									</span>
-								)}
-							</span>
-							<span className="font-bold text-sm">
-								{isLoading ? "Loading..." : `${progress}%`}
-							</span>
-						</div>
-						<Progress
-							value={isLoading ? 5 : progress}
-							className={`h-2.5 ${isLoading ? "animate-pulse" : ""}`}
-						/>
-					</div>
-
-					<div className="flex flex-col sm:flex-row gap-3">
-						{hasExistingTests ? (
-							<>
-								<Button
-									onClick={handleContinueTest}
-									className="flex items-center justify-center gap-2 rounded-[40px]"
-								>
-									{!hasAccess ? (
-										<Lock className="h-4 w-4" />
+						<div className="mb-6">
+							<div className="flex justify-between mb-2">
+								<span className="text-sm">
+									Progress:{" "}
+									{isLoading ? (
+										"Loading..."
 									) : (
-										<PlayCircle className="h-4 w-4" />
+										<span className="font-bold">
+											{completedQuestions} completed, {remainingQuestions} left
+										</span>
 									)}
-									Continue Test
-								</Button>
+								</span>
+								<span className="font-bold text-sm">
+									{isLoading ? "Loading..." : `${progress}%`}
+								</span>
+							</div>
+							<div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2">
+								<div
+									className="bg-blue-600 h-2 rounded-full"
+									style={{
+										width: `${isLoading ? 5 : progress}%`,
+									}}
+								/>
+							</div>
+						</div>
+
+						<div className="flex flex-col sm:flex-row gap-3">
+							{hasExistingTests ? (
+								<>
+									<Button
+										onClick={handleContinueTest}
+										className="flex items-center justify-center gap-2 rounded-[40px]"
+									>
+										{!hasAccess ? (
+											<Lock className="h-4 w-4" />
+										) : (
+											<PlayCircle className="h-4 w-4" />
+										)}
+										Continue Test
+									</Button>
+									<Button
+										variant="secondary"
+										onClick={handleStartNewTest}
+										className="flex items-center justify-center gap-2 rounded-[40px]"
+										disabled={isCreatingTest}
+									>
+										{!hasAccess ? (
+											<Lock className="h-4 w-4" />
+										) : (
+											<PlusCircle className="h-4 w-4" />
+										)}
+										{isCreatingTest ? "Creating..." : "Start New Test"}
+									</Button>
+								</>
+							) : (
 								<Button
 									variant="secondary"
 									onClick={handleStartNewTest}
@@ -199,37 +218,23 @@ export function UserWelcomeCard() {
 									{!hasAccess ? (
 										<Lock className="h-4 w-4" />
 									) : (
-										<PlusCircle className="h-4 w-4" />
+										<Play className="h-4 w-4" />
 									)}
-									{isCreatingTest ? "Creating..." : "Start New Test"}
+									{isCreatingTest ? "Creating..." : "Start Test"}
 								</Button>
-							</>
-						) : (
+							)}
 							<Button
-								variant="secondary"
-								onClick={handleStartNewTest}
+								onClick={() => router.push("/handbook")}
+								variant="outline"
 								className="flex items-center justify-center gap-2 rounded-[40px]"
-								disabled={isCreatingTest}
 							>
-								{!hasAccess ? (
-									<Lock className="h-4 w-4" />
-								) : (
-									<Play className="h-4 w-4" />
-								)}
-								{isCreatingTest ? "Creating..." : "Start Test"}
+								<FileText className="h-4 w-4" />
+								DMV Handbook
 							</Button>
-						)}
-						<Button
-							onClick={() => router.push("/handbook")}
-							variant="outline"
-							className="flex items-center justify-center gap-2 rounded-[40px]"
-						>
-							<FileText className="h-4 w-4" />
-							DMV Handbook
-						</Button>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	);
-} 
+}
