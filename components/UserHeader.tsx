@@ -91,7 +91,7 @@ export function UserHeader() {
 							</div>
 						</div>
 
-						<div className="flex flex-col sm:flex-row items-end justify-center sm:justify-start sm:items-center gap-2 sm:gap-4">
+						<div className="flex flex-row items-center justify-end sm:gap-2">
 							{!hasActiveSubscription && (
 								<Button
 									onClick={() => setIsPricingOpen(true)}
@@ -101,6 +101,16 @@ export function UserHeader() {
 									Upgrade
 								</Button>
 							)}
+							<Button
+								onClick={() => {
+									signOut();
+								}}
+								className="sm:hidden items-center justify-center"
+								variant="ghost"
+								size="icon"
+							>
+								<LogOut className="h-5 w-5 text-red-500" />
+							</Button>
 							<Button
 								onClick={() => {
 									signOut();
