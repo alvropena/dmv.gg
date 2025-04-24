@@ -66,7 +66,7 @@ export function UserHeader() {
 
 	return (
 		<>
-			<header className="sticky top-0 w-full z-50 p-4 pt-6 md:pt-12">
+			<header className="w-full z-50 pt-6 md:pt-12">
 				<div className="container mx-auto px-2 md:px-6">
 					<div className="flex flex-row justify-between items-center sm:items-center bg-white rounded-xl border shadow-sm px-4 md:px-8 py-3 md:py-4">
 						<div className="flex flex-row sm:flex-row items-center gap-4 sm:gap-2">

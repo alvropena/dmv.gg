@@ -143,8 +143,8 @@ export function UserWelcomeCard() {
 
 	return (
 		<div className="w-full px-4">
-			<div className="container mx-auto px-2 md:px-6">
-				<div className="rounded-xl p-8 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+			<div className="container mx-auto px-2 md:px-6 ">
+				<div className="rounded-xl p-8 border border-slate-200 dark:border-slate-800 dark:bg-slate-950 ">
 					<div className="px-1">
 						<h2 className="text-2xl font-bold mb-2">
 							Welcome back, {displayName}!

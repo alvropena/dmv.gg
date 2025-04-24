@@ -3,7 +3,7 @@ import { StudyTipCard } from "./StudyTipCard";
 
 export function StudyTips() {
 	return (
-		<div className="w-full px-4">
+		<div className="w-full pb-12">
 			<div className="container mx-auto px-2 md:px-6">
 				<div className="flex justify-between items-center mb-4">
 					<h2 className="text-xl font-semibold">Study Tips</h2>

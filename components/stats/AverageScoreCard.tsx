@@ -14,8 +14,8 @@ export function AverageScoreCard({
 	error,
 }: AverageScoreCardProps) {
 	return (
-		<div className="w-full px-4">
-			<div className="container mx-auto md:px-6">
+		<div className="w-full">
+			<div className="container mx-auto">
 				<div className="rounded-xl p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
 					<h3 className="text-lg font-medium mb-2">Average Score</h3>
 					<div className="mt-2">

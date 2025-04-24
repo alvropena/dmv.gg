@@ -14,8 +14,8 @@ export function TestsCompletedCard({
 	error,
 }: TestsCompletedCardProps) {
 	return (
-		<div className="w-full px-4">
-			<div className="container mx-auto px-2 md:px-6">
+		<div className="w-full">
+			<div className="container mx-auto">
 				<div className="rounded-xl p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
 					<div className="flex items-center gap-3 mb-2">
 						<h3 className="text-lg font-medium">Tests Completed</h3>

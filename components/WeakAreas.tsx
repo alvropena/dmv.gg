@@ -102,8 +102,8 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
 
 	if (weakAreas.length === 0) {
 		return (
-			<div className="w-full px-4">
-				<div className="container mx-auto px-2 md:px-6">
+			<div className="w-full">
+				<div className="container mx-auto">
 					<div className="flex justify-between items-center mb-4">
 						<h2 className="text-xl font-semibold">Weak Areas</h2>
 					</div>
@@ -130,8 +130,8 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
 	}
 
 	return (
-		<div className="w-full px-4">
-			<div className="container mx-auto px-2 md:px-6">
+		<div className="w-full">
+			<div className="container mx-auto">
 				<div className="flex justify-between items-center mb-4">
 					<h2 className="text-xl font-semibold">Weak Areas</h2>
 				</div>
