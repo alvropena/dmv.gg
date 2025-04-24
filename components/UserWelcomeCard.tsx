@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Lock, Play, PlayCircle, PlusCircle, FileText } from "lucide-react";
+import { PricingDialog } from "@/components/PricingDialog";
 
 type Test = {
 	id: string;
@@ -28,6 +29,7 @@ export function UserWelcomeCard() {
 	const [isCreatingTest, setIsCreatingTest] = useState(false);
 	const [completedQuestions, setCompletedQuestions] = useState(0);
 	const [remainingQuestions, setRemainingQuestions] = useState(0);
+	const [isPricingOpen, setIsPricingOpen] = useState(false);
 
 	const displayName = dbUser?.firstName || "User";
 	const hasAccess = hasActiveSubscription || dbUser?.role === "ADMIN";
@@ -103,9 +105,31 @@ export function UserWelcomeCard() {
 		fetchUserProgress();
 	}, []);
 
+	const handlePlanSelect = async (plan: "weekly" | "monthly" | "lifetime") => {
+		try {
+			const response = await fetch("/api/create-checkout-session", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					plan,
+				}),
+			});
+
+			const data = await response.json();
+
+			if (data.url) {
+				window.location.href = data.url;
+			}
+		} catch (error) {
+			console.error("Error creating checkout session:", error);
+		}
+	};
+
 	const handleContinueTest = () => {
 		if (!hasAccess) {
-			router.push("/pricing");
+			setIsPricingOpen(true);
 			return;
 		}
 		if (latestTestId) {
@@ -115,7 +139,7 @@ export function UserWelcomeCard() {
 
 	const handleStartNewTest = async () => {
 		if (!hasAccess) {
-			router.push("/pricing");
+			setIsPricingOpen(true);
 			return;
 		}
 
@@ -142,73 +166,59 @@ export function UserWelcomeCard() {
 	};
 
 	return (
-		<div className="w-full px-2">
-			<div className="container mx-auto px-2 md:px-6 ">
-				<div className="rounded-xl p-4 border border-slate-200 dark:border-slate-800 dark:bg-slate-950 ">
-					<div className="px-1">
-						<h2 className="text-2xl font-bold mb-2">
-							Welcome back, {displayName}!
-						</h2>
-						<p className="text-muted-foreground mb-4 text-sm">
-							Ready to continue your DMV test preparation? You&apos;re making
-							{progress > 0 ? " great" : ""} progress!
-						</p>
+		<>
+			<div className="w-full px-2">
+				<div className="container mx-auto px-2 md:px-6 ">
+					<div className="rounded-xl p-4 border border-slate-200 dark:border-slate-800 dark:bg-slate-950 ">
+						<div className="px-1">
+							<h2 className="text-2xl font-bold mb-2">
+								Welcome back, {displayName}!
+							</h2>
+							<p className="text-muted-foreground mb-4 text-sm">
+								Ready to continue your DMV test preparation? You&apos;re making
+								{progress > 0 ? " great" : ""} progress!
+							</p>
 
-						<div className="mb-6">
-							<div className="flex justify-between mb-2">
-								<span className="text-sm">
-									Progress:{" "}
-									{isLoading ? (
-										"Loading..."
+							<div className="mb-6">
+								<div className="flex justify-between mb-2">
+									<span className="text-sm">
+										Progress:{" "}
+										{isLoading ? (
+											"Loading..."
+										) : (
+											<span className="font-bold">
+												{completedQuestions} completed, {remainingQuestions} left
+											</span>
+										)}
+									</span>
+									<span className="font-bold text-sm">
+										{isLoading ? "Loading..." : `${progress}%`}
+									</span>
+								</div>
+								<div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2">
+									<div
+										className="bg-blue-600 h-2 rounded-full"
+										style={{
+											width: `${isLoading ? 5 : progress}%`,
+										}}
+									/>
+								</div>
+							</div>
+
+							<div className="flex flex-col sm:flex-row gap-3">
+								{hasExistingTests ? (
+									<>
+										<Button
+									onClick={handleContinueTest}
+									className="flex items-center justify-center gap-2 rounded-[40px]"
+								>
+									{!hasAccess ? (
+										<Lock className="h-4 w-4" />
 									) : (
-										<span className="font-bold">
-											{completedQuestions} completed, {remainingQuestions} left
-										</span>
+										<PlayCircle className="h-4 w-4" />
 									)}
-								</span>
-								<span className="font-bold text-sm">
-									{isLoading ? "Loading..." : `${progress}%`}
-								</span>
-							</div>
-							<div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2">
-								<div
-									className="bg-blue-600 h-2 rounded-full"
-									style={{
-										width: `${isLoading ? 5 : progress}%`,
-									}}
-								/>
-							</div>
-						</div>
-
-						<div className="flex flex-col sm:flex-row gap-3">
-							{hasExistingTests ? (
-								<>
-									<Button
-										onClick={handleContinueTest}
-										className="flex items-center justify-center gap-2 rounded-[40px]"
-									>
-										{!hasAccess ? (
-											<Lock className="h-4 w-4" />
-										) : (
-											<PlayCircle className="h-4 w-4" />
-										)}
-										Continue Test
-									</Button>
-									<Button
-										variant="secondary"
-										onClick={handleStartNewTest}
-										className="flex items-center justify-center gap-2 rounded-[40px]"
-										disabled={isCreatingTest}
-									>
-										{!hasAccess ? (
-											<Lock className="h-4 w-4" />
-										) : (
-											<PlusCircle className="h-4 w-4" />
-										)}
-										{isCreatingTest ? "Creating..." : "Start New Test"}
-									</Button>
-								</>
-							) : (
+									Continue Test
+								</Button>
 								<Button
 									variant="secondary"
 									onClick={handleStartNewTest}
@@ -218,23 +228,45 @@ export function UserWelcomeCard() {
 									{!hasAccess ? (
 										<Lock className="h-4 w-4" />
 									) : (
-										<Play className="h-4 w-4" />
+										<PlusCircle className="h-4 w-4" />
 									)}
-									{isCreatingTest ? "Creating..." : "Start Test"}
+									{isCreatingTest ? "Creating..." : "Start New Test"}
 								</Button>
-							)}
-							<Button
-								onClick={() => router.push("/handbook")}
-								variant="outline"
-								className="flex items-center justify-center gap-2 rounded-[40px]"
-							>
-								<FileText className="h-4 w-4" />
-								DMV Handbook
-							</Button>
+							</>
+								) : (
+									<Button
+										variant="secondary"
+										onClick={handleStartNewTest}
+										className="flex items-center justify-center gap-2 rounded-[40px]"
+										disabled={isCreatingTest}
+									>
+										{!hasAccess ? (
+											<Lock className="h-4 w-4" />
+										) : (
+											<Play className="h-4 w-4" />
+										)}
+										{isCreatingTest ? "Creating..." : "Start Test"}
+									</Button>
+								)}
+								<Button
+									onClick={() => router.push("/handbook")}
+									variant="outline"
+									className="flex items-center justify-center gap-2 rounded-[40px]"
+								>
+									<FileText className="h-4 w-4" />
+									DMV Handbook
+								</Button>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+
+			<PricingDialog
+				isOpen={isPricingOpen}
+				onClose={() => setIsPricingOpen(false)}
+				onPlanSelect={handlePlanSelect}
+			/>
+		</>
 	);
 }

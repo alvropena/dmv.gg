@@ -23,12 +23,14 @@ interface PricingDialogProps {
 	isOpen: boolean;
 	onClose: () => void;
 	onPlanSelect: (plan: "weekly" | "monthly" | "lifetime") => void;
+	isActiveAccount?: boolean;
 }
 
 export function PricingDialog({
 	isOpen,
 	onClose,
 	onPlanSelect,
+	isActiveAccount = false,
 }: PricingDialogProps) {
 	const [prices, setPrices] = useState<Price[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -86,19 +88,19 @@ export function PricingDialog({
 		const isPopular = planType === "monthly";
 		const amount = formatCurrency(price.unitAmount || 0, price.currency);
 		const interval = price.interval
-			? `per ${price.interval}`
+			? `/ per ${price.interval}`
 			: "one-time payment";
 
 		return (
 			<div
 				key={price.id}
 				className={`border rounded-lg p-6 flex flex-col relative ${
-					isSelected ? "border-primary border-2" : ""
+					isSelected ? `${planType === "monthly" ? "border-blue-600" : "border-primary"} border-2` : ""
 				}`}
 			>
 				{isPopular && (
 					<div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-						<Badge variant="default">Most Popular</Badge>
+						<Badge className="bg-blue-600 hover:bg-blue-700 rounded-full">Most Popular</Badge>
 					</div>
 				)}
 				<h3 className="font-semibold text-3xl text-center">
@@ -114,8 +116,25 @@ export function PricingDialog({
 				<div className="flex-grow mt-6 space-y-4">
 					{price.features && price.features.length > 0 ? (
 						price.features.map((feature) => (
-							<div key={feature} className="flex items-center gap-2">
-								<Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+							<div key={feature} className="flex items-center gap-3">
+								<div className="h-4 w-4 rounded-full bg-green-200 flex items-center justify-center flex-shrink-0">
+									<svg
+										width="10"
+										height="10"
+										viewBox="0 0 10 10"
+										fill="none"
+										xmlns="http://www.w3.org/2000/svg"
+										className="text-green-600"
+									>
+										<path
+											d="M1.5 5.5L3.5 7.5L8.5 2.5"
+											stroke="currentColor"
+											strokeWidth="2"
+											strokeLinecap="round"
+											strokeLinejoin="round"
+										/>
+									</svg>
+								</div>
 								<span className="text-sm">{feature}</span>
 							</div>
 						))
@@ -133,13 +152,16 @@ export function PricingDialog({
 								? "default"
 								: "outline"
 					}
-					className='mt-6 rounded-full'
+					className='mt-6 rounded-full font-bold'
 					onClick={() => {
-						setSelectedPlan(planType);
-						onPlanSelect(planType);
+						if (!isActiveAccount) {
+							setSelectedPlan(planType);
+							onPlanSelect(planType);
+						}
 					}}
+					disabled={isActiveAccount}
 				>
-					Get Started
+					{isActiveAccount ? "Premium" : "Get Started"}
 				</Button>
 			</div>
 		);
@@ -163,8 +185,25 @@ export function PricingDialog({
 								prices
 									.find((p) => getPlanType(p) === selectedPlan)
 									?.features?.map((feature) => (
-										<div key={feature} className="flex items-center gap-2">
-											<Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+										<div key={feature} className="flex items-center gap-3">
+											<div className="h-4 w-4 rounded-full bg-green-200 flex items-center justify-center flex-shrink-0">
+												<svg
+													width="10"
+													height="10"
+													viewBox="0 0 10 10"
+													fill="none"
+													xmlns="http://www.w3.org/2000/svg"
+													className="text-green-600"
+												>
+													<path
+														d="M1.5 5.5L3.5 7.5L8.5 2.5"
+														stroke="currentColor"
+														strokeWidth="2"
+														strokeLinecap="round"
+														strokeLinejoin="round"
+													/>
+												</svg>
+											</div>
 											<span className="text-sm">{feature}</span>
 										</div>
 									))}
@@ -174,7 +213,7 @@ export function PricingDialog({
 						<div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
 							{prices.filter((p) => getPlanType(p) === "weekly").length > 0 && (
 								<Card
-									className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-md ${
+									className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-full ${
 										selectedPlan === "weekly" ? "border-primary border-2" : ""
 									}`}
 									onClick={() => {
@@ -198,7 +237,7 @@ export function PricingDialog({
 
 							{prices.filter((p) => getPlanType(p) === "monthly").length > 0 && (
 								<Card
-									className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-md ${
+									className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-xl ${
 										selectedPlan === "monthly" ? "border-primary border-2" : ""
 									}`}
 									onClick={() => {
@@ -222,7 +261,7 @@ export function PricingDialog({
 
 							{prices.filter((p) => getPlanType(p) === "lifetime").length > 0 && (
 								<Card
-									className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-md ${
+									className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-xl ${
 										selectedPlan === "lifetime" ? "border-primary border-2" : ""
 									}`}
 									onClick={() => {
@@ -246,14 +285,15 @@ export function PricingDialog({
 
 						{/* Continue button */}
 						<Button
-							className="w-full mb-2 rounded-full"
+							className="w-full mb-2 rounded-full font-bold"
 							onClick={() => {
-								if (selectedPlan) {
+								if (!isActiveAccount && selectedPlan) {
 									onPlanSelect(selectedPlan);
 								}
 							}}
+							disabled={isActiveAccount}
 						>
-							Continue
+							{isActiveAccount ? "Premium" : "Continue"}
 						</Button>
 					</div>
 				</div>
@@ -264,9 +304,9 @@ export function PricingDialog({
 	const renderDesktopContent = () => {
 		return (
 			<DialogContent className="sm:max-w-[900px]">
-				<div className="flex flex-col items-center mb-8">
-					<h2 className="text-2xl font-bold">Choose Your Plan</h2>
-					<p className="text-muted-foreground">
+				<div className="flex flex-col items-center">
+					<h2 className="text-3xl font-bold mb-1">Choose Your Plan</h2>
+					<p className="text-muted-foreground text-lg">
 						Select the plan that works best for you. Cancel anytime.
 					</p>
 				</div>
