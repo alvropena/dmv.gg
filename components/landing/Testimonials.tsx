@@ -45,7 +45,7 @@ export default function Testimonials() {
 	return (
 		<section
 			id="testimonials"
-			className="w-full py-28 md:py-12 lg:py-52 bg-[#F1F1EF]"
+			className="w-full py-12 md:py-12 lg:py-52 bg-[#F1F1EF]"
 		>
 			<div className="container mx-auto px-2 md:px-6">
 				<div className="flex flex-col justify-center items-center text-center space-y-4 md:space-y-8 mb-8">

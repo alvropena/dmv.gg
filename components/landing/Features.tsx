@@ -60,7 +60,7 @@ export default function Features() {
 	);
 
 	return (
-		<section id="features" className="w-full py-28 md:py-12 lg:py-52 bg-[#FFF25F]">
+		<section id="features" className="w-full py-12 md:py-12 lg:py-52 bg-[#FFF25F]">
 			<div className="container mx-auto px-6">
 				<div className="grid gap-6 lg:gap-12">
 					<div className="flex flex-col justify-center items-center text-center space-y-4 md:space-y-8">
@@ -86,7 +86,7 @@ export default function Features() {
 
 				{/* Mobile Carousel */}
 				<div 
-					className="mt-24 block md:hidden"
+					className="mt-4 block md:hidden"
 					onMouseEnter={() => setIsPaused(true)}
 					onMouseLeave={() => setIsPaused(false)}
 				>
@@ -123,7 +123,7 @@ export default function Features() {
 				</div>
 
 				{/* Desktop Grid */}
-				<div className="mt-24 hidden md:grid md:grid-cols-3 gap-8">
+				<div className="mt-24 hidden md:grid md:grid-cols-2 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
 					{features.map((feature) => (
 						<FeatureCard key={feature.id} feature={feature} />
 					))}

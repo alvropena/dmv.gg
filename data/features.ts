@@ -24,27 +24,11 @@ export const features = [
 		imagePosition: "right"
 	},
 	{
-		id: "efficient",
-		title: "Study Efficiently",
-		description:
-			"Our algorithm focuses on your weak areas to maximize your study time. Learn smarter, not harder with our adaptive learning system.",
-		image: "/features/efficient.png",
-		imagePosition: "left"
-	},
-	{
 		id: "feedback",
 		title: "Instant Feedback",
 		description:
 			"Get immediate explanations for every question to understand the correct answers. Learn from your mistakes in real-time.",
 		image: "/features/feedback.png",
-		imagePosition: "right"
-	},
-	{
-		id: "mobile",
-		title: "Study Anywhere",
-		description:
-			"Access your study materials on any device. Whether you're at home or on the go, your practice tests are always available.",
-		image: "/features/mobile.png",
 		imagePosition: "left"
 	}
 ]; 
