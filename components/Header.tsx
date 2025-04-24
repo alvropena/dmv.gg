@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import Link from "next/link";
 
 export function Header() {
 	const router = useRouter();
@@ -105,9 +106,9 @@ export function Header() {
 			<SheetContent side="left">
 				<div className="flex flex-col h-full py-6">
 					<div className="flex flex-col gap-6 items-center w-full">
-						<div className="w-full text-[#000099] text-4xl font-bold px-6 text-center">
+						<Link href="/" className="w-full text-[#000099] text-4xl font-bold px-6 text-center">
 							DMV.gg
-						</div>
+						</Link>
 						<div className="w-full flex flex-col gap-6">
 							<NavLinks />
 						</div>
@@ -168,7 +169,9 @@ export function Header() {
 								<SignedOutMobileMenu />
 							</div>
 							<div className="hidden lg:block font-bold text-xl mr-8">
-								DMV.gg
+								<Link href="/" className="hover:opacity-90">
+									DMV.gg
+								</Link>
 							</div>
 							<SignedOutDesktopNav />
 						</div>

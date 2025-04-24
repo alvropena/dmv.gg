@@ -85,7 +85,7 @@ export function RecentSessions({
 	};
 
 	return (
-		<div className="w-full">
+		<div className="w-full px-2">
 			<div className="container mx-auto">
 				<div className="flex justify-between items-center mb-4">
 					<h2 className="text-xl font-semibold">Recent Sessions</h2>

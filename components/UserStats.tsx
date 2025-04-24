@@ -61,27 +61,29 @@ export function UserStats({ initialStats }: UserStatsProps) {
 	}, [fetchUserStats]);
 
 	return (
-		<div className="container mx-auto px-2 md:px-6">
-			<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-				<TestsCompletedCard
-					totalCompleted={stats.totalCompleted}
-					weeklyDifference={stats.weeklyDifference}
-					isLoading={isStatsLoading || isUserLoading}
-					error={statsError}
-				/>
+		<div className="w-full px-2">
+			<div className="container mx-auto px-2 md:px-6">
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+					<TestsCompletedCard
+						totalCompleted={stats.totalCompleted}
+						weeklyDifference={stats.weeklyDifference}
+						isLoading={isStatsLoading || isUserLoading}
+						error={statsError}
+					/>
 
-				<AverageScoreCard
-					averageScore={stats.averageScore}
-					scoreDifference={stats.scoreDifference}
-					isLoading={isStatsLoading || isUserLoading}
-					error={statsError}
-				/>
+					<AverageScoreCard
+						averageScore={stats.averageScore}
+						scoreDifference={stats.scoreDifference}
+						isLoading={isStatsLoading || isUserLoading}
+						error={statsError}
+					/>
 
-				<LastScoreCard
-					lastScore={stats.lastScore}
-					isLoading={isStatsLoading || isUserLoading}
-					error={statsError}
-				/>
+					<LastScoreCard
+						lastScore={stats.lastScore}
+						isLoading={isStatsLoading || isUserLoading}
+						error={statsError}
+					/>
+				</div>
 			</div>
 		</div>
 	);

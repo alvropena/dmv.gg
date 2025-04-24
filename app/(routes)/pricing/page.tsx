@@ -3,6 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { useState } from "react";
+import { Header } from "@/components/Header";
+import Footer from "@/components/landing/Footer";
 
 const pricingTiers = [
 	{
@@ -69,71 +71,77 @@ export default function PricingPage() {
 	};
 
 	return (
-		<div className="container mx-auto px-4 py-16">
-			<div className="text-center mb-16">
-				<h1 className="text-4xl font-bold mb-4">Simple, Transparent Pricing</h1>
-				<p className="text-muted-foreground text-lg">
-					Choose the plan that works best for you
-				</p>
-			</div>
+		<>
+			<Header />
+			<div className="container mx-auto px-4 py-4">
+				<div className="text-center mb-16">
+					<h1 className="text-5xl font-extrabold tracking-tighter text-[#B6DBFF] md:text-6xl lg:text-7xl xl:text-8xl mb-4">
+						Simple, Transparent Pricing
+					</h1>
+					<p className="text-[#B6DBFF] md:text-md/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+						Choose the plan that works best for you
+					</p>
+				</div>
 
-			<div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-				{pricingTiers.map((tier) => (
-					<div
-						key={tier.name}
-						className={`rounded-2xl border p-8 transition-all ${
-							selectedPlan === tier.name
-								? "border-primary shadow-lg scale-105"
-								: "border-border hover:border-primary/50"
-						}`}
-					>
-						<div className="mb-8">
-							<h2 className="text-2xl font-bold mb-2">{tier.name}</h2>
-							<div className="flex items-baseline mb-4">
-								<span className="text-4xl font-bold">{tier.price}</span>
-								{tier.name !== "Lifetime" && (
-									<span className="text-muted-foreground ml-2">
-										/ {tier.name.toLowerCase()}
-									</span>
-								)}
-							</div>
-							<p className="text-muted-foreground">{tier.description}</p>
-						</div>
-
-						<ul className="space-y-4 mb-8">
-							{tier.features.map((feature) => (
-								<li key={feature} className="flex items-center gap-3">
-									<Check className="h-5 w-5 text-primary flex-shrink-0" />
-									<span>{feature}</span>
-								</li>
-							))}
-						</ul>
-
-						<Button
-							className="w-full"
-							variant={selectedPlan === tier.name ? "default" : "outline"}
-							onClick={() => {
-								setSelectedPlan(tier.name);
-								handlePlanSelect(tier.name);
-							}}
+				<div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+					{pricingTiers.map((tier) => (
+						<div
+							key={tier.name}
+							className={`rounded-2xl border p-8 transition-all bg-white ${
+								selectedPlan === tier.name
+									? "border-primary shadow-lg scale-105"
+									: "border-border hover:border-primary/50"
+							}`}
 						>
-							Get Started
-						</Button>
-					</div>
-				))}
-			</div>
+							<div className="mb-8">
+								<h2 className="text-2xl font-bold mb-2">{tier.name}</h2>
+								<div className="flex items-baseline mb-4">
+									<span className="text-4xl font-bold">{tier.price}</span>
+									{tier.name !== "Lifetime" && (
+										<span className="text-muted-foreground ml-2">
+											/ {tier.name.toLowerCase()}
+										</span>
+									)}
+								</div>
+								<p className="text-muted-foreground">{tier.description}</p>
+							</div>
 
-			<div className="text-center mt-16">
-				<p className="text-muted-foreground">
-					All plans include access to our comprehensive DMV test preparation
-					materials.
-					<br />
-					Need help choosing?{" "}
-					<a href="/contact" className="text-primary hover:underline">
-						Contact us
-					</a>
-				</p>
+							<ul className="space-y-4 mb-8">
+								{tier.features.map((feature) => (
+									<li key={feature} className="flex items-center gap-3">
+										<Check className="h-5 w-5 text-primary flex-shrink-0" />
+										<span>{feature}</span>
+									</li>
+								))}
+							</ul>
+
+							<Button
+								className="w-full"
+								variant={selectedPlan === tier.name ? "default" : "outline"}
+								onClick={() => {
+									setSelectedPlan(tier.name);
+									handlePlanSelect(tier.name);
+								}}
+							>
+								Get Started
+							</Button>
+						</div>
+					))}
+				</div>
+
+				<div className="text-center mt-8">
+					<p className="text-white">
+						All plans include access to our comprehensive DMV test preparation
+						materials.
+						<br />
+						Need help choosing?{" "}
+						<a href="/contact" className="text-primary hover:underline">
+							Contact us
+						</a>
+					</p>
+				</div>
 			</div>
-		</div>
+			<Footer />
+		</>
 	);
 }
