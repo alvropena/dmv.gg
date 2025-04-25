@@ -10,8 +10,8 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect, useCallback } from "react";
+import { toast } from "sonner";
 
 interface ProgressBarProps {
   totalQuestions: number;
@@ -33,6 +33,7 @@ export function ProgressBar({
   const [showDialog, setShowDialog] = useState(false);
   const [showFlagDialog, setShowFlagDialog] = useState(false);
   const [flagReason, setFlagReason] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const progressPercentage = (questionsAnswered / totalQuestions) * 100;
   const currentQuestionNumber = currentQuestionIndex + 1;
 
@@ -57,17 +58,52 @@ export function ProgressBar({
     router.push("/");
   };
 
-  const handleFlag = () => {
-    // Here you would implement the actual flagging logic
-    // You can use the flagReason state and currentQuestion.id
-    console.log(
-      "Flagging question:",
-      currentQuestion?.id,
-      "Reason:",
-      flagReason
-    );
-    setShowFlagDialog(false);
-    setFlagReason(""); // Reset the input
+  const handleFlag = async () => {
+    if (!flagReason.trim()) {
+      toast.error("Please provide a reason for flagging this question.");
+      return;
+    }
+
+    if (!currentQuestion?.id) {
+      toast.error("Question ID is missing.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/questions/flag", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          questionId: currentQuestion.id,
+          reason: flagReason,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message);
+      }
+
+      toast.success("Question flagged successfully. Thank you for your feedback!");
+      setShowFlagDialog(false);
+      setFlagReason(""); // Reset the input
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to flag question. Please try again later.");
+      console.error("Error flagging question:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === " ") {
+      e.stopPropagation();
+    }
   };
 
   return (
@@ -126,7 +162,12 @@ export function ProgressBar({
       </Dialog>
 
       <Dialog open={showFlagDialog} onOpenChange={setShowFlagDialog}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent 
+          className="sm:max-w-[425px]" 
+          onClick={(e) => e.stopPropagation()} 
+          onKeyDown={(e) => e.stopPropagation()} 
+          onKeyPress={(e) => e.stopPropagation()}
+        >
           <DialogHeader>
             <DialogTitle>Is this question incorrect?</DialogTitle>
           </DialogHeader>
@@ -135,15 +176,20 @@ export function ProgressBar({
               <span className="font-semibold">Question</span>:{' '}
               {currentQuestion?.title || "Current question"}
             </div>
-            <Textarea
+            <textarea
+              className="w-full min-h-[100px] p-3 rounded-md border border-input bg-background text-sm"
               placeholder="Please, tell us why you think this question is incorrect and we will review it."
               value={flagReason}
               onChange={(e) => setFlagReason(e.target.value)}
             />
           </div>
           <DialogFooter>
-            <Button variant="destructive" onClick={handleFlag}>
-              Submit Flag
+            <Button 
+              variant="destructive" 
+              onClick={handleFlag}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Submit Flag"}
             </Button>
           </DialogFooter>
         </DialogContent>

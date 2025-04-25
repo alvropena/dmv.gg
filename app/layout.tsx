@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Baloo_Bhai_2 } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
 import { CookieConsentDialog } from "@/components/CookieConsentDialog";
 import { AuthProvider } from "@/contexts/AuthContext";

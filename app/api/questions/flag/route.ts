@@ -7,18 +7,27 @@ export async function POST(req: Request) {
     const { userId } = await auth();
     
     if (!userId) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return NextResponse.json(
+        { message: 'Unauthorized' },
+        { status: 401 }
+      );
     }
 
     const body = await req.json();
     const { questionId, reason } = body;
 
     if (!questionId) {
-      return new NextResponse('Question ID is required', { status: 400 });
+      return NextResponse.json(
+        { message: 'Question ID is required' },
+        { status: 400 }
+      );
     }
 
     if (!reason) {
-      return new NextResponse('Reason is required', { status: 400 });
+      return NextResponse.json(
+        { message: 'Reason is required' },
+        { status: 400 }
+      );
     }
 
     // Find the user by their clerkId
@@ -27,7 +36,10 @@ export async function POST(req: Request) {
     });
 
     if (!user) {
-      return new NextResponse('User not found', { status: 404 });
+      return NextResponse.json(
+        { message: 'User not found' },
+        { status: 404 }
+      );
     }
 
     // Check if the question exists
@@ -36,7 +48,10 @@ export async function POST(req: Request) {
     });
 
     if (!question) {
-      return new NextResponse('Question not found', { status: 404 });
+      return NextResponse.json(
+        { message: 'Question not found' },
+        { status: 404 }
+      );
     }
 
     // Check if the user has already flagged this question
@@ -49,7 +64,10 @@ export async function POST(req: Request) {
     });
 
     if (existingFlag) {
-      return new NextResponse('You have already flagged this question', { status: 400 });
+      return NextResponse.json(
+        { message: 'You have already flagged this question' },
+        { status: 400 }
+      );
     }
 
     // Create the flag
@@ -65,6 +83,9 @@ export async function POST(req: Request) {
     return NextResponse.json(flaggedQuestion);
   } catch (error) {
     console.error('[QUESTION_FLAG]', error);
-    return new NextResponse('Internal Error', { status: 500 });
+    return NextResponse.json(
+      { message: 'Internal Error' },
+      { status: 500 }
+    );
   }
 } 
