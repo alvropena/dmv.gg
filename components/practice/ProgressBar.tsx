@@ -100,12 +100,6 @@ export function ProgressBar({
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === " ") {
-      e.stopPropagation();
-    }
-  };
-
   return (
     <>
       <div className="flex justify-between items-center mb-4 mx-3 sm:mx-0">
