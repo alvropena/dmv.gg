@@ -1,4 +1,4 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
@@ -22,14 +22,12 @@ interface PricingDialogProps {
 	isOpen: boolean;
 	onClose: () => void;
 	onPlanSelect: (plan: "weekly" | "monthly" | "lifetime") => void;
-	isActiveAccount?: boolean;
 }
 
 export function PricingDialog({
 	isOpen,
 	onClose,
 	onPlanSelect,
-	isActiveAccount = false,
 }: PricingDialogProps) {
 	const [prices, setPrices] = useState<Price[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -153,14 +151,11 @@ export function PricingDialog({
 					}
 					className='mt-6 rounded-full font-bold'
 					onClick={() => {
-						if (!isActiveAccount) {
-							setSelectedPlan(planType);
-							onPlanSelect(planType);
-						}
+						setSelectedPlan(planType);
+						onPlanSelect(planType);
 					}}
-					disabled={isActiveAccount}
 				>
-					{isActiveAccount ? "Premium" : "Get Started"}
+					Get Started
 				</Button>
 			</div>
 		);
@@ -172,7 +167,7 @@ export function PricingDialog({
 				<div className="flex flex-col h-full">
 					{/* Content section */}
 					<div className="p-6 pb-2 flex flex-col">
-						<h2 className="text-xl font-bold mb-1">Begin your DMV journey</h2>
+						<DialogTitle className="text-xl font-bold mb-1">Begin your DMV journey</DialogTitle>
 						<p className="text-gray-600 text-sm mb-4">
 							Unlock the test preparation you need
 						</p>
@@ -286,13 +281,12 @@ export function PricingDialog({
 						<Button
 							className="w-full mb-2 rounded-full font-bold"
 							onClick={() => {
-								if (!isActiveAccount && selectedPlan) {
+								if (selectedPlan) {
 									onPlanSelect(selectedPlan);
 								}
 							}}
-							disabled={isActiveAccount}
 						>
-							{isActiveAccount ? "Premium" : "Continue"}
+							Continue
 						</Button>
 					</div>
 				</div>
@@ -304,7 +298,7 @@ export function PricingDialog({
 		return (
 			<DialogContent className="sm:max-w-[900px]">
 				<div className="flex flex-col items-center">
-					<h2 className="text-3xl font-bold mb-1">Choose Your Plan</h2>
+					<DialogTitle className="text-3xl font-bold mb-1">Choose Your Plan</DialogTitle>
 					<p className="text-muted-foreground text-lg">
 						Select the plan that works best for you. Cancel anytime.
 					</p>

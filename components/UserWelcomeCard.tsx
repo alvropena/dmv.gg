@@ -8,265 +8,292 @@ import { Lock, Play, PlayCircle, PlusCircle, FileText } from "lucide-react";
 import { PricingDialog } from "@/components/PricingDialog";
 
 type Test = {
-	id: string;
-	totalQuestions: number;
-	completedQuestions: number;
-	correctAnswers: number;
-	status: string;
-	answers: Array<{
-		id: string;
-		isCorrect: boolean | null;
-	}>;
+  id: string;
+  totalQuestions: number;
+  completedQuestions: number;
+  correctAnswers: number;
+  status: string;
+  answers: Array<{
+    id: string;
+    isCorrect: boolean | null;
+  }>;
 };
 
 export function UserWelcomeCard() {
-	const router = useRouter();
-	const { dbUser, hasActiveSubscription } = useAuthContext();
-	const [progress, setProgress] = useState(0);
-	const [isLoading, setIsLoading] = useState(true);
-	const [hasExistingTests, setHasExistingTests] = useState(false);
-	const [latestTestId, setLatestTestId] = useState<string | null>(null);
-	const [isCreatingTest, setIsCreatingTest] = useState(false);
-	const [completedQuestions, setCompletedQuestions] = useState(0);
-	const [remainingQuestions, setRemainingQuestions] = useState(0);
-	const [isPricingOpen, setIsPricingOpen] = useState(false);
+  const router = useRouter();
+  const { dbUser, hasActiveSubscription } = useAuthContext();
+  const [progress, setProgress] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasExistingTests, setHasExistingTests] = useState(false);
+  const [latestTestId, setLatestTestId] = useState<string | null>(null);
+  const [isCreatingTest, setIsCreatingTest] = useState(false);
+  const [completedQuestions, setCompletedQuestions] = useState(0);
+  const [remainingQuestions, setRemainingQuestions] = useState(0);
+  const [isPricingOpen, setIsPricingOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-	const displayName = dbUser?.firstName || "User";
-	const hasAccess = hasActiveSubscription || dbUser?.role === "ADMIN";
+  const displayName = dbUser?.firstName || "User";
+  const hasAccess = hasActiveSubscription || dbUser?.role === "ADMIN";
+  const hasUsedFreeTest = dbUser?.hasUsedFreeTest || false;
 
-	useEffect(() => {
-		const fetchUserProgress = async () => {
-			try {
-				setIsLoading(true);
-				const response = await fetch("/api/tests");
+  useEffect(() => {
+    const fetchUserProgress = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/tests");
 
-				if (!response.ok) {
-					throw new Error("Failed to fetch tests");
-				}
+        if (!response.ok) {
+          throw new Error("Failed to fetch tests");
+        }
 
-				const data = await response.json();
+        const data = await response.json();
 
-				// Get the most recent test
-				if (data.tests && data.tests.length > 0) {
-					setHasExistingTests(true);
-					const latestTest = data.tests[0] as Test;
-					setLatestTestId(latestTest.id);
+        // Get the most recent test
+        if (data.tests && data.tests.length > 0) {
+          setHasExistingTests(true);
+          const latestTest = data.tests[0] as Test;
+          setLatestTestId(latestTest.id);
 
-					// Calculate progress based on answered questions
-					if (latestTest.totalQuestions > 0) {
-						// Count how many questions have been answered (where isCorrect is not null)
-						const answeredCount = latestTest.answers.filter(
-							(answer) => answer.isCorrect !== null,
-						).length;
-						const correctCount = latestTest.answers.filter(
-							(answer) => answer.isCorrect === true,
-						).length;
+          // Calculate progress based on answered questions
+          if (latestTest.totalQuestions > 0) {
+            // Count how many questions have been answered (where isCorrect is not null)
+            const answeredCount = latestTest.answers.filter(
+              (answer) => answer.isCorrect !== null
+            ).length;
+            const correctCount = latestTest.answers.filter(
+              (answer) => answer.isCorrect === true
+            ).length;
 
-						setCompletedQuestions(answeredCount);
-						setRemainingQuestions(latestTest.totalQuestions - answeredCount);
+            setCompletedQuestions(answeredCount);
+            setRemainingQuestions(latestTest.totalQuestions - answeredCount);
 
-						// If test is completed, show percentage of correct answers
-						if (latestTest.status === "completed") {
-							const progressPercentage = Math.round(
-								(correctCount / latestTest.totalQuestions) * 100,
-							);
-							setProgress(progressPercentage);
-						}
-						// If test is in progress, show percentage of answered questions
-						else {
-							const progressPercentage = Math.round(
-								(answeredCount / latestTest.totalQuestions) * 100,
-							);
-							setProgress(progressPercentage);
-						}
-					} else {
-						setProgress(0);
-						setCompletedQuestions(0);
-						setRemainingQuestions(0);
-					}
-				} else {
-					// No tests found
-					setHasExistingTests(false);
-					setProgress(0);
-					setCompletedQuestions(0);
-					setRemainingQuestions(0);
-				}
-			} catch (error) {
-				console.error("Error fetching tests:", error);
-				setHasExistingTests(false);
-				setProgress(0);
-				setCompletedQuestions(0);
-				setRemainingQuestions(0);
-			} finally {
-				setIsLoading(false);
-			}
-		};
+            // If test is completed, show percentage of correct answers
+            if (latestTest.status === "completed") {
+              const progressPercentage = Math.round(
+                (correctCount / latestTest.totalQuestions) * 100
+              );
+              setProgress(progressPercentage);
+            }
+            // If test is in progress, show percentage of answered questions
+            else {
+              const progressPercentage = Math.round(
+                (answeredCount / latestTest.totalQuestions) * 100
+              );
+              setProgress(progressPercentage);
+            }
+          } else {
+            setProgress(0);
+            setCompletedQuestions(0);
+            setRemainingQuestions(0);
+          }
+        } else {
+          // No tests found
+          setHasExistingTests(false);
+          setProgress(0);
+          setCompletedQuestions(0);
+          setRemainingQuestions(0);
+        }
+      } catch (error) {
+        console.error("Error fetching tests:", error);
+        setHasExistingTests(false);
+        setProgress(0);
+        setCompletedQuestions(0);
+        setRemainingQuestions(0);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-		fetchUserProgress();
-	}, []);
+    fetchUserProgress();
+  }, []);
 
-	const handlePlanSelect = async (plan: "weekly" | "monthly" | "lifetime") => {
-		try {
-			const response = await fetch("/api/create-checkout-session", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					plan,
-				}),
-			});
+  const handlePlanSelect = async (plan: "weekly" | "monthly" | "lifetime") => {
+    try {
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          plan,
+        }),
+      });
 
-			const data = await response.json();
+      const data = await response.json();
 
-			if (data.url) {
-				window.location.href = data.url;
-			}
-		} catch (error) {
-			console.error("Error creating checkout session:", error);
-		}
-	};
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+    }
+  };
 
-	const handleContinueTest = () => {
-		if (!hasAccess) {
-			setIsPricingOpen(true);
-			return;
-		}
-		if (latestTestId) {
-			router.push(`/test/${latestTestId}`);
-		}
-	};
+  const handleStartNewTest = async () => {
+    if (hasAccess || !hasUsedFreeTest) {
+      try {
+        setIsCreatingTest(true);
+        setError(null);
+        const response = await fetch("/api/tests", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-	const handleStartNewTest = async () => {
-		if (!hasAccess) {
-			setIsPricingOpen(true);
-			return;
-		}
+        if (!response.ok) {
+          const data = await response.json();
+          if (response.status === 403) {
+            setIsPricingOpen(true);
+            return;
+          }
+          throw new Error(data.error || "Failed to create test");
+        }
 
-		try {
-			setIsCreatingTest(true);
-			const response = await fetch("/api/tests", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
+        const data = await response.json();
+        if (data.test && data.test.id) {
+          router.push(`/test/${data.test.id}`);
+        } else {
+          throw new Error("No test ID received from server");
+        }
+      } catch (error) {
+        console.error("Error creating new test:", error);
+        setError(
+          error instanceof Error ? error.message : "Failed to create test"
+        );
+      } finally {
+        setIsCreatingTest(false);
+      }
+    } else {
+      setIsPricingOpen(true);
+    }
+  };
 
-			if (!response.ok) {
-				throw new Error("Failed to create test");
-			}
+  const handleContinueTest = () => {
+    if (!hasAccess && hasUsedFreeTest) {
+      setIsPricingOpen(true);
+      return;
+    }
+    if (latestTestId) {
+      router.push(`/test/${latestTestId}`);
+    }
+  };
 
-			const data = await response.json();
-			router.push(`/test/${data.test.id}`);
-		} catch (error) {
-			console.error("Error creating new test:", error);
-		} finally {
-			setIsCreatingTest(false);
-		}
-	};
+  return (
+    <>
+      <div className="container mx-auto px-2 md:px-6">
+        <div className="bg-white rounded-xl border shadow-sm">
+          <div className="p-4 md:p-8">
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <h1 className="text-2xl font-semibold">
+                  Welcome back, {displayName}!
+                </h1>
+                {!hasAccess && !hasUsedFreeTest && (
+                  <p className="text-muted-foreground">
+                    Start with your free practice test. Subscribe to unlock
+                    unlimited tests.
+                  </p>
+                )}
+                {!hasAccess && hasUsedFreeTest && (
+                  <p className="text-muted-foreground">
+                    You've used your free test. Subscribe to continue
+                    practicing.
+                  </p>
+                )}
+                {hasAccess && (
+                  <p className="text-muted-foreground">
+                    Continue your practice or start a new test.
+                  </p>
+                )}
+              </div>
 
-	return (
-		<>
-			<div className="w-full px-2">
-				<div className="container mx-auto px-2 md:px-6 ">
-					<div className="rounded-xl p-4 border border-slate-200 dark:border-slate-800 dark:bg-slate-950 ">
-						<div className="px-1">
-							<h2 className="text-2xl font-bold mb-2">
-								Welcome back, {displayName}!
-							</h2>
-							<p className="text-muted-foreground mb-4 text-sm">
-								Ready to continue your DMV test preparation? You&apos;re making
-								{progress > 0 ? " great" : ""} progress!
-							</p>
+              {hasExistingTests && !isLoading && (
+                <div className="flex flex-col gap-2">
+                  <div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-blue-600 transition-all duration-500 rounded-full"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>{completedQuestions} completed</span>
+                    <span>{remainingQuestions} remaining</span>
+                  </div>
+                </div>
+              )}
 
-							<div className="mb-6">
-								<div className="flex justify-between mb-2">
-									<span className="text-sm">
-										Progress:{" "}
-										{isLoading ? (
-											"Loading..."
-										) : (
-											<span className="font-bold">
-												{completedQuestions} completed, {remainingQuestions} left
-											</span>
-										)}
-									</span>
-									<span className="font-bold text-sm">
-										{isLoading ? "Loading..." : `${progress}%`}
-									</span>
-								</div>
-								<div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2">
-									<div
-										className="bg-blue-600 h-2 rounded-full"
-										style={{
-											width: `${isLoading ? 5 : progress}%`,
-										}}
-									/>
-								</div>
-							</div>
+              {error && <div className="text-red-500 text-sm">{error}</div>}
 
-							<div className="flex flex-col sm:flex-row gap-3">
-								{hasExistingTests ? (
-									<>
-										<Button
-									onClick={handleContinueTest}
-									className="flex items-center justify-center gap-2 rounded-[40px]"
-								>
-									{!hasAccess ? (
-										<Lock className="h-4 w-4" />
-									) : (
-										<PlayCircle className="h-4 w-4" />
-									)}
-									Continue Test
-								</Button>
-								<Button
-									variant="secondary"
-									onClick={handleStartNewTest}
-									className="flex items-center justify-center gap-2 rounded-[40px]"
-									disabled={isCreatingTest}
-								>
-									{!hasAccess ? (
-										<Lock className="h-4 w-4" />
-									) : (
-										<PlusCircle className="h-4 w-4" />
-									)}
-									{isCreatingTest ? "Creating..." : "Start New Test"}
-								</Button>
-							</>
-								) : (
-									<Button
-										variant="secondary"
-										onClick={handleStartNewTest}
-										className="flex items-center justify-center gap-2 rounded-[40px]"
-										disabled={isCreatingTest}
-									>
-										{!hasAccess ? (
-											<Lock className="h-4 w-4" />
-										) : (
-											<Play className="h-4 w-4" />
-										)}
-										{isCreatingTest ? "Creating..." : "Start Test"}
-									</Button>
-								)}
-								<Button
-									onClick={() => router.push("/handbook")}
-									variant="outline"
-									className="flex items-center justify-center gap-2 rounded-[40px]"
-								>
-									<FileText className="h-4 w-4" />
-									DMV Handbook
-								</Button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+              <div className="flex flex-col sm:flex-row gap-3">
+                {hasExistingTests ? (
+                  <>
+                    <Button
+                      onClick={handleContinueTest}
+                      className="flex items-center justify-center gap-2 rounded-[40px]"
+                      disabled={!hasAccess && hasUsedFreeTest}
+                    >
+                      {!hasAccess && hasUsedFreeTest ? (
+                        <Lock className="h-4 w-4" />
+                      ) : (
+                        <PlayCircle className="h-4 w-4" />
+                      )}
+                      Continue Test
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={handleStartNewTest}
+                      className="flex items-center justify-center gap-2 rounded-[40px]"
+                      disabled={
+                        isCreatingTest || (!hasAccess && hasUsedFreeTest)
+                      }
+                    >
+                      {!hasAccess && hasUsedFreeTest ? (
+                        <Lock className="h-4 w-4" />
+                      ) : (
+                        <PlusCircle className="h-4 w-4" />
+                      )}
+                      {isCreatingTest ? "Creating..." : "Start New Test"}
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    onClick={handleStartNewTest}
+                    className="flex items-center justify-center gap-2 rounded-[40px]"
+                    disabled={isCreatingTest || (!hasAccess && hasUsedFreeTest)}
+                  >
+                    {!hasAccess && hasUsedFreeTest ? (
+                      <Lock className="h-4 w-4" />
+                    ) : (
+                      <Play className="h-4 w-4" />
+                    )}
+                    {isCreatingTest ? "Creating..." : "Start Test"}
+                  </Button>
+                )}
+                <Button
+                  onClick={() =>
+                    window.open(
+                      "https://www.dmv.ca.gov/portal/file/california-driver-handbook-pdf/",
+                      "_blank"
+                    )
+                  }
+                  variant="outline"
+                  className="flex items-center justify-center gap-2 rounded-[40px]"
+                >
+                  <FileText className="h-4 w-4" />
+                  DMV Handbook
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-			<PricingDialog
-				isOpen={isPricingOpen}
-				onClose={() => setIsPricingOpen(false)}
-				onPlanSelect={handlePlanSelect}
-			/>
-		</>
-	);
+      <PricingDialog
+        isOpen={isPricingOpen}
+        onClose={() => setIsPricingOpen(false)}
+        onPlanSelect={handlePlanSelect}
+      />
+    </>
+  );
 }

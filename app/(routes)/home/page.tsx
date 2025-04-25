@@ -20,7 +20,7 @@ export default function HomePage() {
 
   const { isLoaded } = useUser();
   const router = useRouter();
-  const { dbUser, isLoading } = useAuthContext();
+  const { dbUser, isLoading, refreshUser } = useAuthContext();
 
   // Add handlePlanSelect function
   const handlePlanSelect = async (plan: "weekly" | "monthly" | "lifetime") => {
@@ -65,8 +65,8 @@ export default function HomePage() {
 
       if (response.ok) {
         setIsBirthdayDialogOpen(false);
-        // Force a refresh of the auth context to get the updated user data
-        router.refresh();
+        // Refresh the user data to update the birthday
+        await refreshUser();
       }
     } catch (error) {
       console.error("Error saving birthday:", error);

@@ -17,7 +17,6 @@ interface ProgressBarProps {
   totalQuestions: number;
   questionsAnswered: number;
   currentQuestionIndex: number;
-  isReviewMode?: boolean;
   currentQuestion?: {
     title: string;
     id: string;
@@ -28,24 +27,24 @@ export function ProgressBar({
   totalQuestions,
   questionsAnswered,
   currentQuestionIndex,
-  isReviewMode = false,
   currentQuestion,
 }: ProgressBarProps) {
   const router = useRouter();
-  const [showExitDialog, setShowExitDialog] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
   const [showFlagDialog, setShowFlagDialog] = useState(false);
   const [flagReason, setFlagReason] = useState("");
+  const [isFlagging, setIsFlagging] = useState(false);
   const progressPercentage = (questionsAnswered / totalQuestions) * 100;
   const currentQuestionNumber = currentQuestionIndex + 1;
 
   const toggleDialog = useCallback(() => {
-    setShowExitDialog((prev) => !prev);
+    setShowDialog((prev) => !prev);
   }, []);
 
   // Handle ESC key press only when dialog is not open
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !showExitDialog) {
+      if (event.key === "Escape" && !showDialog) {
         event.preventDefault();
         toggleDialog();
       }
@@ -53,7 +52,7 @@ export function ProgressBar({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [showExitDialog, toggleDialog]);
+  }, [showDialog, toggleDialog]);
 
   const handleExit = () => {
     router.push("/");
@@ -75,23 +74,17 @@ export function ProgressBar({
   return (
     <>
       <div className="flex justify-between items-center mb-4 mx-3 sm:mx-0">
-        <Badge variant="outline" className="text-sm py-1 bg-white">
+        <Badge variant="outline" className="text-sm py-1 bg-white rounded-full">
           Question {currentQuestionNumber}/{totalQuestions}
         </Badge>
         <div className="flex items-center gap-2">
-          {isReviewMode && (
-            <Badge variant="secondary" className="text-sm py-1">
-              Review
-            </Badge>
-          )}
-          <Button
+          <Badge
             variant="destructive"
             onClick={() => setShowFlagDialog(true)}
-            aria-label="Flag question"
+            className="text-sm py-1 rounded-full cursor-pointer hover:opacity-90 flex items-center gap-1 font-light w-14 justify-center"
           >
-            <Flag className="h-2 w-2" />
-            <span className="text-sm">Flag</span>
-          </Button>
+            Flag
+          </Badge>
           <Button
             variant="ghost"
             size="sm"
@@ -113,7 +106,7 @@ export function ProgressBar({
         />
       </div>
 
-      <Dialog open={showExitDialog} onOpenChange={setShowExitDialog}>
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Exit Test?</DialogTitle>

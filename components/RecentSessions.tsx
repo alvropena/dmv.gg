@@ -106,8 +106,20 @@ export function RecentSessions({
 				) : (
 					<div>
 						{recentTests.length === 0 ? (
-							<div className="border border-slate-200 dark:border-slate-800 rounded-xl p-6 text-center text-muted-foreground bg-white dark:bg-slate-950">
-								No tests found. Start a practice test to see your tests here.
+							<div className="border border-slate-200 dark:border-slate-800 rounded-xl p-6 bg-white dark:bg-slate-950">
+								<div className="flex flex-col items-center justify-center py-6 text-center">
+									<Calendar className="h-10 w-10 text-muted-foreground mb-2" />
+									<p className="text-muted-foreground mb-4">
+										No tests found. Start a practice test to see your tests here.
+									</p>
+									<Button
+										onClick={() => router.push('/test')}
+										variant="outline"
+										className="rounded-xl"
+									>
+										Take a Test
+									</Button>
+								</div>
 							</div>
 						) : (
 							recentTests.map((test) => (

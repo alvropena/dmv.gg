@@ -40,8 +40,8 @@ export default function TestPage({ params }: TestPageProps) {
 	const [reviewQuestionsAnswered, setReviewQuestionsAnswered] = useState(0);
 	const mountedRef = useRef(false);
 
-	// Add hasAccess check
-	const hasAccess = hasActiveSubscription || dbUser?.role === "ADMIN";
+	// Update hasAccess check to include free test case
+	const hasAccess = hasActiveSubscription || dbUser?.role === "ADMIN" || !dbUser?.hasUsedFreeTest;
 
 	// Function to fetch test data and update local state
 	const fetchTestData = useCallback(async () => {
@@ -83,6 +83,16 @@ export default function TestPage({ params }: TestPageProps) {
 					(answer: TestAnswer) => answer.selectedAnswer !== null,
 				).length;
 				setQuestionsAnswered(answeredCount);
+				
+				// Set the current question index to the first unanswered question
+				if (!isReview && test.status === "in_progress") {
+					const firstUnansweredIndex = test.answers.findIndex(
+						(answer: TestAnswer) => answer.selectedAnswer === null
+					);
+					if (firstUnansweredIndex !== -1) {
+						setCurrentQuestionIndex(firstUnansweredIndex);
+					}
+				}
 			}
 
 			return test;
@@ -134,7 +144,7 @@ export default function TestPage({ params }: TestPageProps) {
 	}, [testId, hasAccess, user, fetchTestData]); // Add fetchTestData to dependencies
 
 	useEffect(() => {
-		// Redirect if not subscribed or not admin
+		// Redirect if not subscribed, not admin, and has used free test
 		if (isLoaded && !isLoading && !hasAccess) {
 			router.push("/");
 		}
@@ -278,8 +288,14 @@ export default function TestPage({ params }: TestPageProps) {
 			setCurrentQuestionIndex((prev) => prev - 1);
 			setSelectedOption(null);
 			setIsAnswerRevealed(false);
+			// Decrease the questions answered count when going back
+			if (!isReviewMode) {
+				setQuestionsAnswered((prev) => prev - 1);
+			} else {
+				setReviewQuestionsAnswered((prev) => prev - 1);
+			}
 		}
-	}, [currentQuestionIndex]);
+	}, [currentQuestionIndex, isReviewMode]);
 
 	const handleKeyDown = useCallback(
 		(e: KeyboardEvent) => {
@@ -388,7 +404,6 @@ export default function TestPage({ params }: TestPageProps) {
 							isReviewMode ? reviewQuestionsAnswered : questionsAnswered
 						}
 						currentQuestionIndex={currentQuestionIndex}
-						isReviewMode={isReviewMode}
 						currentQuestion={{
 							title: currentQuestion.title,
 							id: currentQuestion.id,

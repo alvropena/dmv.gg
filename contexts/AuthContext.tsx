@@ -8,6 +8,7 @@ const AuthContext = createContext<AuthContextType>({
 	dbUser: null,
 	isLoading: true,
 	hasActiveSubscription: false,
+	refreshUser: async () => {},
 });
 
 export const useAuthContext = () => useContext(AuthContext);
@@ -17,24 +18,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [dbUser, setDbUser] = useState<User | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 
+	const fetchUser = async () => {
+		if (!user) {
+			setIsLoading(false);
+			return;
+		}
+
+		try {
+			const response = await fetch("/api/auth");
+			const data = await response.json();
+			setDbUser(data.user);
+		} catch (error) {
+			console.error("Error fetching user:", error);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	useEffect(() => {
-		const fetchUser = async () => {
-			if (!user) {
-				setIsLoading(false);
-				return;
-			}
-
-			try {
-				const response = await fetch("/api/auth");
-				const data = await response.json();
-				setDbUser(data.user);
-			} catch (error) {
-				console.error("Error fetching user:", error);
-			} finally {
-				setIsLoading(false);
-			}
-		};
-
 		fetchUser();
 	}, [user]);
 
@@ -46,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	);
 
 	return (
-		<AuthContext.Provider value={{ dbUser, isLoading, hasActiveSubscription }}>
+		<AuthContext.Provider value={{ dbUser, isLoading, hasActiveSubscription, refreshUser: fetchUser }}>
 			{children}
 		</AuthContext.Provider>
 	);

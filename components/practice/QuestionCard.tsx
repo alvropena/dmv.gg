@@ -52,7 +52,7 @@ export function QuestionCard({
               onClick={() => onOptionSelect(option.key)}
               aria-label={`Option ${option.number}: ${option.text}`}
             >
-              <div className="text-left">{option.text}</div>
+              <div className="text-left">{option.key}) {option.text}</div>
               {isAnswerRevealed && option.key === question.correctAnswer && (
                 <CheckCircle className="h-5 w-5 text-green-500" />
               )}

@@ -24,13 +24,36 @@ export async function POST() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get the user from the database
+    // Get the user from the database with subscriptions
     const dbUser = await db.user.findUnique({
-      where: { clerkId: userId }
+      where: { clerkId: userId },
+      select: {
+        id: true,
+        hasUsedFreeTest: true,
+        subscriptions: {
+          select: {
+            status: true,
+            currentPeriodEnd: true
+          }
+        }
+      }
     });
 
     if (!dbUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Check if user has an active subscription
+    const hasActiveSubscription = dbUser.subscriptions.some(
+      sub => sub.status === 'active' && new Date(sub.currentPeriodEnd) > new Date()
+    );
+
+    // If user has no active subscription and has used their free test
+    if (!hasActiveSubscription && dbUser.hasUsedFreeTest) {
+      return NextResponse.json(
+        { error: 'Please subscribe to create more tests' },
+        { status: 403 }
+      );
     }
 
     // Get all questions 
@@ -48,6 +71,17 @@ export async function POST() {
         status: 'in_progress',
       },
     });
+
+    // If this is a free test, mark it as used
+    if (!hasActiveSubscription) {
+      await db.user.update({
+        where: { id: dbUser.id },
+        data: {
+          hasUsedFreeTest: true,
+          updatedAt: new Date()
+        }
+      });
+    }
 
     // Create TestQuestion entries for the selected questions
     for (let i = 0; i < selectedQuestions.length; i++) {

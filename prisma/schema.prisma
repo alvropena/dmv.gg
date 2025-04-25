@@ -26,6 +26,7 @@ model User {
   lastName  String?
   birthday  DateTime?     @db.Date
   role      UserRole      @default(STUDENT)
+  hasUsedFreeTest Boolean @default(false)
   createdAt DateTime      @default(now()) @db.Timestamptz
   updatedAt DateTime      @default(now()) @db.Timestamptz
   subscriptions Subscription[]

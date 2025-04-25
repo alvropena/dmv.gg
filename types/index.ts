@@ -22,6 +22,7 @@ export type User = {
   lastName: string | null;
   birthday?: Date | null;
   role: UserRole;
+  hasUsedFreeTest: boolean;
   createdAt: Date;
   updatedAt: Date;
   subscriptions: Subscription[];
@@ -46,6 +47,7 @@ export type AuthContextType = {
   dbUser: User | null;
   isLoading: boolean;
   hasActiveSubscription: boolean;
+  refreshUser: () => Promise<void>;
 };
 
 export type Test = {

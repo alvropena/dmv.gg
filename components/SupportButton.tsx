@@ -86,7 +86,7 @@ export function SupportButton() {
           {!isSubmitted ? (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <h3 className="font-medium text-lg">Contact Support</h3>
+                <h3 className="font-bold text-lg">Contact Support</h3>
                 <p className="text-sm text-muted-foreground">
                   Let us know how we can help and our team will get back to you
                   as soon as possible.

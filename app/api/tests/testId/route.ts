@@ -135,13 +135,16 @@ export async function GET(
     // Extract the ordered list of questions from the test
     const orderedQuestions = test.questions.map((tq: { question: unknown }) => tq.question);
 
-    // Ensure answers are properly formatted with questionId and selectedAnswer
-    const formattedAnswers = test.answers.map((answer) => ({
-      questionId: answer.questionId,
-      selectedAnswer: answer.selectedAnswer,
-      isCorrect: answer.isCorrect,
-      answeredAt: answer.answeredAt,
-    }));
+    // Ensure answers are properly formatted and ordered according to questions order
+    const formattedAnswers = test.questions.map((tq: any) => {
+      const answer = test.answers.find((a: any) => a.questionId === tq.questionId);
+      return {
+        questionId: tq.questionId,
+        selectedAnswer: answer?.selectedAnswer ?? null,
+        isCorrect: answer?.isCorrect ?? null,
+        answeredAt: answer?.answeredAt ?? null,
+      };
+    });
 
     return NextResponse.json({
       test: {
