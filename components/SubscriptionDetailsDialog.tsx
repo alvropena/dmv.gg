@@ -66,19 +66,28 @@ export function SubscriptionDetailsDialog({
 	const getPlanName = (): string => {
 		if (!activeSubscription) return "Premium";
 
+		// For lifetime subscriptions (no stripeSubscriptionId)
 		if (!activeSubscription.stripeSubscriptionId) {
 			return "Lifetime";
 		}
 
-		// Determine if monthly or weekly based on period length
-		const start = new Date(activeSubscription.currentPeriodStart);
+		// For weekly/monthly subscriptions, check the end date
 		const end = new Date(activeSubscription.currentPeriodEnd);
+		
+		// If the end date is far in the future (2099), it's a lifetime plan
+		if (end.getFullYear() >= 2099) {
+			return "Lifetime";
+		}
+
+		// For regular subscriptions, determine type by period length
+		const start = new Date(activeSubscription.currentPeriodStart);
 		const diffDays = Math.round(
 			(end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24),
 		);
 
-		if (diffDays <= 10) return "Weekly";
-		if (diffDays <= 35) return "Monthly";
+		// More precise weekly/monthly detection
+		if (diffDays <= 8) return "Weekly";  // Allow for some flexibility
+		if (diffDays <= 32) return "Monthly"; // Allow for months with 31 days
 		return "Premium";
 	};
 
@@ -228,7 +237,9 @@ export function SubscriptionDetailsDialog({
 															Canceled
 														</Badge>
 													) : (
-														<Badge variant="secondary" className="rounded-full">
+														<Badge 
+															className="rounded-full bg-green-100 hover:bg-green-100 text-green-700 border-green-200 font-normal shadow-none"
+														>
 															<CheckCircle className="h-3 w-3 mr-1" />
 															Active
 														</Badge>
@@ -248,7 +259,7 @@ export function SubscriptionDetailsDialog({
 															<CalendarIcon className="h-4 w-4" />
 															<span className="font-medium">
 																{formatDate(
-																	new Date(activeSubscription.currentPeriodEnd),
+																	new Date(activeSubscription.currentPeriodEnd)
 																)}
 															</span>
 														</div>
@@ -264,9 +275,7 @@ export function SubscriptionDetailsDialog({
 													<TableCell className="text-right">
 														<div className="flex items-center justify-end gap-1">
 															<Clock className="h-4 w-4" />
-															<span className="font-medium">
-																Never (Lifetime)
-															</span>
+															<span className="font-medium">Never</span>
 														</div>
 													</TableCell>
 												</TableRow>
