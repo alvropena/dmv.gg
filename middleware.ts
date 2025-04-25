@@ -10,6 +10,7 @@ const isPublicRoute = createRouteMatcher([
   "/sign-up(.*)",
   "/terms",
   "/api/webhooks(.*)", // Allow Stripe webhook endpoint
+  "/api/prices(.*)", // Allow public access to pricing data
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

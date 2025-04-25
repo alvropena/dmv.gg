@@ -1,52 +1,55 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import Footer from "@/components/landing/Footer";
+import { formatCurrency } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
-const pricingTiers = [
-	{
-		name: "Weekly",
-		price: "$9.99",
-		description: "Perfect for short-term preparation",
-		features: [
-			"Full access to all practice tests",
-			"Unlimited test attempts",
-			"Progress tracking",
-			"DMV handbook access",
-			"7-day money-back guarantee",
-		],
-	},
-	{
-		name: "Monthly",
-		price: "$19.99",
-		description: "Most popular for serious learners",
-		features: [
-			"Everything in Weekly plan",
-			"Priority support",
-			"Study streak tracking",
-			"Performance analytics",
-			"30-day money-back guarantee",
-		],
-	},
-	{
-		name: "Lifetime",
-		price: "$99.99",
-		description: "Best value for long-term access",
-		features: [
-			"Everything in Monthly plan",
-			"Lifetime updates",
-			"Exclusive content",
-			"Premium support",
-			"90-day money-back guarantee",
-		],
-	},
-];
+interface Price {
+	id: string;
+	name: string;
+	description: string;
+	unitAmount: number;
+	currency: string;
+	type: "recurring" | "one_time";
+	interval?: "day" | "week" | "month" | "year";
+	features: string[];
+	metadata: Record<string, string>;
+}
 
 export default function PricingPage() {
 	const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+	const [prices, setPrices] = useState<Price[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		const fetchPrices = async () => {
+			try {
+				setLoading(true);
+				const response = await fetch("/api/prices");
+				if (!response.ok) throw new Error("Failed to fetch prices");
+				const data = await response.json();
+				setPrices(data);
+
+				// Default to monthly plan if available
+				const monthlyPlan = data.find((p: Price) => p.interval === "month");
+				if (monthlyPlan) {
+					setSelectedPlan(monthlyPlan.name);
+				}
+			} catch (err) {
+				setError(
+					err instanceof Error ? err.message : "Failed to load pricing data",
+				);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchPrices();
+	}, []);
 
 	const handlePlanSelect = async (plan: string) => {
 		try {
@@ -70,63 +73,124 @@ export default function PricingPage() {
 		}
 	};
 
+	if (loading) {
+		return (
+			<>
+				<Header />
+				<div className="container mx-auto px-4 py-4">
+					<div className="flex justify-center items-center min-h-[60vh]">
+						<Loader2 className="h-8 w-8 animate-spin text-primary" />
+					</div>
+				</div>
+				<Footer />
+			</>
+		);
+	}
+
+	if (error) {
+		return (
+			<>
+				<Header />
+				<div className="container mx-auto px-4 py-4">
+					<div className="flex flex-col items-center justify-center min-h-[60vh]">
+						<p className="text-red-500 mb-4">Error: {error}</p>
+						<Button onClick={() => window.location.reload()}>Try Again</Button>
+					</div>
+				</div>
+				<Footer />
+			</>
+		);
+	}
+
 	return (
 		<>
 			<Header />
 			<div className="container mx-auto px-4 py-4">
 				<div className="text-center mb-16">
-					<h1 className="text-5xl font-extrabold tracking-tighter text-[#B6DBFF] md:text-6xl lg:text-7xl xl:text-8xl mb-4">
-						Simple, Transparent Pricing
+					<h1 className="text-5xl font-extrabold tracking-tighter text-white md:text-6xl lg:text-7xl xl:text-8xl mb-4">
+						Choose Your Study Plan
 					</h1>
-					<p className="text-[#B6DBFF] md:text-md/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+					<p className="text-white md:text-md/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
 						Choose the plan that works best for you
 					</p>
 				</div>
 
 				<div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-					{pricingTiers.map((tier) => (
-						<div
-							key={tier.name}
-							className={`rounded-2xl border p-8 transition-all bg-white ${
-								selectedPlan === tier.name
-									? "border-primary shadow-lg scale-105"
-									: "border-border hover:border-primary/50"
-							}`}
-						>
-							<div className="mb-8">
-								<h2 className="text-2xl font-bold mb-2">{tier.name}</h2>
-								<div className="flex items-baseline mb-4">
-									<span className="text-4xl font-bold">{tier.price}</span>
-									{tier.name !== "Lifetime" && (
-										<span className="text-muted-foreground ml-2">
-											/ {tier.name.toLowerCase()}
-										</span>
-									)}
-								</div>
-								<p className="text-muted-foreground">{tier.description}</p>
-							</div>
+					{prices.map((price) => {
+						const isMonthly = price.interval === "month";
+						const amount = formatCurrency(price.unitAmount || 0, price.currency);
+						const interval = price.interval
+							? `/ ${price.interval}`
+							: "";
 
-							<ul className="space-y-4 mb-8">
-								{tier.features.map((feature) => (
-									<li key={feature} className="flex items-center gap-3">
-										<Check className="h-5 w-5 text-primary flex-shrink-0" />
-										<span>{feature}</span>
-									</li>
-								))}
-							</ul>
-
-							<Button
-								className="w-full"
-								variant={selectedPlan === tier.name ? "default" : "outline"}
-								onClick={() => {
-									setSelectedPlan(tier.name);
-									handlePlanSelect(tier.name);
-								}}
+						return (
+							<div
+								key={price.id}
+								className={`rounded-2xl border p-8 transition-all bg-[#B6DBFF]/10 backdrop-blur-sm border-white/10 flex flex-col relative ${
+									selectedPlan === price.name
+										? `${isMonthly ? "border-blue-600" : "border-primary"} shadow-lg scale-105`
+										: "hover:border-primary/50"
+								}`}
 							>
-								Get Started
-							</Button>
-						</div>
-					))}
+								{isMonthly && (
+									<div className="absolute -top-5 left-1/2 transform -translate-x-1/2">
+										<div className="bg-[#FFF25F] text-[#3F3500] text-sm px-8 py-2 rounded-full font-semibold">
+											Most popular
+										</div>
+									</div>
+								)}
+								<div>
+									<h2 className="text-2xl font-bold mb-2 text-white">{price.name}</h2>
+									<div className="flex items-baseline mb-4">
+										<span className="text-4xl font-bold text-white">{amount}</span>
+										<span className="text-white/70 ml-2">
+											{interval}
+										</span>
+									</div>
+									<p className="text-white/70">{price.description}</p>
+								</div>
+
+								<ul className="space-y-4 my-8 flex-grow">
+									{price.features.map((feature) => (
+										<li key={feature} className="flex items-center gap-3">
+											<div className="h-4 w-4 rounded-full bg-green-200 flex items-center justify-center flex-shrink-0">
+												<svg
+													width="10"
+													height="10"
+													viewBox="0 0 10 10"
+													fill="none"
+													xmlns="http://www.w3.org/2000/svg"
+													className="text-green-600"
+												>
+													<path
+														d="M1.5 5.5L3.5 7.5L8.5 2.5"
+														stroke="currentColor"
+														strokeWidth="2"
+														strokeLinecap="round"
+														strokeLinejoin="round"
+													/>
+												</svg>
+											</div>
+											<span className="text-white">{feature}</span>
+										</li>
+									))}
+								</ul>
+
+								<Button
+									className={`w-full rounded-full font-bold mt-auto px-6 py-4 h-auto text-lg ${
+										selectedPlan === price.name ? "bg-[#FFF25F] hover:bg-[#FFF25F]/90 text-[#3F3500]" : "text-black"
+									}`}
+									variant={selectedPlan === price.name ? "default" : "outline"}
+									onClick={() => {
+										setSelectedPlan(price.name);
+										handlePlanSelect(price.name);
+									}}
+								>
+									Get started
+								</Button>
+							</div>
+						);
+					})}
 				</div>
 
 				<div className="text-center mt-8">
@@ -135,7 +199,7 @@ export default function PricingPage() {
 						materials.
 						<br />
 						Need help choosing?{" "}
-						<a href="/contact" className="text-primary hover:underline">
+						<a href="/contact" className="underline text-white">
 							Contact us
 						</a>
 					</p>

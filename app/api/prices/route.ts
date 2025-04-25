@@ -52,7 +52,7 @@ export async function GET() {
 
         return {
           id: price.id,
-          name: product.name,
+          name: product.name.replace('DMV.gg ', ''),
           description: product.description,
           unitAmount: price.unit_amount,
           currency: price.currency,
