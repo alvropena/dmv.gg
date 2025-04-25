@@ -204,11 +204,11 @@ export function PricingDialog({
 						</div>
 
 						{/* Plan selection - updated grid layout based on available plans */}
-						<div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
+						<div className="grid grid-cols-3 gap-1 mb-4">
 							{prices.filter((p) => getPlanType(p) === "weekly").length > 0 && (
 								<Card
 									className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-full ${
-										selectedPlan === "weekly" ? "border-primary border-2" : ""
+										selectedPlan === "weekly" ? "border-blue-600 border-2" : ""
 									}`}
 									onClick={() => {
 										setSelectedPlan("weekly");
@@ -216,7 +216,7 @@ export function PricingDialog({
 								>
 									<div className="text-xs text-center">Weekly</div>
 									{prices.find((p) => getPlanType(p) === "weekly") && (
-										<div className="font-bold text-sm text-center">
+										<div className="font-bold text-[11px] text-center">
 											{formatCurrency(
 												prices.find((p) => getPlanType(p) === "weekly")
 													?.unitAmount || 0,
@@ -231,8 +231,8 @@ export function PricingDialog({
 
 							{prices.filter((p) => getPlanType(p) === "monthly").length > 0 && (
 								<Card
-									className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-xl ${
-										selectedPlan === "monthly" ? "border-primary border-2" : ""
+									className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-full ${
+										selectedPlan === "monthly" ? "border-blue-600 border-2" : ""
 									}`}
 									onClick={() => {
 										setSelectedPlan("monthly");
@@ -240,7 +240,7 @@ export function PricingDialog({
 								>
 									<div className="text-xs text-center">Monthly</div>
 									{prices.find((p) => getPlanType(p) === "monthly") && (
-										<div className="font-bold text-sm text-center">
+										<div className="font-bold text-[11px] text-center">
 											{formatCurrency(
 												prices.find((p) => getPlanType(p) === "monthly")
 													?.unitAmount || 0,
@@ -255,8 +255,8 @@ export function PricingDialog({
 
 							{prices.filter((p) => getPlanType(p) === "lifetime").length > 0 && (
 								<Card
-									className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-xl ${
-										selectedPlan === "lifetime" ? "border-primary border-2" : ""
+									className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-full ${
+										selectedPlan === "lifetime" ? "border-blue-600 border-2" : ""
 									}`}
 									onClick={() => {
 										setSelectedPlan("lifetime");
@@ -264,7 +264,7 @@ export function PricingDialog({
 								>
 									<div className="text-xs text-center">Lifetime</div>
 									{prices.find((p) => getPlanType(p) === "lifetime") && (
-										<div className="font-bold text-sm text-center">
+										<div className="font-bold text-[11px] text-center">
 											{formatCurrency(
 												prices.find((p) => getPlanType(p) === "lifetime")
 													?.unitAmount || 0,
