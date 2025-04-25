@@ -101,8 +101,8 @@ export function ProgressBar({
   };
 
   return (
-    <>
-      <div className="flex justify-between items-center mb-4 mx-3 sm:mx-0">
+    <div className="mx-3 sm:mx-0">
+      <div className="flex justify-between items-center mb-4">
         <Badge variant="outline" className="text-sm py-1 bg-white rounded-full">
           Question {currentQuestionNumber}/{totalQuestions}
         </Badge>
@@ -126,7 +126,7 @@ export function ProgressBar({
         </div>
       </div>
 
-      <div className="w-full bg-white dark:bg-slate-700 rounded-full h-2 mb-6 mx-3 sm:mx-0">
+      <div className="w-full bg-white dark:bg-slate-700 rounded-full h-2 mb-6 border border-input">
         <div
           className="bg-[#000099] h-2 rounded-full"
           style={{
@@ -188,6 +188,6 @@ export function ProgressBar({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }

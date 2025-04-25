@@ -38,7 +38,7 @@ export function QuestionCard({
             <Button
               key={option.key}
               variant={selectedOption === option.key ? "secondary" : "outline"}
-              className={`w-full justify-between ${
+              className={`w-full justify-between whitespace-normal text-left px-4 py-3 h-auto ${
                 isAnswerRevealed && option.key === question.correctAnswer
                   ? "bg-green-200/60"
                   : ""
@@ -52,7 +52,10 @@ export function QuestionCard({
               onClick={() => onOptionSelect(option.key)}
               aria-label={`Option ${option.number}: ${option.text}`}
             >
-              <div className="text-left">{option.key}) {option.text}</div>
+              <div className="text-left flex-1 min-w-0 leading-relaxed">
+                <span className="font-medium mr-3">{option.key})</span>
+                <span className="break-words">{option.text}</span>
+              </div>
               {isAnswerRevealed && option.key === question.correctAnswer && (
                 <CheckCircle className="h-5 w-5 text-green-500" />
               )}

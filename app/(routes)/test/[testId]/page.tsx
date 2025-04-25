@@ -398,85 +398,87 @@ export default function TestPage({ params }: TestPageProps) {
 		<div className="relative min-h-screen bg-white flex items-center justify-center">
 			<div className="w-full flex items-center justify-center overflow-hidden px-4 py-8">
 				<div className="max-w-3xl w-full">
-					<ProgressBar
-						totalQuestions={questions.length}
-						questionsAnswered={
-							isReviewMode ? reviewQuestionsAnswered : questionsAnswered
-						}
-						currentQuestionIndex={currentQuestionIndex}
-						currentQuestion={{
-							title: currentQuestion.title,
-							id: currentQuestion.id,
-						}}
-					/>
+					<div className="space-y-6">
+						<ProgressBar
+							totalQuestions={questions.length}
+							questionsAnswered={
+								isReviewMode ? reviewQuestionsAnswered : questionsAnswered
+							}
+							currentQuestionIndex={currentQuestionIndex}
+							currentQuestion={{
+								title: currentQuestion.title,
+								id: currentQuestion.id,
+							}}
+						/>
 
-					<QuestionCard
-						question={currentQuestion}
-						selectedOption={selectedOption}
-						isAnswerRevealed={isAnswerRevealed}
-						onOptionSelect={selectOption}
-					/>
+						<QuestionCard
+							question={currentQuestion}
+							selectedOption={selectedOption}
+							isAnswerRevealed={isAnswerRevealed}
+							onOptionSelect={selectOption}
+						/>
 
-					<div className="flex justify-between gap-4 sm:mx-0">
-						{currentQuestionIndex > 0 && (
-							<Button
-								onClick={goToPreviousQuestion}
-								variant="outline"
-								className="w-full"
-							>
-								Previous Question
-							</Button>
-						)}
-						{isReviewMode ? (
-							<>
-								{!isAnswerRevealed ? (
-									<Button
-										onClick={handleCheckAnswer}
-										disabled={selectedOption === null}
-										className="w-full"
-									>
-										Check Answer{!isMobile && " (Space/Enter)"}
-									</Button>
-								) : (
-									<div className="flex gap-2 w-full">
-										<Button onClick={goToNextQuestion} className="w-full">
-											{currentQuestionIndex < questions.length - 1 ? (
-												<>Next Question{!isMobile && " (Space/Enter)"}</>
-											) : (
-												"Finish Review"
-											)}
+						<div className="flex justify-between gap-4 mx-3 sm:mx-0">
+							{currentQuestionIndex > 0 && (
+								<Button
+									onClick={goToPreviousQuestion}
+									variant="outline"
+									className="w-full"
+								>
+									Previous Question
+								</Button>
+							)}
+							{isReviewMode ? (
+								<>
+									{!isAnswerRevealed ? (
+										<Button
+											onClick={handleCheckAnswer}
+											disabled={selectedOption === null}
+											className="w-full"
+										>
+											Check Answer{!isMobile && " (Space/Enter)"}
 										</Button>
-									</div>
-								)}
-							</>
-						) : (
-							<>
-								{!isAnswerRevealed ? (
-									<Button
-										onClick={handleCheckAnswer}
-										disabled={selectedOption === null}
-										className="w-full"
-									>
-										Check Answer{!isMobile && " (Space/Enter)"}
-									</Button>
-								) : (
-									<Button onClick={goToNextQuestion} className="w-full">
-										Next Question{!isMobile && " (Space/Enter)"}
-									</Button>
-								)}
-							</>
+									) : (
+										<div className="flex gap-2 w-full">
+											<Button onClick={goToNextQuestion} className="w-full">
+												{currentQuestionIndex < questions.length - 1 ? (
+													<>Next Question{!isMobile && " (Space/Enter)"}</>
+												) : (
+													"Finish Review"
+												)}
+											</Button>
+										</div>
+									)}
+								</>
+							) : (
+								<>
+									{!isAnswerRevealed ? (
+										<Button
+											onClick={handleCheckAnswer}
+											disabled={selectedOption === null}
+											className="w-full"
+										>
+											Check Answer{!isMobile && " (Space/Enter)"}
+										</Button>
+									) : (
+										<Button onClick={goToNextQuestion} className="w-full">
+											Next Question{!isMobile && " (Space/Enter)"}
+										</Button>
+									)}
+								</>
+							)}
+						</div>
+
+						{!isMobile && (
+							<div className="mt-6 text-center text-sm text-muted-foreground">
+								<p>
+									Keyboard shortcuts: Press 1-4 to select an option, Space or
+									Enter to check/continue, Left/Right arrows to navigate between
+									questions
+								</p>
+							</div>
 						)}
 					</div>
-
-					{!isMobile && (
-						<div className="mt-6 text-center text-sm text-muted-foreground">
-							<p>
-								Keyboard shortcuts: Press 1-4 to select an option, Space or
-								Enter to check/continue, Left/Right arrows to navigate between
-								questions
-							</p>
-						</div>
-					)}
 				</div>
 			</div>
 		</div>
