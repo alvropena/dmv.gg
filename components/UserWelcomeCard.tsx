@@ -197,7 +197,7 @@ export function UserWelcomeCard() {
                 )}
                 {!hasAccess && hasUsedFreeTest && (
                   <p className="text-muted-foreground">
-                    You've used your free test. Subscribe to continue
+                    You&apos;ve used your free test. Subscribe to continue
                     practicing.
                   </p>
                 )}

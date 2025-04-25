@@ -136,8 +136,8 @@ export async function GET(
     const orderedQuestions = test.questions.map((tq: { question: unknown }) => tq.question);
 
     // Ensure answers are properly formatted and ordered according to questions order
-    const formattedAnswers = test.questions.map((tq: any) => {
-      const answer = test.answers.find((a: any) => a.questionId === tq.questionId);
+    const formattedAnswers = test.questions.map((tq: { question: unknown; questionId: string }) => {
+      const answer = test.answers.find((a: { questionId: string }) => a.questionId === tq.questionId);
       return {
         questionId: tq.questionId,
         selectedAnswer: answer?.selectedAnswer ?? null,

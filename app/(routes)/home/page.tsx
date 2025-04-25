@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Loader2 } from "lucide-react";
 import { UserHeader } from "@/components/UserHeader";
@@ -19,7 +18,6 @@ export default function HomePage() {
   const [isBirthdayDialogOpen, setIsBirthdayDialogOpen] = useState(false);
 
   const { isLoaded } = useUser();
-  const router = useRouter();
   const { dbUser, isLoading, refreshUser } = useAuthContext();
 
   // Add handlePlanSelect function

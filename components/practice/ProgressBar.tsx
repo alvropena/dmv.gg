@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { X, Flag } from "lucide-react";
+import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -33,7 +33,6 @@ export function ProgressBar({
   const [showDialog, setShowDialog] = useState(false);
   const [showFlagDialog, setShowFlagDialog] = useState(false);
   const [flagReason, setFlagReason] = useState("");
-  const [isFlagging, setIsFlagging] = useState(false);
   const progressPercentage = (questionsAnswered / totalQuestions) * 100;
   const currentQuestionNumber = currentQuestionIndex + 1;
 
