@@ -52,6 +52,21 @@ CREATE TABLE "Question" (
 );
 
 -- CreateTable
+CREATE TABLE "FlaggedQuestion" (
+    "id" TEXT NOT NULL DEFAULT gen_random_uuid(),
+    "questionId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "reason" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'pending',
+    "adminNotes" TEXT,
+    "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "resolvedAt" TIMESTAMPTZ,
+
+    CONSTRAINT "FlaggedQuestion_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Test" (
     "id" TEXT NOT NULL DEFAULT gen_random_uuid(),
     "userId" TEXT NOT NULL,
@@ -119,6 +134,15 @@ CREATE INDEX "Subscription_userId_idx" ON "Subscription"("userId");
 CREATE INDEX "Question_id_idx" ON "Question"("id");
 
 -- CreateIndex
+CREATE INDEX "FlaggedQuestion_questionId_idx" ON "FlaggedQuestion"("questionId");
+
+-- CreateIndex
+CREATE INDEX "FlaggedQuestion_userId_idx" ON "FlaggedQuestion"("userId");
+
+-- CreateIndex
+CREATE INDEX "FlaggedQuestion_status_idx" ON "FlaggedQuestion"("status");
+
+-- CreateIndex
 CREATE INDEX "Test_userId_idx" ON "Test"("userId");
 
 -- CreateIndex
@@ -144,6 +168,12 @@ CREATE INDEX "SupportRequest_createdAt_idx" ON "SupportRequest"("createdAt");
 
 -- AddForeignKey
 ALTER TABLE "Subscription" ADD CONSTRAINT "Subscription_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "FlaggedQuestion" ADD CONSTRAINT "FlaggedQuestion_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "Question"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "FlaggedQuestion" ADD CONSTRAINT "FlaggedQuestion_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Test" ADD CONSTRAINT "Test_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

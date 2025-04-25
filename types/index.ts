@@ -41,7 +41,22 @@ export interface Question {
   explanation: string
   createdAt: Date;
   updatedAt: Date;
+  flags?: FlaggedQuestion[];
 }
+
+export type FlaggedQuestion = {
+  id: string;
+  questionId: string;
+  userId: string;
+  reason: string;
+  status: 'pending' | 'reviewed' | 'resolved' | 'dismissed';
+  adminNotes?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  resolvedAt: Date | null;
+  question?: Question;
+  user?: User;
+};
 
 export type AuthContextType = {
   dbUser: User | null;

@@ -32,6 +32,7 @@ model User {
   subscriptions Subscription[]
   tests Test[]
   supportRequests SupportRequest[]
+  flaggedQuestions FlaggedQuestion[]
 }
 
 model Subscription {
@@ -68,6 +69,8 @@ model Question {
   
   // Relation to tests that include this question
   tests    TestQuestion[]
+  // Relation to flagged reports
+  flags    FlaggedQuestion[]
 
   @@index([id])
 }
@@ -143,4 +146,22 @@ model SupportRequest {
   @@index([userId])
   @@index([status])
   @@index([createdAt])
+}
+
+model FlaggedQuestion {
+  id          String    @id @default(uuid())
+  questionId  String
+  question    Question  @relation(fields: [questionId], references: [id])
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  reason      String    @db.Text
+  status      String    @default("pending") // "pending", "reviewed", "resolved", "dismissed"
+  adminNotes  String?   @db.Text
+  createdAt   DateTime  @default(now()) @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @db.Timestamptz
+  resolvedAt  DateTime? @db.Timestamptz
+
+  @@index([questionId])
+  @@index([userId])
+  @@index([status])
 }
