@@ -92,7 +92,7 @@ export function UserHeader() {
             </div>
 
             <div className="flex flex-row items-center justify-end sm:gap-2">
-              {hasActiveSubscription ? (
+              {(hasActiveSubscription || dbUser?.role === "ADMIN") ? (
                 <Button                  
                   onClick={() => setIsSubscriptionDetailsOpen(true)}
                   className="flex items-center justify-center gap-2 w-[100px] sm:w-auto bg-[#FFF25F] hover:bg-[#E6D954] text-[#3F3500] h-9"
