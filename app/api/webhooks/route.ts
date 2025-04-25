@@ -76,9 +76,6 @@ export async function POST(req: Request) {
           // Fetch the subscription to get the current period dates
           const subscriptionData = await stripe.subscriptions.retrieve(session.subscription as string);
           const subscription = subscriptionData as unknown as StripeSubscriptionWithTimestamps;
-
-          // Get the price details to determine if it's weekly or monthly
-          const price = await stripe.prices.retrieve(priceId);
           
           // Calculate the end date based on the subscription interval
           const startDate = new Date(subscription.current_period_start * 1000);
