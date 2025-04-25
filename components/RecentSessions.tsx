@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Loader2 } from "lucide-react";
+import { Calendar, Loader2, PlayCircle } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import type { Test, TestAnswer } from "@prisma/client";
@@ -149,6 +149,7 @@ export function RecentSessions({
 												)
 											}
 										>
+											<PlayCircle className="h-4 w-4" />
 											{test.status === "completed" ? "Review" : "Continue"}
 										</Button>
 									</div>

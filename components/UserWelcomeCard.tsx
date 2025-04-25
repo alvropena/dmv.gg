@@ -180,120 +180,114 @@ export function UserWelcomeCard() {
   };
 
   return (
-    <>
-      <div className="container mx-auto px-2 md:px-6">
-        <div className="bg-white rounded-xl border shadow-sm">
-          <div className="p-4 md:p-8">
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <h1 className="text-2xl font-semibold">
-                  Welcome back, {displayName}!
-                </h1>
-                {!hasAccess && !hasUsedFreeTest && (
-                  <p className="text-muted-foreground">
-                    Start with your free practice test. Subscribe to unlock
-                    unlimited tests.
-                  </p>
-                )}
-                {!hasAccess && hasUsedFreeTest && (
-                  <p className="text-muted-foreground">
-                    You&apos;ve used your free test. Subscribe to continue
-                    practicing.
-                  </p>
-                )}
-                {hasAccess && (
-                  <p className="text-muted-foreground">
-                    Continue your practice or start a new test.
-                  </p>
-                )}
+    <div className="container mx-auto px-4 sm:px-6 mb-6">
+      <div className="rounded-xl p-6 border border-slate-200 bg-white">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-2xl font-semibold">
+              Welcome back, {displayName}!
+            </h1>
+            {!hasAccess && !hasUsedFreeTest && (
+              <p className="text-muted-foreground">
+                Start with your free practice test. Subscribe to unlock
+                unlimited tests.
+              </p>
+            )}
+            {!hasAccess && hasUsedFreeTest && (
+              <p className="text-muted-foreground">
+                You&apos;ve used your free test. Subscribe to continue
+                practicing.
+              </p>
+            )}
+            {hasAccess && (
+              <p className="text-muted-foreground">
+                Continue your practice or start a new test.
+              </p>
+            )}
+          </div>
+
+          {hasExistingTests && !isLoading && (
+            <div className="flex flex-col gap-2">
+              <div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-blue-600 transition-all duration-500 rounded-full"
+                  style={{ width: `${progress}%` }}
+                />
               </div>
-
-              {hasExistingTests && !isLoading && (
-                <div className="flex flex-col gap-2">
-                  <div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-blue-600 transition-all duration-500 rounded-full"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-                  <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>{completedQuestions} completed</span>
-                    <span>{remainingQuestions} remaining</span>
-                  </div>
-                </div>
-              )}
-
-              {error && <div className="text-red-500 text-sm">{error}</div>}
-
-              <div className="flex flex-col sm:flex-row gap-3">
-                {hasExistingTests ? (
-                  <>
-                    <Button
-                      onClick={handleContinueTest}
-                      className="flex items-center justify-center gap-2 rounded-[40px]"
-                      disabled={!hasAccess && hasUsedFreeTest}
-                    >
-                      {!hasAccess && hasUsedFreeTest ? (
-                        <Lock className="h-4 w-4" />
-                      ) : (
-                        <PlayCircle className="h-4 w-4" />
-                      )}
-                      Continue Test
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      onClick={handleStartNewTest}
-                      className="flex items-center justify-center gap-2 rounded-[40px]"
-                      disabled={
-                        isCreatingTest || (!hasAccess && hasUsedFreeTest)
-                      }
-                    >
-                      {!hasAccess && hasUsedFreeTest ? (
-                        <Lock className="h-4 w-4" />
-                      ) : (
-                        <PlusCircle className="h-4 w-4" />
-                      )}
-                      {isCreatingTest ? "Creating..." : "Start New Test"}
-                    </Button>
-                  </>
-                ) : (
-                  <Button
-                    onClick={handleStartNewTest}
-                    className="flex items-center justify-center gap-2 rounded-[40px]"
-                    disabled={isCreatingTest || (!hasAccess && hasUsedFreeTest)}
-                  >
-                    {!hasAccess && hasUsedFreeTest ? (
-                      <Lock className="h-4 w-4" />
-                    ) : (
-                      <Play className="h-4 w-4" />
-                    )}
-                    {isCreatingTest ? "Creating..." : "Start Test"}
-                  </Button>
-                )}
-                <Button
-                  onClick={() =>
-                    window.open(
-                      "https://www.dmv.ca.gov/portal/file/california-driver-handbook-pdf/",
-                      "_blank"
-                    )
-                  }
-                  variant="outline"
-                  className="flex items-center justify-center gap-2 rounded-[40px]"
-                >
-                  <FileText className="h-4 w-4" />
-                  DMV Handbook
-                </Button>
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>{completedQuestions} completed</span>
+                <span>{remainingQuestions} remaining</span>
               </div>
             </div>
+          )}
+
+          {error && <div className="text-red-500 text-sm">{error}</div>}
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            {hasExistingTests ? (
+              <>
+                <Button
+                  onClick={handleContinueTest}
+                  className="flex items-center justify-center gap-2 rounded-[40px]"
+                  disabled={!hasAccess && hasUsedFreeTest}
+                >
+                  {!hasAccess && hasUsedFreeTest ? (
+                    <Lock className="h-4 w-4" />
+                  ) : (
+                    <PlayCircle className="h-4 w-4" />
+                  )}
+                  Continue Test
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={handleStartNewTest}
+                  className="flex items-center justify-center gap-2 rounded-[40px]"
+                  disabled={isCreatingTest || (!hasAccess && hasUsedFreeTest)}
+                >
+                  {!hasAccess && hasUsedFreeTest ? (
+                    <Lock className="h-4 w-4" />
+                  ) : (
+                    <PlusCircle className="h-4 w-4" />
+                  )}
+                  {isCreatingTest ? "Creating..." : "Start New Test"}
+                </Button>
+              </>
+            ) : (
+              <Button
+                onClick={handleStartNewTest}
+                className="flex items-center justify-center gap-2 rounded-[40px]"
+                disabled={isCreatingTest || (!hasAccess && hasUsedFreeTest)}
+              >
+                {!hasAccess && hasUsedFreeTest ? (
+                  <Lock className="h-4 w-4" />
+                ) : (
+                  <Play className="h-4 w-4" />
+                )}
+                {isCreatingTest ? "Creating..." : "Start Test"}
+              </Button>
+            )}
+            <Button
+              onClick={() =>
+                window.open(
+                  "https://www.dmv.ca.gov/portal/file/california-driver-handbook-pdf/",
+                  "_blank"
+                )
+              }
+              variant="outline"
+              className="flex items-center justify-center gap-2 rounded-[40px]"
+            >
+              <FileText className="h-4 w-4" />
+              DMV Handbook
+            </Button>
           </div>
         </div>
-      </div>
 
-      <PricingDialog
-        isOpen={isPricingOpen}
-        onClose={() => setIsPricingOpen(false)}
-        onPlanSelect={handlePlanSelect}
-      />
-    </>
+        <PricingDialog
+          isOpen={isPricingOpen}
+          onClose={() => setIsPricingOpen(false)}
+          onPlanSelect={handlePlanSelect}
+        />
+      </div>
+    </div>
   );
 }

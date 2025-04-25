@@ -101,16 +101,16 @@ export function ProgressBar({
   };
 
   return (
-    <div className="mx-3 sm:mx-0">
-      <div className="flex justify-between items-center mb-4">
-        <Badge variant="outline" className="text-sm py-1 bg-white rounded-full">
+    <div className="mb-6 sm:mx-0">
+      <div className="flex justify-between items-center mb-4 md:mb-6">
+        <Badge variant="outline" className="text-sm md:text-lg py-1 md:py-2 px-4 md:px-6 bg-white rounded-full">
           Question {currentQuestionNumber}/{totalQuestions}
         </Badge>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 md:gap-4">
           <Badge
             variant="destructive"
             onClick={() => setShowFlagDialog(true)}
-            className="text-sm py-1 rounded-full cursor-pointer hover:opacity-90 flex items-center gap-1 font-light w-14 justify-center"
+            className="text-sm md:text-lg py-1 md:py-2 px-4 md:px-6 rounded-full cursor-pointer hover:opacity-90 flex items-center gap-1 font-light justify-center"
           >
             Flag
           </Badge>
@@ -118,17 +118,17 @@ export function ProgressBar({
             variant="ghost"
             size="sm"
             onClick={toggleDialog}
-            className="h-6 px-2 hover:bg-gray-800/50"
+            className="h-6 md:h-8 px-2 md:px-3 hover:bg-gray-800/50"
             aria-label="Exit test"
           >
-            <X className="h-4 w-4" />
+            <X className="h-4 md:h-6 w-4 md:w-6" />
           </Button>
         </div>
       </div>
 
-      <div className="w-full bg-white dark:bg-slate-700 rounded-full h-2 mb-6 border border-input">
+      <div className="w-full bg-white dark:bg-slate-700 rounded-full h-2 md:h-3 mb-6 md:mb-10 border border-input">
         <div
-          className="bg-[#000099] h-2 rounded-full"
+          className="bg-[#000099] h-2 md:h-3 rounded-full transition-all duration-300 ease-in-out"
           style={{
             width: `${progressPercentage}%`,
           }}

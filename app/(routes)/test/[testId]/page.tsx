@@ -396,86 +396,100 @@ export default function TestPage({ params }: TestPageProps) {
 
 	return (
 		<div className="relative min-h-screen bg-white flex items-center justify-center">
-			<div className="w-full flex items-center justify-center overflow-hidden px-4 py-8">
-				<div className="max-w-3xl w-full">
-					<div className="space-y-6">
-						<ProgressBar
-							totalQuestions={questions.length}
-							questionsAnswered={
-								isReviewMode ? reviewQuestionsAnswered : questionsAnswered
-							}
-							currentQuestionIndex={currentQuestionIndex}
-							currentQuestion={{
-								title: currentQuestion.title,
-								id: currentQuestion.id,
-							}}
-						/>
+			<div className="w-full flex items-center justify-center overflow-hidden px-4 py-8 sm:px-6 md:px-8">
+				<div className="w-full max-w-3xl md:max-w-7xl">
+					<div className="space-y-4 md:space-y-8">
+						<div className="px-4 sm:px-6 md:px-8 md:transform md:scale-140 md:origin-top">
+							<ProgressBar
+								totalQuestions={questions.length}
+								questionsAnswered={
+									isReviewMode ? reviewQuestionsAnswered : questionsAnswered
+								}
+								currentQuestionIndex={currentQuestionIndex}
+								currentQuestion={{
+									title: currentQuestion.title,
+									id: currentQuestion.id,
+								}}
+							/>
+						</div>
 
-						<QuestionCard
-							question={currentQuestion}
-							selectedOption={selectedOption}
-							isAnswerRevealed={isAnswerRevealed}
-							onOptionSelect={selectOption}
-						/>
+						<div className="px-4 sm:px-6 md:px-8 md:transform md:scale-140 md:origin-top">
+							<QuestionCard
+								question={currentQuestion}
+								selectedOption={selectedOption}
+								isAnswerRevealed={isAnswerRevealed}
+								onOptionSelect={selectOption}
+							/>
+						</div>
 
-						<div className="flex justify-between gap-4 mx-3 sm:mx-0">
-							{currentQuestionIndex > 0 && (
-								<Button
-									onClick={goToPreviousQuestion}
-									variant="outline"
-									className="w-full"
-								>
-									Previous Question
-								</Button>
-							)}
-							{isReviewMode ? (
-								<>
-									{!isAnswerRevealed ? (
-										<Button
-											onClick={handleCheckAnswer}
-											disabled={selectedOption === null}
-											className="w-full"
-										>
-											Check Answer{!isMobile && " (Space/Enter)"}
-										</Button>
-									) : (
-										<div className="flex gap-2 w-full">
-											<Button onClick={goToNextQuestion} className="w-full">
-												{currentQuestionIndex < questions.length - 1 ? (
-													<>Next Question{!isMobile && " (Space/Enter)"}</>
-												) : (
-													"Finish Review"
-												)}
+						<div className="px-4 sm:px-6 md:px-8 md:transform md:scale-140 md:origin-top">
+							<div className="flex justify-between gap-4 sm:gap-6">
+								{currentQuestionIndex > 0 && (
+									<Button
+										onClick={goToPreviousQuestion}
+										variant="outline"
+										className="w-full text-sm sm:text-base md:text-xl py-2.5 sm:py-3 md:py-4 h-auto rounded-full px-4 sm:px-6 md:px-8"
+									>
+										Previous Question
+									</Button>
+								)}
+								{isReviewMode ? (
+									<>
+										{!isAnswerRevealed ? (
+											<Button
+												onClick={handleCheckAnswer}
+												disabled={selectedOption === null}
+												className="w-full text-sm sm:text-base md:text-xl py-2.5 sm:py-3 md:py-4 h-auto rounded-full px-4 sm:px-6 md:px-8"
+											>
+												Check Answer{!isMobile && " (Space/Enter)"}
 											</Button>
-										</div>
-									)}
-								</>
-							) : (
-								<>
-									{!isAnswerRevealed ? (
-										<Button
-											onClick={handleCheckAnswer}
-											disabled={selectedOption === null}
-											className="w-full"
-										>
-											Check Answer{!isMobile && " (Space/Enter)"}
-										</Button>
-									) : (
-										<Button onClick={goToNextQuestion} className="w-full">
-											Next Question{!isMobile && " (Space/Enter)"}
-										</Button>
-									)}
-								</>
-							)}
+										) : (
+											<div className="flex w-full">
+												<Button 
+													onClick={goToNextQuestion} 
+													className="w-full text-sm sm:text-base md:text-xl py-2.5 sm:py-3 md:py-4 h-auto rounded-full px-4 sm:px-6 md:px-8"
+												>
+													{currentQuestionIndex < questions.length - 1 ? (
+														<>Next Question{!isMobile && " (Space/Enter)"}</>
+													) : (
+														"Finish Review"
+													)}
+												</Button>
+											</div>
+										)}
+									</>
+								) : (
+									<>
+										{!isAnswerRevealed ? (
+											<Button
+												onClick={handleCheckAnswer}
+												disabled={selectedOption === null}
+												className="w-full text-sm sm:text-base md:text-xl py-2.5 sm:py-3 md:py-4 h-auto rounded-full px-4 sm:px-6 md:px-8"
+											>
+												Check Answer{!isMobile && " (Space/Enter)"}
+											</Button>
+										) : (
+											<Button 
+												onClick={goToNextQuestion} 
+												className="w-full text-sm sm:text-base md:text-xl py-2.5 sm:py-3 md:py-4 h-auto rounded-full px-4 sm:px-6 md:px-8"
+											>
+												Next Question{!isMobile && " (Space/Enter)"}
+											</Button>
+										)}
+									</>
+								)}
+							</div>
 						</div>
 
 						{!isMobile && (
-							<div className="mt-6 text-center text-sm text-muted-foreground">
-								<p>
-									Keyboard shortcuts: Press 1-4 to select an option, Space or
-									Enter to check/continue, Left/Right arrows to navigate between
-									questions
-								</p>
+							<div className="px-4 sm:px-6 md:px-8 md:transform md:scale-140 md:origin-top">
+								<div className="text-center text-base md:text-2xl text-muted-foreground">
+									<p>
+										Keyboard shortcuts: Press 1-4 to select an option, Space or
+										Enter to check/continue, Left/Right arrows to navigate between
+										questions
+									</p>
+								</div>
 							</div>
 						)}
 					</div>

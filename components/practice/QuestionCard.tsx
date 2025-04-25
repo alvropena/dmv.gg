@@ -28,49 +28,49 @@ export function QuestionCard({
   }
 
   return (
-    <Card className="mb-6 mx-3 sm:mx-0">
-      <CardHeader>
-        <CardTitle className="text-xl">{question.title}</CardTitle>
+    <Card className="mb-6 sm:mx-0 shadow-none">
+      <CardHeader className="px-6 md:px-8">
+        <CardTitle className="text-xl md:text-2xl">{question.title}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
+      <CardContent className="px-6 md:px-8">
+        <div className="space-y-3 md:space-y-4">
           {options.map((option) => (
             <Button
               key={option.key}
               variant={selectedOption === option.key ? "secondary" : "outline"}
-              className={`w-full justify-between whitespace-normal text-left px-4 py-3 h-auto ${
+              className={`w-full justify-between whitespace-normal text-left px-6 py-2.5 sm:px-4 sm:py-3 md:py-4 h-auto text-sm sm:text-base md:text-lg ${
                 isAnswerRevealed && option.key === question.correctAnswer
-                  ? "bg-green-200/60"
+                  ? "bg-green-200/60 border border-green-600"
                   : ""
               } ${
                 isAnswerRevealed &&
                 selectedOption === option.key &&
                 option.key !== question.correctAnswer
-                  ? "bg-red-200/60"
+                  ? "bg-red-200/60 border border-red-600"
                   : ""
               }`}
               onClick={() => onOptionSelect(option.key)}
               aria-label={`Option ${option.number}: ${option.text}`}
             >
               <div className="text-left flex-1 min-w-0 leading-relaxed">
-                <span className="font-medium mr-3">{option.key})</span>
-                <span className="break-words">{option.text}</span>
+                <span className="font-medium mr-3 text-sm sm:text-base md:text-lg">{option.key})</span>
+                <span className="break-words text-sm sm:text-base md:text-lg">{option.text}</span>
               </div>
               {isAnswerRevealed && option.key === question.correctAnswer && (
-                <CheckCircle className="h-5 w-5 text-green-500" />
+                <CheckCircle className="h-5 w-5 md:h-6 md:w-6 text-green-500 flex-shrink-0" />
               )}
               {isAnswerRevealed &&
                 selectedOption === option.key &&
                 option.key !== question.correctAnswer && (
-                  <XCircle className="h-5 w-5 text-red-500" />
+                  <XCircle className="h-5 w-5 md:h-6 md:w-6 text-red-500 flex-shrink-0" />
                 )}
             </Button>
           ))}
         </div>
 
         {isAnswerRevealed && (
-          <div className="mt-6 space-y-2 text-sm">
-            <p>Explanation: {question.explanation}</p>
+          <div className="mt-6 space-y-2">
+            <p className="text-sm sm:text-base md:text-lg">Explanation: {question.explanation}</p>
           </div>
         )}
       </CardContent>
