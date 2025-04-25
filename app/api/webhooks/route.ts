@@ -60,14 +60,14 @@ export async function POST(req: Request) {
         if (session.mode === 'payment') {
           await db.subscription.create({
             data: {
-              id: crypto.randomUUID(), // Generate UUID to match the schema
-              userId: user.id, // Use the numeric ID from our database
+              id: crypto.randomUUID(),
+              userId: user.id,
               stripeCustomerId: session.customer as string,
               stripePriceId: priceId,
               status: 'active',
-              // For lifetime plans, set a far future end date
               currentPeriodStart: new Date(),
-              currentPeriodEnd: new Date('2099-12-31'),
+              // Use a far future date for lifetime plans (Year 2099)
+              currentPeriodEnd: new Date('2099-12-31T23:59:59Z'),
             },
           });
         }
@@ -77,19 +77,17 @@ export async function POST(req: Request) {
           const subscriptionData = await stripe.subscriptions.retrieve(session.subscription as string);
           const subscription = subscriptionData as unknown as StripeSubscriptionWithTimestamps;
 
-          // Safely convert Unix timestamps to Date objects
-          const startDate = subscription.current_period_start
-            ? new Date(subscription.current_period_start * 1000)
-            : new Date();
-
-          const endDate = subscription.current_period_end
-            ? new Date(subscription.current_period_end * 1000)
-            : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // Default to 30 days in the future
+          // Get the price details to determine if it's weekly or monthly
+          const price = await stripe.prices.retrieve(priceId);
+          
+          // Calculate the end date based on the subscription interval
+          const startDate = new Date(subscription.current_period_start * 1000);
+          const endDate = new Date(subscription.current_period_end * 1000);
 
           await db.subscription.create({
             data: {
-              id: crypto.randomUUID(), // Generate UUID to match the schema
-              userId: user.id, // Use the numeric ID from our database
+              id: crypto.randomUUID(),
+              userId: user.id,
               stripeCustomerId: session.customer as string,
               stripeSubscriptionId: session.subscription as string,
               stripePriceId: priceId,
@@ -107,14 +105,9 @@ export async function POST(req: Request) {
         const subscriptionObject = event.data.object as Stripe.Subscription;
         const subscription = subscriptionObject as unknown as StripeSubscriptionWithTimestamps;
 
-        // Safely convert Unix timestamps to Date objects
-        const startDate = subscription.current_period_start
-          ? new Date(subscription.current_period_start * 1000)
-          : new Date();
-
-        const endDate = subscription.current_period_end
-          ? new Date(subscription.current_period_end * 1000)
-          : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+        // Get the start and end dates from the subscription
+        const startDate = new Date(subscription.current_period_start * 1000);
+        const endDate = new Date(subscription.current_period_end * 1000);
 
         await db.subscription.updateMany({
           where: {
