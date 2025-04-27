@@ -1,14 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { SignInDialog } from "@/components/SignInDialog";
+import { useRouter } from "next/navigation";
 
 export default function CTA() {
-  const [isSignInOpen, setIsSignInOpen] = useState(false);
+  const router = useRouter();
 
   const handleGetStarted = () => {
-    setIsSignInOpen(true);
+    router.push("/sign-up");
   };
 
   return (
@@ -35,10 +34,6 @@ export default function CTA() {
           </div>
         </div>
       </div>
-      <SignInDialog
-        isOpen={isSignInOpen}
-        onClose={() => setIsSignInOpen(false)}
-      />
     </section>
   );
 }

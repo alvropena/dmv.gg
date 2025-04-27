@@ -1,16 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { SignInDialog } from "@/components/SignInDialog";
+import { useRouter } from "next/navigation";
 import { Download } from "lucide-react";
 
 export default function Hero() {
-  const [isSignInOpen, setIsSignInOpen] = useState(false);
+  const router = useRouter();
 
   const handleStartPracticing = (e: React.MouseEvent) => {
     e.preventDefault();
-    setIsSignInOpen(true);
+    router.push("/sign-up");
   };
 
   return (
@@ -48,11 +47,6 @@ export default function Hero() {
           </div>
         </div>
       </div>
-
-      <SignInDialog
-        isOpen={isSignInOpen}
-        onClose={() => setIsSignInOpen(false)}
-      />
     </section>
   );
 }
