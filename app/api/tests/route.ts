@@ -29,6 +29,7 @@ export async function POST() {
       where: { clerkId: userId },
       select: {
         id: true,
+        role: true,
         hasUsedFreeTest: true,
         subscriptions: {
           select: {
@@ -43,13 +44,15 @@ export async function POST() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Check if user has an active subscription
+    // Check if user has an active subscription or is an ADMIN
     const hasActiveSubscription = dbUser.subscriptions.some(
-      sub => sub.status === 'active' && new Date(sub.currentPeriodEnd) > new Date()
+      (sub: { status: string; currentPeriodEnd: Date }) =>
+        sub.status === 'active' && new Date(sub.currentPeriodEnd) > new Date()
     );
+    const isAdmin = dbUser.role === 'ADMIN';
 
-    // If user has no active subscription and has used their free test
-    if (!hasActiveSubscription && dbUser.hasUsedFreeTest) {
+    // If user has no active subscription, is not an ADMIN, and has used their free test
+    if (!hasActiveSubscription && !isAdmin && dbUser.hasUsedFreeTest) {
       return NextResponse.json(
         { error: 'Please subscribe to create more tests' },
         { status: 403 }
@@ -58,11 +61,11 @@ export async function POST() {
 
     // Get all questions 
     const allQuestions = await db.question.findMany();
-    
+
     // Shuffle and select a random subset (up to MAX_QUESTIONS_PER_TEST)
     const shuffledQuestions = shuffleArray(allQuestions);
     const selectedQuestions = shuffledQuestions.slice(0, MAX_QUESTIONS_PER_TEST);
-    
+
     // Create a new test
     const test = await db.test.create({
       data: {
@@ -134,8 +137,8 @@ export async function GET() {
 
     // Get tests with their answers
     const tests = await db.test.findMany({
-      where: { 
-        userId: dbUser.id 
+      where: {
+        userId: dbUser.id
       },
       orderBy: {
         startedAt: 'desc'
