@@ -53,7 +53,7 @@ export default function PricingPage() {
 		fetchPrices();
 	}, []);
 
-	const handlePlanSelect = (plan: string) => {
+	const handlePlanSelect = () => {
 		router.push("/sign-up");
 	};
 
@@ -167,7 +167,7 @@ export default function PricingPage() {
 									variant={selectedPlan === price.name ? "default" : "outline"}
 									onClick={() => {
 										setSelectedPlan(price.name);
-										handlePlanSelect(price.name);
+										handlePlanSelect();
 									}}
 								>
 									Get started
