@@ -95,7 +95,7 @@ export function UserHeader() {
               {(hasActiveSubscription || dbUser?.role === "ADMIN") ? (
                 <Button                  
                   onClick={() => setIsSubscriptionDetailsOpen(true)}
-                  className="flex items-center justify-center gap-2 w-[100px] sm:w-auto bg-[#FFF25F] hover:bg-[#E6D954] text-[#3F3500] h-9"
+                  className="flex items-center justify-center gap-2 w-[100px] sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-white h-9"
                 >
                   <Star className="h-4 w-4" />
                   <span className="inline-flex items-center">Premium</span>
@@ -123,7 +123,7 @@ export function UserHeader() {
                 onClick={() => {
                   signOut();
                 }}
-                className="hidden sm:flex items-center justify-center gap-2 w-[100px] sm:w-auto"
+                className="hidden sm:flex items-center justify-center gap-2 w-[100px] sm:w-auto bg-red-500 hover:bg-red-600 text-white"
                 variant="secondary"
               >
                 <LogOut className="h-4 w-4" />
