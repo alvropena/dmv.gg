@@ -10,10 +10,10 @@ import { AuthProvider } from "@/contexts/AuthContext";
 const balooBhai2 = Baloo_Bhai_2({ weight: ["400", "700"], subsets: ["latin"] });
 
 export const metadata: Metadata = {
-	title: "DMV.gg - Ace Your DMV Test",
+	title: "DMV.gg - Ace your DMV Knowledge Test",
 	description: "Ace your DMV test with our comprehensive question bank",
 	openGraph: {
-		title: "DMV.gg - Ace Your DMV Test",
+		title: "DMV.gg - Ace your DMV Knowledge Test",
 		description: "Ace your DMV test with our comprehensive question bank",
 		url: "https://dmv.gg",
 		siteName: "DMV.gg",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 	},
 	twitter: {
 		card: "summary_large_image",
-		title: "DMV.gg - Ace Your DMV Test",
+		title: "DMV.gg - Ace your DMV Knowledge Test",
 		description: "Ace your DMV test with our comprehensive question bank",
 	},
 };
