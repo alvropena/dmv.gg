@@ -37,6 +37,7 @@ export interface Question {
   optionB: string;
   optionC: string;
   optionD?: string | null;
+  image?: string | null;
   correctAnswer: string;
   explanation: string
   createdAt: Date;
