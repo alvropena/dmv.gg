@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Headset, CheckCircle } from "lucide-react";
+import { Headset, CheckCircle, Loader2 } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -114,13 +114,13 @@ export function SupportButton() {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full min-w-[80px] flex items-center justify-center gap-2"
                 disabled={isSubmitting || !message}
               >
                 {isSubmitting ? (
-                  <span className="flex items-center gap-1">Sending...</span>
+                  <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  <span className="flex items-center gap-1">Send</span>
+                  "Send"
                 )}
               </Button>
             </form>

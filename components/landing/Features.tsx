@@ -20,7 +20,7 @@ export default function Features() {
 							We provide all the tools and resources you need to pass your test on
 							the first try.
 						</p>
-					</div>
+				</div>
 					<div className="mx-auto w-full max-w-full space-y-4">
 						<div className="grid grid-cols-1 gap-8 md:grid-cols-3">
 							<div className="flex flex-col items-center space-y-2 border-gray-800 p-4">
@@ -35,12 +35,12 @@ export default function Features() {
 										<path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z" />
 										<path d="M11 11h2v6h-2zm0-4h2v2h-2z" />
 									</svg>
-								</div>
+			</div>
 								<h3 className="text-xl font-bold">Practice Tests</h3>
 								<p className="text-sm text-gray-500 dark:text-gray-400">
 									Access hundreds of practice questions to prepare for your test.
-								</p>
-							</div>
+			</p>
+		</div>
 							<div className="flex flex-col items-center space-y-2 border-gray-800 p-4">
 								<div className="p-2">
 									<svg

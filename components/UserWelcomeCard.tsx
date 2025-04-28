@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Lock, Play, PlayCircle, PlusCircle, FileText } from "lucide-react";
+import { Lock, Play, PlayCircle, PlusCircle, FileText, Loader2 } from "lucide-react";
 import { PricingDialog } from "@/components/PricingDialog";
 
 type Test = {
@@ -228,7 +228,7 @@ export function UserWelcomeCard() {
 							<>
 								<Button
 									onClick={handleContinueTest}
-									className="flex items-center justify-center gap-2 rounded-[40px]"
+									className="flex items-center justify-center gap-2 rounded-[40px] min-w-[140px]"
 									disabled={!hasAccess && hasUsedFreeTest}
 								>
 									{!hasAccess && hasUsedFreeTest ? (
@@ -241,29 +241,33 @@ export function UserWelcomeCard() {
 								<Button
 									variant="secondary"
 									onClick={handleStartNewTest}
-									className="flex items-center justify-center gap-2 rounded-[40px]"
+									className="flex items-center justify-center gap-2 rounded-[40px] min-w-[140px]"
 									disabled={isCreatingTest || (!hasAccess && hasUsedFreeTest)}
 								>
 									{!hasAccess && hasUsedFreeTest ? (
 										<Lock className="h-4 w-4" />
+									) : isCreatingTest ? (
+										<Loader2 className="h-4 w-4 animate-spin" />
 									) : (
 										<PlusCircle className="h-4 w-4" />
 									)}
-									{isCreatingTest ? "Creating..." : "Start New Test"}
+									{!isCreatingTest && "Start New Test"}
 								</Button>
 							</>
 						) : (
 							<Button
 								onClick={handleStartNewTest}
-								className="flex items-center justify-center gap-2 rounded-[40px]"
+								className="flex items-center justify-center gap-2 rounded-[40px] min-w-[120px]"
 								disabled={isCreatingTest || (!hasAccess && hasUsedFreeTest)}
 							>
 								{!hasAccess && hasUsedFreeTest ? (
 									<Lock className="h-4 w-4" />
+								) : isCreatingTest ? (
+									<Loader2 className="h-4 w-4 animate-spin" />
 								) : (
 									<Play className="h-4 w-4" />
 								)}
-								{isCreatingTest ? "Creating..." : "Start Test"}
+								{!isCreatingTest && "Start Test"}
 							</Button>
 						)}
 						<Button

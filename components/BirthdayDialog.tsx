@@ -149,7 +149,7 @@ export function BirthdayDialog({ isOpen, onSave, onClose }: BirthdayDialogProps)
 					<Button
 						onClick={handleSave}
 						disabled={!isSelectionComplete || isSubmitting}
-						className="w-full sm:w-auto"
+						className="w-full sm:w-auto min-w-[100px] flex items-center justify-center"
 					>
 						{isSubmitting ? (
 							<Loader2 className="h-4 w-4 animate-spin" />
