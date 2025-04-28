@@ -6,6 +6,7 @@ CREATE TABLE "User" (
     "firstName" TEXT,
     "lastName" TEXT,
     "birthday" DATE,
+    "hasUsedFreeTest" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
