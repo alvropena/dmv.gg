@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import Footer from "@/components/landing/Footer";
 import { formatCurrency } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface Price {
 	id: string;
@@ -20,6 +21,7 @@ interface Price {
 }
 
 export default function PricingPage() {
+	const router = useRouter();
 	const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
 	const [prices, setPrices] = useState<Price[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -51,26 +53,8 @@ export default function PricingPage() {
 		fetchPrices();
 	}, []);
 
-	const handlePlanSelect = async (plan: string) => {
-		try {
-			const response = await fetch("/api/create-checkout-session", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					plan: plan.toLowerCase(),
-				}),
-			});
-
-			const data = await response.json();
-
-			if (data.url) {
-				window.location.href = data.url;
-			}
-		} catch (error) {
-			console.error("Error:", error);
-		}
+	const handlePlanSelect = (plan: string) => {
+		router.push("/sign-up");
 	};
 
 	if (loading) {
