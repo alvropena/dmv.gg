@@ -41,7 +41,10 @@ export default function TestPage({ params }: TestPageProps) {
 	const mountedRef = useRef(false);
 
 	// Update hasAccess check to include free test case
-	const hasAccess = hasActiveSubscription || dbUser?.role === "ADMIN" || !dbUser?.hasUsedFreeTest;
+	const hasAccess =
+		hasActiveSubscription ||
+		dbUser?.role === "ADMIN" ||
+		!dbUser?.hasUsedFreeTest;
 
 	// Function to fetch test data and update local state
 	const fetchTestData = useCallback(async () => {
@@ -83,11 +86,11 @@ export default function TestPage({ params }: TestPageProps) {
 					(answer: TestAnswer) => answer.selectedAnswer !== null,
 				).length;
 				setQuestionsAnswered(answeredCount);
-				
+
 				// Set the current question index to the first unanswered question
 				if (!isReview && test.status === "in_progress") {
 					const firstUnansweredIndex = test.answers.findIndex(
-						(answer: TestAnswer) => answer.selectedAnswer === null
+						(answer: TestAnswer) => answer.selectedAnswer === null,
 					);
 					if (firstUnansweredIndex !== -1) {
 						setCurrentQuestionIndex(firstUnansweredIndex);
@@ -224,21 +227,16 @@ export default function TestPage({ params }: TestPageProps) {
 
 		setIsAnswerRevealed(true);
 
-		// Determine if the answer is correct
-		const isCorrect = selectedOption === currentQuestion.correctAnswer;
-		
 		// In review mode, increment reviewQuestionsAnswered instead
 		if (isReviewMode) {
 			setReviewQuestionsAnswered((prev) => prev + 1);
 			// Also save answers in review mode to track weak areas
 			if (testId && currentQuestion.id) {
-				console.log(`Saving review answer - Question: ${currentQuestion.id}, Answer: ${selectedOption}, Correct: ${isCorrect}`);
 				await saveAnswer(currentQuestion.id, selectedOption);
 			}
 		} else {
 			// Save answer to test
 			if (testId && currentQuestion.id) {
-				console.log(`Saving regular answer - Question: ${currentQuestion.id}, Answer: ${selectedOption}, Correct: ${isCorrect}`);
 				await saveAnswer(currentQuestion.id, selectedOption);
 			}
 		}
@@ -445,8 +443,8 @@ export default function TestPage({ params }: TestPageProps) {
 											</Button>
 										) : (
 											<div className="flex w-full">
-												<Button 
-													onClick={goToNextQuestion} 
+												<Button
+													onClick={goToNextQuestion}
 													className="w-full text-sm sm:text-base md:text-xl py-2.5 sm:py-3 md:py-4 h-auto rounded-full px-4 sm:px-6 md:px-8"
 												>
 													{currentQuestionIndex < questions.length - 1 ? (
@@ -469,8 +467,8 @@ export default function TestPage({ params }: TestPageProps) {
 												Check Answer{!isMobile && " (Space/Enter)"}
 											</Button>
 										) : (
-											<Button 
-												onClick={goToNextQuestion} 
+											<Button
+												onClick={goToNextQuestion}
 												className="w-full text-sm sm:text-base md:text-xl py-2.5 sm:py-3 md:py-4 h-auto rounded-full px-4 sm:px-6 md:px-8"
 											>
 												Next Question{!isMobile && " (Space/Enter)"}
@@ -486,8 +484,8 @@ export default function TestPage({ params }: TestPageProps) {
 								<div className="text-center text-base md:text-2xl text-muted-foreground">
 									<p>
 										Keyboard shortcuts: Press 1-4 to select an option, Space or
-										Enter to check/continue, Left/Right arrows to navigate between
-										questions
+										Enter to check/continue, Left/Right arrows to navigate
+										between questions
 									</p>
 								</div>
 							</div>

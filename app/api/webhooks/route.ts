@@ -58,6 +58,7 @@ export async function POST(req: Request) {
 
         // For one-time payments (lifetime plan)
         if (session.mode === 'payment') {
+          const now = new Date();
           await db.subscription.create({
             data: {
               id: crypto.randomUUID(),
@@ -65,21 +66,25 @@ export async function POST(req: Request) {
               stripeCustomerId: session.customer as string,
               stripePriceId: priceId,
               status: 'active',
-              currentPeriodStart: new Date(),
+              currentPeriodStart: now,
               // Use a far future date for lifetime plans (Year 2099)
-              currentPeriodEnd: new Date('2099-12-31T23:59:59Z'),
+              currentPeriodEnd: new Date('2099-12-31T23:59:59.999Z'),
             },
           });
         }
         // For subscriptions (monthly/weekly plans)
         else if (session.mode === 'subscription' && session.subscription) {
+          // Wait a moment for the subscription to be fully created
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
           // Fetch the subscription to get the current period dates
-          const subscriptionData = await stripe.subscriptions.retrieve(session.subscription as string);
-          const subscription = subscriptionData as unknown as StripeSubscriptionWithTimestamps;
-          
-          // Calculate the end date based on the subscription interval
-          const startDate = new Date(subscription.current_period_start * 1000);
-          const endDate = new Date(subscription.current_period_end * 1000);
+          const subscriptionData = await stripe.subscriptions.retrieve(
+            session.subscription as string
+          );
+
+          const item = subscriptionData.items.data[0];
+          const startDate = new Date(item.current_period_start * 1000);
+          const endDate = new Date(item.current_period_end * 1000);
 
           await db.subscription.create({
             data: {
@@ -87,12 +92,14 @@ export async function POST(req: Request) {
               userId: user.id,
               stripeCustomerId: session.customer as string,
               stripeSubscriptionId: session.subscription as string,
-              stripePriceId: priceId,
-              status: subscription.status,
+              stripePriceId: item.price.id,
+              status: subscriptionData.status,
               currentPeriodStart: startDate,
               currentPeriodEnd: endDate,
             },
           });
+        } else {
+          throw new Error('Invalid session mode or missing subscription');
         }
         break;
       }

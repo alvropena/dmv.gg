@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, XCircle } from "lucide-react";
 import type { Question } from "@/types";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 interface QuestionCardProps {
   question: Question;
@@ -33,6 +34,17 @@ export function QuestionCard({
         <CardTitle className="text-xl md:text-2xl">{question.title}</CardTitle>
       </CardHeader>
       <CardContent className="px-6 md:px-8">
+        {question.image && (
+          <div className="my-4 relative w-full h-64">
+            <Image 
+              src={question.image} 
+              alt={`Question ${question.id} image`}
+              fill
+              className="object-contain rounded-lg"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          </div>
+        )}
         <div className="space-y-3 md:space-y-4">
           {options.map((option) => (
             <Button

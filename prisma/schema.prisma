@@ -59,6 +59,7 @@ model Question {
   optionB     String    @db.Text
   optionC     String    @db.Text
   optionD     String?   @db.Text
+  image       String?   @db.Text  // URL to the image
   correctAnswer String   @db.VarChar(1)  // 'A', 'B', 'C', or 'D'
   explanation String     @db.Text
   createdAt   DateTime   @default(now()) @db.Timestamptz
