@@ -43,6 +43,7 @@ CREATE TABLE "Question" (
     "optionB" TEXT NOT NULL,
     "optionC" TEXT NOT NULL,
     "optionD" TEXT,
+    "image" TEXT,
     "correctAnswer" VARCHAR(1) NOT NULL,
     "explanation" TEXT NOT NULL,
     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
