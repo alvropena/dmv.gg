@@ -7,9 +7,10 @@ import {
 	CarouselItem,
 } from "@/components/ui/carousel";
 import { type CarouselApi } from "@/components/ui/carousel";
+import { useRouter } from "next/navigation";
 
 export default function Features() {
-	const [isSignInOpen, setIsSignInOpen] = useState(false);
+	const router = useRouter();
 	const [api, setApi] = useState<CarouselApi>();
 	const [current, setCurrent] = useState(0);
 	const [isPaused, setIsPaused] = useState(false);
@@ -39,7 +40,7 @@ export default function Features() {
 
 	const handleStartPracticing = (e: React.MouseEvent) => {
 		e.preventDefault();
-		setIsSignInOpen(true);
+		router.push("/sign-up");
 	};
 
 	const FeatureCard = ({ feature }: { feature: typeof features[0] }) => (
