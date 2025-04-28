@@ -6,6 +6,7 @@ import { Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Link from "next/link";
+import Image from "next/image";
 
 export function Header() {
 	const router = useRouter();
@@ -39,7 +40,7 @@ export function Header() {
 			<>
 				<Button
 					variant="ghost"
-					className="w-full px-6 py-4 h-auto rounded-full text-center text-lg"
+					className="w-full px-4 py-4 h-auto rounded-full text-center text-lg"
 					onClick={() => handleNavigation("#features")}
 				>
 					Features
@@ -71,7 +72,7 @@ export function Header() {
 
 	// Extracted desktop navigation component for signed out users
 	const SignedOutDesktopNav = () => (
-		<nav className="hidden lg:flex gap-2 ml-8">
+		<nav className="hidden lg:flex gap-1 ml-2">
 			<NavLinks />
 		</nav>
 	);
@@ -106,8 +107,14 @@ export function Header() {
 			<SheetContent side="left">
 				<div className="flex flex-col h-full py-6">
 					<div className="flex flex-col gap-6 items-center w-full">
-						<Link href="/" className="w-full text-[#000099] text-4xl font-bold px-6 text-center">
-							DMV.gg
+						<Link href="/" className="w-full text-center">
+							<Image
+								src="/logo.png"
+								alt="DMV.gg Logo"
+								width={120}
+								height={32}
+								className="mx-auto rounded-full"
+							/>
 						</Link>
 						<div className="w-full flex flex-col gap-6">
 							<NavLinks />
@@ -168,9 +175,15 @@ export function Header() {
 							<div className="block lg:hidden">
 								<SignedOutMobileMenu />
 							</div>
-							<div className="hidden lg:block font-bold text-xl mr-8">
+							<div className="hidden lg:block mr-4">
 								<Link href="/" className="hover:opacity-90">
-									DMV.gg
+									<Image
+										src="/logo.png"
+										alt="DMV.gg Logo"
+										width={100}
+										height={32}
+										className="rounded-full"
+									/>
 								</Link>
 							</div>
 							<SignedOutDesktopNav />
