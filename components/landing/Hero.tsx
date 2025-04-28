@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Download } from "lucide-react";
+import Image from "next/image";
 
 export default function Hero() {
   const router = useRouter();
@@ -32,17 +33,21 @@ export default function Hero() {
                 onClick={handleStartPracticing}
               >
                 Get the app
-                <Download className="w-4 h-4" />
+                <Download className="w-4 h-4 ml-2" />
               </Button>
             </div>
           </div>
           
           <div className="flex items-center justify-center md:mt-0">
-            {/* Right column content - can add image or other content here */}
-            <div className="w-full h-[400px] md:h-[500px] lg:h-[600px] rounded-3xl bg-white/10 backdrop-blur-sm p-6 flex items-center justify-center">
-              <div className="text-center text-[#B6DBFF]">
-                <p className="text-lg font-medium">Preview content can go here</p>
-              </div>
+            <div className="relative w-full h-[400px] md:h-[500px] lg:h-[600px] rounded-3xl overflow-hidden">
+              <Image
+                src="/hero-image.png"
+                alt="Happy driver showing DMV app and license"
+                fill
+                className="object-cover"
+                priority
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
             </div>
           </div>
         </div>
