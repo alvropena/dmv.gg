@@ -4,7 +4,15 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Lock, Play, PlayCircle, PlusCircle, FileText, Loader2 } from "lucide-react";
+import {
+	Lock,
+	Play,
+	PlayCircle,
+	PlusCircle,
+	FileText,
+	Loader2,
+	RotateCcw,
+} from "lucide-react";
 import { PricingDialog } from "@/components/PricingDialog";
 
 type Test = {
@@ -31,6 +39,7 @@ export function UserWelcomeCard() {
 	const [remainingQuestions, setRemainingQuestions] = useState(0);
 	const [isPricingOpen, setIsPricingOpen] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [isTestCompleted, setIsTestCompleted] = useState(false);
 
 	const displayName = dbUser?.firstName || "User";
 	const hasAccess = hasActiveSubscription || dbUser?.role === "ADMIN";
@@ -53,6 +62,7 @@ export function UserWelcomeCard() {
 					setHasExistingTests(true);
 					const latestTest = data.tests[0] as Test;
 					setLatestTestId(latestTest.id);
+					setIsTestCompleted(latestTest.status === "completed");
 
 					// Calculate progress based on answered questions
 					if (latestTest.totalQuestions > 0) {
@@ -226,32 +236,86 @@ export function UserWelcomeCard() {
 					<div className="flex flex-col sm:flex-row gap-3">
 						{hasExistingTests ? (
 							<>
+								{isTestCompleted ? (
+									<>
+										<Button
+											onClick={handleStartNewTest}
+											className="flex items-center justify-center gap-2 rounded-[40px] min-w-[140px]"
+											disabled={
+												isCreatingTest || (!hasAccess && hasUsedFreeTest)
+											}
+										>
+											{!hasAccess && hasUsedFreeTest ? (
+												<Lock className="h-4 w-4" />
+											) : isCreatingTest ? (
+												<Loader2 className="h-4 w-4 animate-spin" />
+											) : (
+												<PlusCircle className="h-4 w-4" />
+											)}
+											{!isCreatingTest && "Start New Test"}
+										</Button>
+										<Button
+											variant="secondary"
+											onClick={() =>
+												latestTestId &&
+												router.push(`/test/${latestTestId}?review=true`)
+											}
+											className="flex items-center justify-center gap-2 rounded-[40px] min-w-[140px]"
+											disabled={!hasAccess && hasUsedFreeTest}
+										>
+											{!hasAccess && hasUsedFreeTest ? (
+												<Lock className="h-4 w-4" />
+											) : (
+												<RotateCcw className="h-4 w-4" />
+											)}
+											Retake Test
+										</Button>
+									</>
+								) : (
+									<>
+										<Button
+											onClick={handleContinueTest}
+											className="flex items-center justify-center gap-2 rounded-[40px] min-w-[140px]"
+											disabled={!hasAccess && hasUsedFreeTest}
+										>
+											{!hasAccess && hasUsedFreeTest ? (
+												<Lock className="h-4 w-4" />
+											) : (
+												<PlayCircle className="h-4 w-4" />
+											)}
+											Continue Test
+										</Button>
+										<Button
+											variant="secondary"
+											onClick={handleStartNewTest}
+											className="flex items-center justify-center gap-2 rounded-[40px] min-w-[140px]"
+											disabled={
+												isCreatingTest || (!hasAccess && hasUsedFreeTest)
+											}
+										>
+											{!hasAccess && hasUsedFreeTest ? (
+												<Lock className="h-4 w-4" />
+											) : isCreatingTest ? (
+												<Loader2 className="h-4 w-4 animate-spin" />
+											) : (
+												<PlusCircle className="h-4 w-4" />
+											)}
+											{!isCreatingTest && "Start New Test"}
+										</Button>
+									</>
+								)}
 								<Button
-									onClick={handleContinueTest}
-									className="flex items-center justify-center gap-2 rounded-[40px] min-w-[140px]"
-									disabled={!hasAccess && hasUsedFreeTest}
+									onClick={() =>
+										window.open(
+											"https://www.dmv.ca.gov/portal/file/california-driver-handbook-pdf/",
+											"_blank",
+										)
+									}
+									variant="outline"
+									className="flex items-center justify-center gap-2 rounded-[40px]"
 								>
-									{!hasAccess && hasUsedFreeTest ? (
-										<Lock className="h-4 w-4" />
-									) : (
-										<PlayCircle className="h-4 w-4" />
-									)}
-									Continue Test
-								</Button>
-								<Button
-									variant="secondary"
-									onClick={handleStartNewTest}
-									className="flex items-center justify-center gap-2 rounded-[40px] min-w-[140px]"
-									disabled={isCreatingTest || (!hasAccess && hasUsedFreeTest)}
-								>
-									{!hasAccess && hasUsedFreeTest ? (
-										<Lock className="h-4 w-4" />
-									) : isCreatingTest ? (
-										<Loader2 className="h-4 w-4 animate-spin" />
-									) : (
-										<PlusCircle className="h-4 w-4" />
-									)}
-									{!isCreatingTest && "Start New Test"}
+									<FileText className="h-4 w-4" />
+									DMV Handbook
 								</Button>
 							</>
 						) : (
@@ -270,19 +334,6 @@ export function UserWelcomeCard() {
 								{!isCreatingTest && "Start Test"}
 							</Button>
 						)}
-						<Button
-							onClick={() =>
-								window.open(
-									"https://www.dmv.ca.gov/portal/file/california-driver-handbook-pdf/",
-									"_blank",
-								)
-							}
-							variant="outline"
-							className="flex items-center justify-center gap-2 rounded-[40px]"
-						>
-							<FileText className="h-4 w-4" />
-							DMV Handbook
-						</Button>
 					</div>
 				</div>
 
