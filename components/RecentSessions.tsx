@@ -6,6 +6,12 @@ import { useState, useEffect } from "react";
 import type { Test, TestAnswer } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type TestWithAnswers = Test & {
 	answers: TestAnswer[];
@@ -179,28 +185,57 @@ export function RecentSessions({
 													{Math.round((test.score / 100) * test.totalQuestions)}
 													/{test.totalQuestions} correct)
 												</span>
-												<Badge
-													variant={
-														Math.round(
-															(test.score / 100) * test.totalQuestions,
-														) >= 39
-															? "secondary"
-															: "destructive"
-													}
-													className={`rounded-full ${
-														Math.round(
-															(test.score / 100) * test.totalQuestions,
-														) >= 39
-															? "bg-green-100 hover:bg-green-100 text-green-700 border-green-200 font-normal shadow-none"
-															: ""
-													}`}
-												>
-													{Math.round(
-														(test.score / 100) * test.totalQuestions,
-													) >= 39
-														? "Passing"
-														: "Failed"}
-												</Badge>
+												<TooltipProvider>
+													<Tooltip>
+														<TooltipTrigger asChild>
+															<Badge
+																variant={
+																	Math.round(
+																		(test.score / 100) * test.totalQuestions,
+																	) >= 39
+																		? "secondary"
+																		: "destructive"
+																}
+																className={`rounded-full ${
+																	Math.round(
+																		(test.score / 100) * test.totalQuestions,
+																	) >= 39
+																		? "bg-green-100 hover:bg-green-100 text-green-700 border-green-200 font-normal shadow-none"
+																		: ""
+																}`}
+															>
+																{Math.round(
+																	(test.score / 100) * test.totalQuestions,
+																) >= 39
+																	? "Passing"
+																	: "Failed"}
+															</Badge>
+														</TooltipTrigger>
+														<TooltipContent>
+															<p>
+																{Math.round(
+																	(test.score / 100) * test.totalQuestions,
+																) >= 39
+																	? `Passed with ${
+																			test.totalQuestions -
+																			Math.round(
+																				(test.score / 100) *
+																					test.totalQuestions,
+																			)
+																		} errors (max allowed: 5)`
+																	: `Failed with ${
+																			test.totalQuestions -
+																			Math.round(
+																				(test.score / 100) *
+																					test.totalQuestions,
+																			)
+																		} errors. Max 5 errors allowed out of ${
+																			test.totalQuestions
+																		} questions.`}
+															</p>
+														</TooltipContent>
+													</Tooltip>
+												</TooltipProvider>
 											</>
 										) : (
 											<>

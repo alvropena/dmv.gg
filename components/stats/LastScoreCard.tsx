@@ -1,5 +1,11 @@
 import { Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type LastScoreCardProps = {
 	lastScore: number;
@@ -16,6 +22,11 @@ export function LastScoreCard({
 	const totalQuestions = 46;
 	const correctAnswers = Math.round((lastScore / 100) * totalQuestions);
 	const isPassing = correctAnswers >= 39;
+	const errors = totalQuestions - correctAnswers;
+
+	const tooltipText = isPassing
+		? `Passed with ${errors} errors (max allowed: 5)`
+		: `Failed with ${errors} errors. Max 5 errors allowed out of ${totalQuestions} questions.`;
 
 	return (
 		<div className="rounded-xl p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
@@ -32,16 +43,25 @@ export function LastScoreCard({
 					<>
 						<span className="text-4xl font-bold">{lastScore}%</span>
 						<div className="mt-1">
-							<Badge
-								variant={isPassing ? "secondary" : "destructive"}
-								className={`rounded-full ${
-									isPassing
-										? "bg-green-100 hover:bg-green-100 text-green-700 border-green-200 font-normal shadow-none"
-										: ""
-								}`}
-							>
-								{isPassing ? "Passing" : "Failed"}
-							</Badge>
+							<TooltipProvider>
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<Badge
+											variant={isPassing ? "secondary" : "destructive"}
+											className={`rounded-full ${
+												isPassing
+													? "bg-green-100 hover:bg-green-100 text-green-700 border-green-200 font-normal shadow-none"
+													: ""
+											}`}
+										>
+											{isPassing ? "Passing" : "Failed"}
+										</Badge>
+									</TooltipTrigger>
+									<TooltipContent>
+										<p>{tooltipText}</p>
+									</TooltipContent>
+								</Tooltip>
+							</TooltipProvider>
 						</div>
 					</>
 				)}
