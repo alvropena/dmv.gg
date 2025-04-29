@@ -142,12 +142,12 @@ export function RecentSessions({
 												</Badge>
 											)}
 											<h3 className="font-semibold text-lg">
-												Practice Test #{tests.indexOf(test) + 1}
+												Practice Test #{tests.length - tests.indexOf(test)}
 											</h3>
 										</div>
 										<Button
 											variant={
-												test.status === "completed" ? "outline" : "default"
+												test.status === "completed" ? "secondary" : "default"
 											}
 											onClick={() =>
 												handleTestNavigation(
