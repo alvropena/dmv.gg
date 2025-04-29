@@ -187,7 +187,13 @@ export function RecentSessions({
 															? "secondary"
 															: "destructive"
 													}
-													className="rounded-full"
+													className={`rounded-full ${
+														Math.round(
+															(test.score / 100) * test.totalQuestions,
+														) >= 39
+															? "bg-green-100 hover:bg-green-100 text-green-700 border-green-200 font-normal shadow-none"
+															: ""
+													}`}
 												>
 													{Math.round(
 														(test.score / 100) * test.totalQuestions,

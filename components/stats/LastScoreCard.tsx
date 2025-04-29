@@ -32,7 +32,14 @@ export function LastScoreCard({
 					<>
 						<span className="text-4xl font-bold">{lastScore}%</span>
 						<div className="mt-1">
-							<Badge variant={isPassing ? "secondary" : "destructive"}>
+							<Badge
+								variant={isPassing ? "secondary" : "destructive"}
+								className={`rounded-full ${
+									isPassing
+										? "bg-green-100 hover:bg-green-100 text-green-700 border-green-200 font-normal shadow-none"
+										: ""
+								}`}
+							>
 								{isPassing ? "Passing" : "Failed"}
 							</Badge>
 						</div>
