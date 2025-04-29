@@ -76,8 +76,8 @@ export function RecentSessions({
 		return test.answers.filter((a) => a.selectedAnswer !== null).length;
 	};
 
-	// Get the latest 2 tests for display
-	const recentTests = tests.slice(0, 2);
+	// Get the latest 3 tests for display
+	const recentTests = tests.slice(0, 3);
 
 	// Navigate to test page
 	const handleTestNavigation = (testId: string, isCompleted: boolean) => {
