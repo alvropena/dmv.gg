@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -26,7 +26,7 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
 	const [creatingTest, setCreatingTest] = useState<boolean>(false);
 	const router = useRouter();
 
-	const fetchWeakAreas = async () => {
+	const fetchWeakAreas = useCallback(async () => {
 		try {
 			setLoading(true);
 			const response = await fetch(`/api/user/weak-areas?t=${Date.now()}`);
@@ -42,11 +42,11 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, []);
 
 	useEffect(() => {
 		fetchWeakAreas();
-	}, []);
+	}, [fetchWeakAreas]);
 
 	const handleReviewQuestion = async () => {
 		if (weakAreas.length === 0) {
@@ -157,6 +157,60 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
 									</div>
 								</div>
 							))}
+							<div className="border-b pb-3">
+								<p className="font-medium text-sm line-clamp-2">
+									To be sure a lane is clear before moving into it, you should:
+								</p>
+								<div className="flex justify-between items-center mt-1">
+									<p className="text-xs text-muted-foreground">
+										Incorrect 1 time
+									</p>
+								</div>
+							</div>
+							<div className="border-b pb-3">
+								<p className="font-medium text-sm line-clamp-2">
+									When turning left from a two-way street onto a one-way street,
+									you should:
+								</p>
+								<div className="flex justify-between items-center mt-1">
+									<p className="text-xs text-muted-foreground">
+										Incorrect 1 time
+									</p>
+								</div>
+							</div>
+							<div className="border-b pb-3">
+								<p className="font-medium text-sm line-clamp-2">
+									It is illegal to leave a child age ___ or younger alone in a
+									vehicle.
+								</p>
+								<div className="flex justify-between items-center mt-1">
+									<p className="text-xs text-muted-foreground">
+										Incorrect 1 time
+									</p>
+								</div>
+							</div>
+							<div className="border-b pb-3">
+								<p className="font-medium text-sm line-clamp-2">
+									Which of these vehicles must always stop before crossing
+									railroad tracks?
+								</p>
+								<div className="flex justify-between items-center mt-1">
+									<p className="text-xs text-muted-foreground">
+										Incorrect 1 time
+									</p>
+								</div>
+							</div>
+							<div className="border-b pb-3 last:border-b-0">
+								<p className="font-medium text-sm line-clamp-2">
+									If you are driving and the rear end of your car starts
+									skidding to the left, you should:
+								</p>
+								<div className="flex justify-between items-center mt-1">
+									<p className="text-xs text-muted-foreground">
+										Incorrect 1 time
+									</p>
+								</div>
+							</div>
 						</div>
 
 						<Button

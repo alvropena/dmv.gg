@@ -62,12 +62,52 @@ export function RecentSessions({
 		if (!dateString) return "";
 
 		const date = new Date(dateString);
-		return date.toLocaleString("en-US", {
-			month: "numeric",
+		const now = new Date();
+		const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+		const diffInMinutes = Math.floor(diffInSeconds / 60);
+		const diffInHours = Math.floor(diffInMinutes / 60);
+		const diffInDays = Math.floor(diffInHours / 24);
+
+		// For very recent times
+		if (diffInMinutes < 1) return "Just now";
+		if (diffInMinutes < 60) {
+			return `${diffInMinutes} ${diffInMinutes === 1 ? "minute" : "minutes"} ago`;
+		}
+
+		// For today
+		if (diffInHours < 24) {
+			return `${diffInHours} ${diffInHours === 1 ? "hour" : "hours"} ago`;
+		}
+
+		// For yesterday
+		if (diffInDays === 1) {
+			return `Yesterday at ${date.toLocaleTimeString("en-US", {
+				hour: "numeric",
+				minute: "2-digit",
+				hour12: true,
+			})}`;
+		}
+
+		// For this week (less than 7 days)
+		if (diffInDays < 7) {
+			return `${date.toLocaleDateString("en-US", { weekday: "long" })} at ${date.toLocaleTimeString(
+				"en-US",
+				{
+					hour: "numeric",
+					minute: "2-digit",
+					hour12: true,
+				},
+			)}`;
+		}
+
+		// For older dates
+		return date.toLocaleDateString("en-US", {
+			month: "short",
 			day: "numeric",
-			year: "numeric",
-			hour: "2-digit",
+			year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
+			hour: "numeric",
 			minute: "2-digit",
+			hour12: true,
 		});
 	};
 
