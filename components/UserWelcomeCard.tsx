@@ -211,7 +211,9 @@ export function UserWelcomeCard() {
 						)}
 						{hasAccess && (
 							<p className="text-muted-foreground">
-								Continue your practice or start a new test.
+								{isTestCompleted
+									? "Great job completing your test! Keep practicing to master the DMV exam."
+									: "Continue your practice or start a new test."}
 							</p>
 						)}
 					</div>
