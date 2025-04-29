@@ -70,19 +70,14 @@ export function UserWelcomeCard() {
 						const answeredCount = latestTest.answers.filter(
 							(answer) => answer.isCorrect !== null,
 						).length;
-						const correctCount = latestTest.answers.filter(
-							(answer) => answer.isCorrect === true,
-						).length;
 
 						setCompletedQuestions(answeredCount);
 						setRemainingQuestions(latestTest.totalQuestions - answeredCount);
 
 						// If test is completed, show percentage of correct answers
 						if (latestTest.status === "completed") {
-							const progressPercentage = Math.round(
-								(correctCount / latestTest.totalQuestions) * 100,
-							);
-							setProgress(progressPercentage);
+							// When test is completed, progress should be 100%
+							setProgress(100);
 						}
 						// If test is in progress, show percentage of answered questions
 						else {
