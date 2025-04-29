@@ -12,6 +12,11 @@ export function LastScoreCard({
 	isLoading,
 	error,
 }: LastScoreCardProps) {
+	// Calculate number of correct answers based on percentage
+	const totalQuestions = 46;
+	const correctAnswers = Math.round((lastScore / 100) * totalQuestions);
+	const isPassing = correctAnswers >= 39;
+
 	return (
 		<div className="rounded-xl p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
 			<h3 className="text-xl font-bold">Last Score</h3>
@@ -27,10 +32,8 @@ export function LastScoreCard({
 					<>
 						<span className="text-4xl font-bold">{lastScore}%</span>
 						<div className="mt-1">
-							<Badge
-								variant={lastScore >= 70 ? "secondary" : "destructive"}
-							>
-								{lastScore >= 70 ? "Passing" : "Failed"}
+							<Badge variant={isPassing ? "secondary" : "destructive"}>
+								{isPassing ? "Passing" : "Failed"}
 							</Badge>
 						</div>
 					</>
