@@ -93,7 +93,7 @@ export function UserHeader() {
 							{hasActiveSubscription || dbUser?.role === "ADMIN" ? (
 								<Button
 									onClick={() => setIsSubscriptionDetailsOpen(true)}
-									className="flex items-center justify-center gap-2 w-[100px] sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-white h-9"
+									className="flex items-center justify-center gap-2 w-[100px] sm:w-auto bg-fuchsia-500 hover:bg-fuchsia-600 text-white h-9"
 								>
 									<Star className="h-4 w-4" />
 									<span className="inline-flex items-center">Premium</span>
