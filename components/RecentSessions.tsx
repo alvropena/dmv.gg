@@ -174,16 +174,7 @@ export function RecentSessions({
 									key={test.id}
 									className="border border-slate-200 dark:border-slate-800 rounded-xl p-6 mb-4 last:mb-0 bg-white dark:bg-slate-950"
 								>
-									<div className="flex items-center justify-end mb-4">
-										<div className="flex items-center gap-2 text-muted-foreground">
-											<Calendar className="h-4 w-4" />
-											<span className="text-sm">
-												{formatDate(test.startedAt)}
-											</span>
-										</div>
-									</div>
-
-									<div className="flex items-center justify-between">
+									<div className="flex items-center justify-between mb-4">
 										<div className="flex items-center gap-3">
 											{test.status === "completed" ? (
 												<Badge className="text-blue-600 bg-blue-100 dark:bg-blue-900 dark:text-blue-300 rounded-full">
@@ -212,6 +203,13 @@ export function RecentSessions({
 										>
 											{test.status === "completed" ? "Review" : "Continue"}
 										</Button>
+									</div>
+
+									<div className="flex items-center gap-2 text-muted-foreground mb-4">
+										<Calendar className="h-4 w-4" />
+										<span className="text-sm">
+											{formatDate(test.startedAt)}
+										</span>
 									</div>
 
 									<div className="flex justify-between items-center mt-4">
