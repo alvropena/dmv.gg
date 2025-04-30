@@ -121,7 +121,7 @@ export function UserHeader() {
 								onClick={() => {
 									signOut();
 								}}
-								className="hidden sm:flex items-center justify-center gap-2 w-[100px] sm:w-auto bg-red-500 hover:bg-red-600 text-white"
+								className="hidden sm:flex items-center justify-center gap-2 w-[100px] sm:w-auto"
 								variant="secondary"
 							>
 								<LogOut className="h-4 w-4" />
