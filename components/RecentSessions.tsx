@@ -174,7 +174,7 @@ export function RecentSessions({
 									key={test.id}
 									className="border border-slate-200 dark:border-slate-800 rounded-xl p-6 mb-4 last:mb-0 bg-white dark:bg-slate-950"
 								>
-									<div className="flex items-center justify-between mb-4">
+									<div className="flex items-center justify-end mb-4">
 										<div className="flex items-center gap-2 text-muted-foreground">
 											<Calendar className="h-4 w-4" />
 											<span className="text-sm">

@@ -32,15 +32,23 @@ export function TestsCompletedCard({
 							<Trophy className="h-8 w-8 text-yellow-500" />
 							<span className="text-4xl font-bold">{totalCompleted}</span>
 						</div>
-						<div className="mt-1 text-sm">
+						<div className="mt-1">
 							{weeklyDifference > 0 ? (
-								<span className="text-green-500">+{weeklyDifference}</span>
+								<>
+									<span className="text-green-500">+{weeklyDifference}</span>
+									<span className="text-muted-foreground"> from last week</span>
+								</>
 							) : weeklyDifference < 0 ? (
-								<span className="text-red-500">{weeklyDifference}</span>
+								<>
+									<span className="text-red-500">{weeklyDifference}</span>
+									<span className="text-muted-foreground"> from last week</span>
+								</>
 							) : (
-								<span className="text-gray-500">No change</span>
-							)}{" "}
-							from last week
+								<>
+									<span className="text-muted-foreground">No change</span>
+									<span className="text-muted-foreground"> from last week</span>
+								</>
+							)}
 						</div>
 					</>
 				)}
