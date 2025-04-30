@@ -71,7 +71,7 @@ export function UserHeader() {
 					<div className="flex flex-row justify-between items-center sm:items-center bg-white rounded-xl border shadow-sm px-4 md:px-8 py-3 md:py-4">
 						<div className="flex flex-row sm:flex-row items-center gap-4">
 							<div>
-								<Avatar className="w-10 h-10">
+								<Avatar className="w-12 h-12">
 									<AvatarImage src={user?.imageUrl} alt={displayName} />
 									<AvatarFallback>
 										{displayName?.[0]?.toUpperCase()}

@@ -27,15 +27,23 @@ export function AverageScoreCard({
 				) : (
 					<>
 						<span className="text-4xl font-bold">{averageScore}%</span>
-						<div className="mt-1 text-sm">
+						<div className="mt-1">
 							{scoreDifference > 0 ? (
-								<span className="text-green-500">+{scoreDifference}%</span>
+								<>
+									<span className="text-green-500">+{scoreDifference}%</span>
+									<span className="text-muted-foreground"> from last test</span>
+								</>
 							) : scoreDifference < 0 ? (
-								<span className="text-red-500">{scoreDifference}%</span>
+								<>
+									<span className="text-red-500">{scoreDifference}%</span>
+									<span className="text-muted-foreground"> from last test</span>
+								</>
 							) : (
-								<span className="text-gray-500">No change</span>
-							)}{" "}
-							from last test
+								<>
+									<span className="text-muted-foreground">No change</span>
+									<span className="text-muted-foreground"> from last test</span>
+								</>
+							)}
 						</div>
 					</>
 				)}
