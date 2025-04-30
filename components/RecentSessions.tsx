@@ -177,13 +177,11 @@ export function RecentSessions({
 									<div className="flex items-center justify-between mb-4">
 										<div className="flex items-center gap-3">
 											{test.status === "completed" ? (
-												<Badge variant="secondary" className="rounded-full">
+												<Badge className="text-blue-600 bg-blue-100 dark:bg-blue-900 dark:text-blue-300 rounded-full">
 													Completed
 												</Badge>
 											) : (
-												<Badge className="text-blue-600 bg-blue-100 dark:bg-blue-900 dark:text-blue-300 rounded-full">
-													In Progress
-												</Badge>
+												<Badge className="rounded-full">In Progress</Badge>
 											)}
 											<h3 className="font-semibold text-lg">
 												Practice Test #{tests.length - tests.indexOf(test)}
