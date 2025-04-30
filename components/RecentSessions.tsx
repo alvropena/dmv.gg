@@ -181,7 +181,9 @@ export function RecentSessions({
 													Completed
 												</Badge>
 											) : (
-												<Badge className="rounded-full">In Progress</Badge>
+												<Badge variant="secondary" className="rounded-full">
+													In Progress
+												</Badge>
 											)}
 											<h3 className="font-semibold text-lg">
 												Practice Test #{tests.length - tests.indexOf(test)}
