@@ -175,6 +175,15 @@ export function RecentSessions({
 									className="border border-slate-200 dark:border-slate-800 rounded-xl p-6 mb-4 last:mb-0 bg-white dark:bg-slate-950"
 								>
 									<div className="flex items-center justify-between mb-4">
+										<div className="flex items-center gap-2 text-muted-foreground">
+											<Calendar className="h-4 w-4" />
+											<span className="text-sm">
+												{formatDate(test.startedAt)}
+											</span>
+										</div>
+									</div>
+
+									<div className="flex items-center justify-between">
 										<div className="flex items-center gap-3">
 											{test.status === "completed" ? (
 												<Badge className="text-blue-600 bg-blue-100 dark:bg-blue-900 dark:text-blue-300 rounded-full">
@@ -205,18 +214,7 @@ export function RecentSessions({
 										</Button>
 									</div>
 
-									<div className="mb-4">
-										<div className="flex items-center justify-between">
-											<div className="flex items-center gap-2 text-muted-foreground">
-												<Calendar className="h-4 w-4" />
-												<span className="text-sm">
-													{formatDate(test.startedAt)}
-												</span>
-											</div>
-										</div>
-									</div>
-
-									<div className="flex justify-between items-center">
+									<div className="flex justify-between items-center mt-4">
 										{test.status === "completed" ? (
 											<>
 												<span className="text-sm">
