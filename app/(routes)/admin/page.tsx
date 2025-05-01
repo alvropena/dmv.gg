@@ -11,10 +11,10 @@ import { RecentActivityList } from "@/components/RecentActivityList"
 import { IssuesCard } from "@/components/IssuesCard"
 import { PerformanceMetrics } from "@/components/PerformanceMetrics"
 import { QuickActions } from "@/components/QuickActions"
-import { ContentTab } from "@/components/ContentTab"
 import { UsersTab } from "@/components/UsersTab"
 import { ReportsTab } from "@/components/ReportsTab"
 import { TestsTab } from "@/components/TestsTab"
+import { QuestionsTab } from "@/components/QuestionsTab"
 import { getDashboardStats } from "@/app/actions/stats"
 
 export default async function AdminPage() {
@@ -90,7 +90,7 @@ export default async function AdminPage() {
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="users">Users</TabsTrigger>
                 <TabsTrigger value="tests">Tests</TabsTrigger>
-                <TabsTrigger value="content">Content</TabsTrigger>
+                <TabsTrigger value="questions">Questions</TabsTrigger>
                 <TabsTrigger value="reports">Reports</TabsTrigger>
               </TabsList>
               
@@ -131,8 +131,8 @@ export default async function AdminPage() {
                 <TestsTab />
               </TabsContent>
               
-              {/* Content Tab */}
-              <ContentTab />
+              {/* Questions Tab */}
+              <QuestionsTab />
               
               {/* Reports Tab */}
               <ReportsTab />
