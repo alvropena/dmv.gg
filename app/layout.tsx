@@ -4,7 +4,6 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
-import { CookieConsentDialog } from "@/components/CookieConsentDialog";
 import { AuthProvider } from "@/contexts/AuthContext";
 
 const balooBhai2 = Baloo_Bhai_2({ weight: ["400", "700"], subsets: ["latin"] });

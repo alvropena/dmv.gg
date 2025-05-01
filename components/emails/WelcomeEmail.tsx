@@ -1,4 +1,5 @@
 import type React from "react";
+import Image from "next/image";
 
 interface WelcomeEmailProps {
 	firstName: string | null;
@@ -19,9 +20,11 @@ export const WelcomeEmail: React.FC<WelcomeEmailProps> = ({ firstName }) => {
 				padding: '20px 0',
 				backgroundColor: '#f8f9fa'
 			}}>
-				<img 
+				<Image 
 					src="https://dmv.gg/logo.png" 
 					alt="DMV.gg Logo" 
+					width={150}
+					height={50}
 					style={{ 
 						width: '150px',
 						height: 'auto'
@@ -43,11 +46,12 @@ export const WelcomeEmail: React.FC<WelcomeEmailProps> = ({ firstName }) => {
 				</h1>
 
 				<p style={{ marginBottom: '20px' }}>
-					We're thrilled to have you join our community of future drivers. At DMV.gg, we're committed to helping you ace your driving test with confidence.
+					We&apos;re thrilled to have you join our community of future drivers. At DMV.gg, we&apos;re excited to help you ace
+					your driving test!
 				</p>
 
 				<p style={{ marginBottom: '20px' }}>
-					Here's what you can do to get started:
+					Here&apos;s what you can do to get started:
 				</p>
 
 				<ul style={{ 
