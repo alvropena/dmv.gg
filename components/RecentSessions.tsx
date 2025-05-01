@@ -146,16 +146,38 @@ export function RecentSessions({
 	};
 
 	// Navigate to test page
-	const handleTestNavigation = (testId: string, isCompleted: boolean) => {
+	const handleTestNavigation = async (testId: string, isCompleted: boolean) => {
 		if (isCompleted && !hasAccess) {
 			setIsPricingOpen(true);
 			return;
 		}
 		if (isCompleted) {
-			// Navigate to review page
-			router.push(`/test/${testId}?review=true`);
+			// For completed tests, create a new REVIEW test
+			try {
+				const response = await fetch("/api/tests", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						type: "REVIEW",
+						originalTestId: testId
+					}),
+				});
+
+				if (!response.ok) {
+					throw new Error("Failed to create review test");
+				}
+
+				const data = await response.json();
+				if (data?.test?.id) {
+					router.push(`/test/${data.test.id}`);
+				}
+			} catch (error) {
+				console.error("Error creating review test:", error);
+			}
 		} else {
-			// Continue the test
+			// Continue the in-progress test
 			router.push(`/test/${testId}`);
 		}
 	};

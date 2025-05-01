@@ -144,6 +144,9 @@ export function UserWelcomeCard() {
 					headers: {
 						"Content-Type": "application/json",
 					},
+					body: JSON.stringify({
+						type: "NEW"
+					}),
 				});
 
 				if (!response.ok) {

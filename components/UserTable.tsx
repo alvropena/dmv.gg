@@ -1,5 +1,5 @@
 "use client"
-import { CheckCircle, MoreHorizontal, Shield, XCircle, ArrowUpDown } from "lucide-react"
+import { CheckCircle, MoreHorizontal, Shield, XCircle, ArrowUpDown, Glasses } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -18,15 +18,15 @@ type User = {
   id: string
   name: string
   email: string
-  status: string
   role: string
   joined: string
   tests: number
   avgScore: string
   passed: boolean
+  birthday?: Date | null
 }
 
-type SortField = "status" | "role" | "joined" | "tests" | "avgScore"
+type SortField = "status" | "role" | "joined" | "tests" | "avgScore" | "age"
 type SortDirection = "asc" | "desc"
 
 export function UserTable({ searchQuery }: { searchQuery?: string }) {
@@ -70,8 +70,6 @@ export function UserTable({ searchQuery }: { searchQuery?: string }) {
     const direction = sortDirection === "asc" ? 1 : -1
 
     switch (sortField) {
-      case "status":
-        return direction * a.status.localeCompare(b.status)
       case "role":
         return direction * a.role.localeCompare(b.role)
       case "joined":
@@ -80,6 +78,8 @@ export function UserTable({ searchQuery }: { searchQuery?: string }) {
         return direction * (a.tests - b.tests)
       case "avgScore":
         return direction * (parseInt(a.avgScore) - parseInt(b.avgScore))
+      case "age":
+        return direction * (new Date(a.birthday || "").getTime() - new Date(b.birthday || "").getTime())
       default:
         return 0
     }
@@ -94,10 +94,10 @@ export function UserTable({ searchQuery }: { searchQuery?: string }) {
             <th className="px-4 py-3 font-medium">
               <Button
                 variant="ghost"
-                onClick={() => handleSort("status")}
+                onClick={() => handleSort("age")}
                 className="flex items-center gap-1 mx-auto"
               >
-                Status
+                Age
                 <ArrowUpDown className="h-4 w-4" />
               </Button>
             </th>
@@ -167,21 +167,35 @@ export function UserTable({ searchQuery }: { searchQuery?: string }) {
                   </div>
                 </td>
                 <td className="px-4 py-3 text-center">
-                  <div className="flex justify-center">
-                    <StatusBadge status={user.status} />
-                  </div>
+                  {user.birthday ? (
+                    Math.floor((new Date().getTime() - new Date(user.birthday).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
+                  ) : (
+                    "-"
+                  )}
                 </td>
                 <td className="px-4 py-3 text-center">
                   <div className="flex justify-center">
                     <RoleBadge role={user.role} />
                   </div>
                 </td>
-                <td className="px-4 py-3 text-center">{user.joined}</td>
-                <td className="px-4 py-3 text-center">{user.tests}</td>
                 <td className="px-4 py-3 text-center">
-                  <span className={`font-medium ${user.passed ? 'text-green-600' : 'text-red-600'}`}>
+                  {new Date(user.joined).toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric'
+                  })}
+                </td>
+                <td className="px-4 py-3 text-center">{user.tests}</td>
+                <td className="px-4 py-3 flex justify-center">
+                  <Badge
+                    variant="outline"
+                    className={`${user.passed 
+                      ? 'bg-green-50 text-green-600 border-green-200 dark:bg-green-950/20 dark:text-green-400 dark:border-green-900/30' 
+                      : 'bg-red-50 text-red-600 border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900/30'
+                    } w-16 flex items-center justify-center`}
+                  >
                     {user.avgScore}
-                  </span>
+                  </Badge>
                 </td>
                 <td className="px-4 py-3 text-right">
                   <DropdownMenu>
@@ -210,49 +224,13 @@ export function UserTable({ searchQuery }: { searchQuery?: string }) {
   )
 }
 
-function StatusBadge({ status }: { status: string }) {
-  switch (status) {
-    case "active":
-      return (
-        <Badge
-          variant="outline"
-          className="bg-green-50 text-green-600 border-green-200 dark:bg-green-950/20 dark:text-green-400 dark:border-green-900/30"
-        >
-          <CheckCircle className="mr-1 h-3 w-3" />
-          Active
-        </Badge>
-      )
-    case "inactive":
-      return (
-        <Badge
-          variant="outline"
-          className="bg-gray-50 text-gray-600 border-gray-200 dark:bg-gray-950/20 dark:text-gray-400 dark:border-gray-900/30"
-        >
-          Inactive
-        </Badge>
-      )
-    case "suspended":
-      return (
-        <Badge
-          variant="outline"
-          className="bg-red-50 text-red-600 border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900/30"
-        >
-          <XCircle className="mr-1 h-3 w-3" />
-          Suspended
-        </Badge>
-      )
-    default:
-      return null
-  }
-}
-
 function RoleBadge({ role }: { role: string }) {
   switch (role?.toUpperCase()) {
     case "ADMIN":
       return (
         <Badge
           variant="outline"
-          className="bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900/30"
+          className="bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900/30 w-20"
         >
           <Shield className="mr-1 h-3 w-3" />
           Admin
@@ -262,8 +240,9 @@ function RoleBadge({ role }: { role: string }) {
       return (
         <Badge
           variant="outline"
-          className="bg-gray-50 text-gray-600 border-gray-200 dark:bg-gray-950/20 dark:text-gray-400 dark:border-gray-900/30"
+          className="bg-gray-50 text-gray-600 border-gray-200 dark:bg-gray-950/20 dark:text-gray-400 dark:border-gray-900/30 w-20"
         >
+          <Glasses className="mr-1 h-3 w-3" />
           Student
         </Badge>
       )
@@ -271,8 +250,9 @@ function RoleBadge({ role }: { role: string }) {
       return (
         <Badge
           variant="outline"
-          className="bg-gray-50 text-gray-600 border-gray-200 dark:bg-gray-950/20 dark:text-gray-400 dark:border-gray-900/30"
+          className="bg-gray-50 text-gray-600 border-gray-200 dark:bg-gray-950/20 dark:text-gray-400 dark:border-gray-900/30 w-20"
         >
+          <Glasses className="mr-1 h-3 w-3" />
           {role || 'Student'}
         </Badge>
       )

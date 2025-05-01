@@ -89,14 +89,15 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
 
     try {
       setCreatingTest(true);
-      const questionIds = weakAreas.map((area) => area.question.id);
-
-      const response = await fetch("/api/tests/custom", {
+      const response = await fetch("/api/tests", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ questionIds }),
+        body: JSON.stringify({
+          type: "WEAK_AREAS",
+          questionIds: weakAreas.map((area) => area.question.id)
+        }),
       });
 
       if (!response.ok) {
@@ -104,7 +105,7 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
       }
 
       const data = await response.json();
-      router.push(`/test/${data.test.id}?review=true`);
+      router.push(`/test/${data.test.id}`);
     } catch (error) {
       console.error("Error creating test for weak areas:", error);
       router.push("/");

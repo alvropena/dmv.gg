@@ -1,5 +1,7 @@
 export type UserRole = 'STUDENT' | 'ADMIN';
 
+export type TestType = 'NEW' | 'REVIEW' | 'WEAK_AREAS';
+
 export type Subscription = {
   id: string;
   userId: string;
@@ -69,15 +71,16 @@ export type AuthContextType = {
 export type Test = {
   id: string;
   userId: string;
+  type: TestType;
   startedAt: Date;
   completedAt: Date | null;
   score: number;
   totalQuestions: number;
-  status: string; // "in_progress", "completed", "abandoned"
-  answers?: TestAnswer[];
-  questions?: TestQuestion[];
+  status: 'in_progress' | 'completed' | 'abandoned';
   createdAt: Date;
   updatedAt: Date;
+  answers?: TestAnswer[];
+  questions?: TestQuestion[];
 };
 
 export type TestQuestion = {
