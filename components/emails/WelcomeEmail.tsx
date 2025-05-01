@@ -17,7 +17,7 @@ export const WelcomeEmail: React.FC<WelcomeEmailProps> = ({ firstName }) => {
 			<div style={{
 				textAlign: 'center',
 				padding: '20px 0',
-				backgroundColor: '#000099'
+				backgroundColor: '#f8f9fa'
 			}}>
 				<img 
 					src="https://dmv.gg/logo.png" 
@@ -62,7 +62,7 @@ export const WelcomeEmail: React.FC<WelcomeEmailProps> = ({ firstName }) => {
 				{/* Call to Action Button */}
 				<div style={{ textAlign: 'center', margin: '30px 0' }}>
 					<a 
-						href="https://dmv.gg/dashboard" 
+						href="https://dmv.gg/home" 
 						style={{
 							display: 'inline-block',
 							padding: '12px 24px',
@@ -128,7 +128,7 @@ export const WelcomeEmail: React.FC<WelcomeEmailProps> = ({ firstName }) => {
 					<a 
 						href="https://dmv.gg/unsubscribe" 
 						style={{ 
-							color: '#2563eb',
+							color: '#666666',
 							textDecoration: 'none'
 						}}
 					>

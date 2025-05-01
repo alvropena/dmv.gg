@@ -9,8 +9,8 @@ export async function GET() {
         const data = await resend.emails.send({
             from: 'DMV.gg <support@dmv.gg>',
             to: ['me@alvropena.com'],
-            subject: 'Test Welcome Email',
-            react: WelcomeEmail({ firstName: 'John Doe' })
+            subject: 'Lorem Ipsum',
+            react: WelcomeEmail({ firstName: 'Alvin' })
         });
 
         return NextResponse.json({ success: true, data });
