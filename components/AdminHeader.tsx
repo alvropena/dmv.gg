@@ -1,8 +1,11 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
+import { useUser } from "@clerk/nextjs"
 import { Bell, Search, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,15 +16,21 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 export function AdminHeader() {
+  const { user } = useUser();
+  
   return (
     <header className="sticky top-0 z-10 border-b bg-white dark:bg-gray-950 dark:border-gray-800">
       <div className="flex h-16 items-center justify-between px-6">
         <div className="flex items-center gap-2">
-          <Link href="/admin" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-600 text-white font-bold">
-              DMV
-            </div>
-            <span className="text-lg font-bold">Admin Panel</span>
+          <Link href="/admin" className="flex items-center">
+            <Image
+              src="/logo.png"
+              alt="DMV Logo"
+              width={60}
+              height={20}
+              className="h-auto w-auto rounded-full"
+              priority
+            />
           </Link>
         </div>
         <div className="flex items-center gap-4">
@@ -84,9 +93,12 @@ export function AdminHeader() {
           </DropdownMenu>
           <div className="relative">
             <Button variant="ghost" size="icon" className="rounded-full">
-              <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium">
-                AS
-              </div>
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={user?.imageUrl} alt={user?.fullName || 'Admin'} />
+                <AvatarFallback>
+                  {user?.fullName?.[0]?.toUpperCase() || 'A'}
+                </AvatarFallback>
+              </Avatar>
               <span className="sr-only">Admin profile</span>
             </Button>
             <div className="absolute right-0 top-0 h-2 w-2 rounded-full bg-green-500 ring-1 ring-white" />
