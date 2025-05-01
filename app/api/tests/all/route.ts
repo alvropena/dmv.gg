@@ -27,11 +27,13 @@ export async function GET() {
           select: {
             firstName: true,
             lastName: true,
+            email: true,
           }
         },
         answers: {
           select: {
-            isCorrect: true
+            isCorrect: true,
+            selectedAnswer: true
           }
         }
       },
@@ -43,6 +45,7 @@ export async function GET() {
     // Transform the data to include calculated fields
     const transformedTests = tests.map(test => {
       const correctAnswers = test.answers.filter(answer => answer.isCorrect).length
+      const completedQuestions = test.answers.filter(answer => answer.selectedAnswer !== null).length
       const score = test.totalQuestions > 0 
         ? Math.round((correctAnswers / test.totalQuestions) * 100) 
         : 0
@@ -51,7 +54,9 @@ export async function GET() {
         id: test.id,
         userId: test.userId,
         userName: `${test.user.firstName || ''} ${test.user.lastName || ''}`.trim() || 'Anonymous User',
+        userEmail: test.user.email || '',
         totalQuestions: test.totalQuestions,
+        completedQuestions,
         correctAnswers,
         score,
         status: test.status,

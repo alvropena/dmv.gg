@@ -5,12 +5,21 @@ import { ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
+import { Card, CardContent } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 type Test = {
   id: string
   userId: string
   userName: string
+  userEmail: string
   totalQuestions: number
+  completedQuestions: number
   correctAnswers: number
   status: 'completed' | 'in_progress'
   score: number
@@ -18,7 +27,7 @@ type Test = {
   completedAt?: string
 }
 
-type SortField = "userName" | "totalQuestions" | "score" | "status" | "startedAt"
+type SortField = "userName" | "completedQuestions" | "score" | "status" | "startedAt"
 type SortDirection = "asc" | "desc"
 
 export function TestsTab() {
@@ -26,6 +35,7 @@ export function TestsTab() {
   const [loading, setLoading] = useState(true)
   const [sortField, setSortField] = useState<SortField>("startedAt")
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc")
+  const [selectedTest, setSelectedTest] = useState<Test | null>(null)
   const { toast } = useToast()
 
   useEffect(() => {
@@ -49,7 +59,7 @@ export function TestsTab() {
     }
 
     fetchTests()
-  }, [])
+  }, [toast])
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -66,8 +76,8 @@ export function TestsTab() {
     switch (sortField) {
       case "userName":
         return direction * a.userName.localeCompare(b.userName)
-      case "totalQuestions":
-        return direction * (a.totalQuestions - b.totalQuestions)
+      case "completedQuestions":
+        return direction * (a.completedQuestions - b.completedQuestions)
       case "score":
         return direction * (a.score - b.score)
       case "status":
@@ -80,121 +90,229 @@ export function TestsTab() {
   })
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-tight">Tests</h2>
-      </div>
-      
-      <div className="rounded-md border">
-        <div className="w-full overflow-auto">
-          <table className="w-full caption-bottom text-sm">
-            <thead className="border-b">
-              <tr className="text-left">
-                <th className="px-4 py-3 font-medium">
-                  <Button
-                    variant="ghost"
-                    onClick={() => handleSort("userName")}
-                    className="flex items-center gap-1 mx-auto"
-                  >
-                    User
-                    <ArrowUpDown className="h-4 w-4" />
-                  </Button>
-                </th>
-                <th className="px-4 py-3 font-medium">
-                  <Button
-                    variant="ghost"
-                    onClick={() => handleSort("totalQuestions")}
-                    className="flex items-center gap-1 mx-auto"
-                  >
-                    Questions
-                    <ArrowUpDown className="h-4 w-4" />
-                  </Button>
-                </th>
-                <th className="px-4 py-3 font-medium">
-                  <Button
-                    variant="ghost"
-                    onClick={() => handleSort("score")}
-                    className="flex items-center gap-1 mx-auto"
-                  >
-                    Score
-                    <ArrowUpDown className="h-4 w-4" />
-                  </Button>
-                </th>
-                <th className="px-4 py-3 font-medium">
-                  <Button
-                    variant="ghost"
-                    onClick={() => handleSort("status")}
-                    className="flex items-center gap-1 mx-auto"
-                  >
-                    Status
-                    <ArrowUpDown className="h-4 w-4" />
-                  </Button>
-                </th>
-                <th className="px-4 py-3 font-medium">
-                  <Button
-                    variant="ghost"
-                    onClick={() => handleSort("startedAt")}
-                    className="flex items-center gap-1 mx-auto"
-                  >
-                    Started
-                    <ArrowUpDown className="h-4 w-4" />
-                  </Button>
-                </th>
-                <th className="px-4 py-3 font-medium text-center">Completed</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan={6} className="px-4 py-3 text-center">
-                    Loading tests...
-                  </td>
-                </tr>
-              ) : sortedTests.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-4 py-3 text-center">
-                    No tests found.
-                  </td>
-                </tr>
-              ) : (
-                sortedTests.map((test) => (
-                  <tr key={test.id} className="border-b transition-colors hover:bg-muted/50">
-                    <td className="px-4 py-3 text-center">{test.userName}</td>
-                    <td className="px-4 py-3 text-center">{test.totalQuestions}</td>
-                    <td className="px-4 py-3 text-center">
-                      {test.status === 'in_progress' ? (
-                        <span className="text-gray-500">-</span>
-                      ) : (
-                        <span className={test.score >= 89.13 ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>
-                          {test.score}%
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <StatusBadge status={test.status} />
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      {new Date(test.startedAt).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span className={test.completedAt ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>
-                        {test.completedAt ? 'True' : 'False'}
-                      </span>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+    <>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold tracking-tight">Tests</h2>
         </div>
+        
+        <Card>
+          <CardContent className="p-0">
+            <div className="relative w-full overflow-auto">
+              <table className="w-full caption-bottom text-sm">
+                <thead>
+                  <tr className="border-b transition-colors hover:bg-muted/5">
+                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                      ID
+                    </th>
+                    <th className="h-12 px-4 text-left align-middle font-medium">
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleSort("userName")}
+                        className="flex items-center gap-1 -ml-4 h-12 hover:bg-transparent"
+                      >
+                        User
+                        <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                    </th>
+                    <th className="h-12 px-4 text-left align-middle font-medium">
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleSort("completedQuestions")}
+                        className="flex items-center gap-1 -ml-4 h-12 hover:bg-transparent"
+                      >
+                        Questions Done
+                        <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                    </th>
+                    <th className="h-12 px-4 text-left align-middle font-medium">
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleSort("score")}
+                        className="flex items-center gap-1 -ml-4 h-12 hover:bg-transparent"
+                      >
+                        Score
+                        <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                    </th>
+                    <th className="h-12 px-4 text-left align-middle font-medium">
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleSort("status")}
+                        className="flex items-center gap-1 -ml-4 h-12 hover:bg-transparent"
+                      >
+                        Status
+                        <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                    </th>
+                    <th className="h-12 px-4 text-left align-middle font-medium">
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleSort("startedAt")}
+                        className="flex items-center gap-1 -ml-4 h-12 hover:bg-transparent"
+                      >
+                        Started
+                        <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                    </th>
+                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                      Completed
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td colSpan={7} className="p-4 text-center">
+                        Loading tests...
+                      </td>
+                    </tr>
+                  ) : sortedTests.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="p-4 text-center">
+                        No tests found.
+                      </td>
+                    </tr>
+                  ) : (
+                    sortedTests.map((test) => (
+                      <tr 
+                        key={test.id} 
+                        onClick={() => setSelectedTest(test)}
+                        className="border-b transition-colors hover:bg-muted/5 cursor-pointer"
+                      >
+                        <td className="p-4 align-middle text-muted-foreground">
+                          {test.id.slice(0, 8)}
+                        </td>
+                        <td className="p-4 align-middle">
+                          <div>
+                            <p className="font-medium">{test.userName}</p>
+                            <p className="text-muted-foreground">{test.userEmail}</p>
+                          </div>
+                        </td>
+                        <td className="p-4 align-middle">
+                          <span className={test.status === 'completed' ? 'text-green-600 font-medium' : 'text-blue-600 font-medium'}>
+                            {test.completedQuestions}/{test.totalQuestions}
+                          </span>
+                        </td>
+                        <td className="p-4 align-middle">
+                          {test.status === 'in_progress' ? (
+                            <span className="text-muted-foreground">-</span>
+                          ) : (
+                            <span className={test.score >= 89.13 ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>
+                              {test.score}%
+                            </span>
+                          )}
+                        </td>
+                        <td className="p-4 align-middle">
+                          <StatusBadge status={test.status} />
+                        </td>
+                        <td className="p-4 align-middle">
+                          {new Date(test.startedAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </td>
+                        <td className="p-4 align-middle">
+                          <span className={test.completedAt ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>
+                            {test.completedAt ? 'True' : 'False'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-    </div>
+
+      <Dialog open={!!selectedTest} onOpenChange={() => setSelectedTest(null)}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Test Details</DialogTitle>
+          </DialogHeader>
+          {selectedTest && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">User</p>
+                  <p className="text-sm">{selectedTest.userName}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Status</p>
+                  <StatusBadge status={selectedTest.status} />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Questions Completed</p>
+                  <p className="text-sm font-medium">
+                    {selectedTest.completedQuestions}/{selectedTest.totalQuestions}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Score</p>
+                  <p className={`text-sm font-medium ${
+                    selectedTest.status === 'completed' 
+                      ? selectedTest.score >= 89.13 
+                        ? 'text-green-600' 
+                        : 'text-red-600'
+                      : 'text-muted-foreground'
+                  }`}>
+                    {selectedTest.status === 'completed' ? `${selectedTest.score}%` : '-'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Started</p>
+                  <p className="text-sm">
+                    {new Date(selectedTest.startedAt).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Completed</p>
+                  <p className="text-sm">
+                    {selectedTest.completedAt 
+                      ? new Date(selectedTest.completedAt).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })
+                      : '-'
+                    }
+                  </p>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-2">Performance</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="rounded-lg border p-3">
+                    <p className="text-sm font-medium">Correct Answers</p>
+                    <p className="text-2xl font-bold text-green-600">{selectedTest.correctAnswers}</p>
+                  </div>
+                  <div className="rounded-lg border p-3">
+                    <p className="text-sm font-medium">Incorrect Answers</p>
+                    <p className="text-2xl font-bold text-red-600">
+                      {selectedTest.completedQuestions - selectedTest.correctAnswers}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 

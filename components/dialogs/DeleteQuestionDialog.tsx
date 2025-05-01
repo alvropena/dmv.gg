@@ -35,7 +35,7 @@ export function DeleteQuestionDialog({
         </DialogHeader>
         {question && (
           <p className="text-sm font-medium my-2 text-destructive">
-            "{question.title}"
+            &ldquo;{question.title}&rdquo;
           </p>
         )}
         <DialogFooter className="flex space-x-2 justify-end pt-4">

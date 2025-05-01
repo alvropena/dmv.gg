@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { TabsContent } from "@/components/ui/tabs"
-import { ChevronDown, ChevronUp, ArrowDownAZ, ArrowUpAZ, Search } from "lucide-react"
+import { ChevronDown, ArrowDownAZ, ArrowUpAZ, Search } from "lucide-react"
 import { QuestionTable, SortDirection, SortField } from "@/components/QuestionTable"
 import { AddQuestionDialog } from "@/components/AddQuestionDialog"
 import { useState } from "react"

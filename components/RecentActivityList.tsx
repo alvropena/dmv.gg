@@ -2,7 +2,21 @@
 
 import { BookOpen, ClipboardList, Flag, MessageSquare, User, UserPlus } from "lucide-react"
 
-const activities = [
+type Activity = {
+  id: number;
+  type: 'user_registered' | 'test_completed' | 'question_flagged' | 'content_added' | 'support_ticket';
+  user?: string;
+  test?: string;
+  score?: string;
+  questionId?: string;
+  admin?: string;
+  contentType?: string;
+  content?: string;
+  ticketId?: string;
+  time: string;
+}
+
+const activities: Activity[] = [
   {
     id: 1,
     type: "user_registered",
@@ -98,7 +112,7 @@ function ActivityIcon({ type }: { type: string }) {
   }
 }
 
-function ActivityContent({ activity }: { activity: any }) {
+function ActivityContent({ activity }: { activity: Activity }) {
   switch (activity.type) {
     case "user_registered":
       return (

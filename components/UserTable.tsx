@@ -55,7 +55,7 @@ export function UserTable({ searchQuery }: { searchQuery?: string }) {
     }
 
     fetchUsers()
-  }, [searchQuery])
+  }, [searchQuery, toast])
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {

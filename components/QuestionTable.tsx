@@ -108,7 +108,7 @@ export function QuestionTable({
     };
 
     fetchQuestions();
-  }, [searchQuery, sortField, sortDirection]);
+  }, [searchQuery, sortField, sortDirection, toast]);
 
   const loadMoreQuestions = async () => {
     if (!hasMore || loadingMore) return;
