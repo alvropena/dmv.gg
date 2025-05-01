@@ -43,7 +43,7 @@ export function AdminNotificationsButton() {
             </div>
           ) : (
             <div className="max-h-80 overflow-auto">
-              {notifications.map((notification) => (
+              {notifications.map(() => (
                 // This would be populated when we have actual notifications
                 null
               ))}
