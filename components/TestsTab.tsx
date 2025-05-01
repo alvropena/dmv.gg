@@ -18,6 +18,7 @@ type Test = {
   userId: string
   userName: string
   userEmail: string
+  type: 'NEW' | 'REVIEW' | 'WEAK_AREAS'
   totalQuestions: number
   completedQuestions: number
   correctAnswers: number
@@ -27,7 +28,7 @@ type Test = {
   completedAt?: string
 }
 
-type SortField = "userName" | "completedQuestions" | "score" | "status" | "startedAt"
+type SortField = "userName" | "completedQuestions" | "score" | "status" | "startedAt" | "type"
 type SortDirection = "asc" | "desc"
 
 export function TestsTab() {
@@ -84,6 +85,8 @@ export function TestsTab() {
         return direction * a.status.localeCompare(b.status)
       case "startedAt":
         return direction * (new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime())
+      case "type":
+        return direction * a.type.localeCompare(b.type)
       default:
         return 0
     }
@@ -132,6 +135,16 @@ export function TestsTab() {
                         className="flex items-center gap-1 -ml-4 h-12 hover:bg-transparent"
                       >
                         Score
+                        <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+                      </Button>
+                    </th>
+                    <th className="h-12 px-4 text-left align-middle font-medium">
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleSort("type")}
+                        className="flex items-center gap-1 -ml-4 h-12 hover:bg-transparent"
+                      >
+                        Type
                         <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
                       </Button>
                     </th>
@@ -204,6 +217,9 @@ export function TestsTab() {
                           )}
                         </td>
                         <td className="p-4 align-middle">
+                          <TestTypeBadge type={test.type} />
+                        </td>
+                        <td className="p-4 align-middle">
                           <StatusBadge status={test.status} />
                         </td>
                         <td className="p-4 align-middle">
@@ -241,6 +257,10 @@ export function TestsTab() {
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">User</p>
                   <p className="text-sm">{selectedTest.userName}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Type</p>
+                  <TestTypeBadge type={selectedTest.type} />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">Status</p>
@@ -334,6 +354,40 @@ function StatusBadge({ status }: { status: string }) {
           className="bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900/30"
         >
           In Progress
+        </Badge>
+      )
+    default:
+      return null
+  }
+}
+
+function TestTypeBadge({ type }: { type: string }) {
+  switch (type) {
+    case "NEW":
+      return (
+        <Badge
+          variant="outline"
+          className="bg-purple-50 text-purple-600 border-purple-200 dark:bg-purple-950/20 dark:text-purple-400 dark:border-purple-900/30"
+        >
+          New Test
+        </Badge>
+      )
+    case "REVIEW":
+      return (
+        <Badge
+          variant="outline"
+          className="bg-orange-50 text-orange-600 border-orange-200 dark:bg-orange-950/20 dark:text-orange-400 dark:border-orange-900/30"
+        >
+          Review
+        </Badge>
+      )
+    case "WEAK_AREAS":
+      return (
+        <Badge
+          variant="outline"
+          className="bg-yellow-50 text-yellow-600 border-yellow-200 dark:bg-yellow-950/20 dark:text-yellow-400 dark:border-yellow-900/30"
+        >
+          Weak Areas
         </Badge>
       )
     default:
