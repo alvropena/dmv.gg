@@ -60,6 +60,41 @@ export function QuestionTable({
   const [showEditDialog, setShowEditDialog] = useState(false);
   
   const observer = useRef<IntersectionObserver | null>(null);
+  const { toast } = useToast();
+
+  const loadMoreQuestions = useCallback(async () => {
+    if (!hasMore || loadingMore) return;
+    
+    try {
+      setLoadingMore(true);
+      const nextPage = page + 1;
+      
+      const actualSortField = sortField || 'createdAt';
+      const actualSortDirection = sortDirection || 'desc';
+      
+      const result = await getQuestions(
+        searchQuery, 
+        nextPage, 
+        20, 
+        actualSortField, 
+        actualSortDirection
+      );
+      
+      setQuestions(prev => [...prev, ...result.questions]);
+      setHasMore(result.hasMore);
+      setPage(nextPage);
+    } catch (error) {
+      console.error("Error loading more questions:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load more questions",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [hasMore, loadingMore, page, searchQuery, sortField, sortDirection, toast]);
+
   const lastQuestionElementRef = useCallback((node: HTMLTableRowElement | null) => {
     if (loading || loadingMore) return;
     if (observer.current) observer.current.disconnect();
@@ -71,9 +106,7 @@ export function QuestionTable({
     }, { threshold: 0.5 });
     
     if (node) observer.current.observe(node);
-  }, [loading, loadingMore, hasMore]);
-
-  const { toast } = useToast();
+  }, [loading, loadingMore, hasMore, loadMoreQuestions]);
 
   // Fetch questions when component mounts, searchQuery, or sort params change
   useEffect(() => {
@@ -109,39 +142,6 @@ export function QuestionTable({
 
     fetchQuestions();
   }, [searchQuery, sortField, sortDirection, toast]);
-
-  const loadMoreQuestions = async () => {
-    if (!hasMore || loadingMore) return;
-    
-    try {
-      setLoadingMore(true);
-      const nextPage = page + 1;
-      
-      const actualSortField = sortField || 'createdAt';
-      const actualSortDirection = sortDirection || 'desc';
-      
-      const result = await getQuestions(
-        searchQuery, 
-        nextPage, 
-        20, 
-        actualSortField, 
-        actualSortDirection
-      );
-      
-      setQuestions(prev => [...prev, ...result.questions]);
-      setHasMore(result.hasMore);
-      setPage(nextPage);
-    } catch (error) {
-      console.error("Error loading more questions:", error);
-      toast({
-        title: "Error",
-        description: "Failed to load more questions",
-        variant: "destructive",
-      });
-    } finally {
-      setLoadingMore(false);
-    }
-  };
 
   // Function to refresh questions
   const refreshQuestions = async () => {
