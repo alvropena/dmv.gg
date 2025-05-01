@@ -41,7 +41,7 @@ export default function RootLayout({
 						<div className="relative z-[120]">
 							<Toaster />
 						</div>
-						<CookieConsentDialog />
+						{/* <CookieConsentDialog /> */}
 						<Analytics />
 					</AuthProvider>
 				</body>
