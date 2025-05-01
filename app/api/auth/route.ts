@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
 import { currentUser, auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
-import { Resend } from 'resend';
-import { WelcomeEmail } from '@/components/emails/WelcomeEmail';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function GET() {
     const { userId } = await auth();
@@ -64,25 +60,27 @@ export async function GET() {
 
             // Send welcome email ONLY if user creation succeeded
             if (dbUser.email) {
-                try { // Try sending the email
-                    await resend.emails.send({
-                        from: 'DMV.gg <support@dmv.gg>', // Replace with your verified domain if possible
-                        to: [dbUser.email],
-                        subject: 'Welcome to DMV.gg!',
-                        // Call the React component function and pass props
-                        react: WelcomeEmail({ firstName: dbUser.firstName || 'there' })
+                try {
+                    await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/email/welcome`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            email: dbUser.email,
+                            firstName: dbUser.firstName
+                        })
                     });
-                } catch { // Catch email sending errors
-                    // Decide if you want to fail the request or just log the error
-                    // For now, we just log it and continue, as user creation was successful
+                } catch (error) {
+                    console.error('Error sending welcome email:', error);
+                    // Continue without failing the request
                 }
             }
-        } catch { // Catch user creation errors
-            // Return an error response if user creation failed
+        } catch (error) {
+            console.error('Error creating user:', error);
             return NextResponse.json({ error: "Failed to process sign up" }, { status: 500 });
         }
     }
 
-    // If we reach here, dbUser exists (either found initially or created successfully)
     return NextResponse.json({ user: dbUser });
 }
