@@ -1,13 +1,19 @@
 "use client";
 
 import { useClerk, useUser } from "@clerk/nextjs";
-import { Gift, LogOut, Zap, Star } from "lucide-react";
+import { Gift, LogOut, Zap, Star, Bell } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useState, useEffect } from "react";
 import { PricingDialog } from "@/components/PricingDialog";
 import { SubscriptionDetailsDialog } from "@/components/SubscriptionDetailsDialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function UserHeader() {
 	const { signOut } = useClerk();
@@ -107,6 +113,20 @@ export function UserHeader() {
 									Upgrade
 								</Button>
 							)}
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button
+										variant="outline"
+										size="icon"
+										className="rounded-full"
+									>
+										<Bell className="h-5 w-5" />
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent align="end">
+									<DropdownMenuItem disabled>No notifications</DropdownMenuItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
 							<Button
 								onClick={() => {
 									signOut();
