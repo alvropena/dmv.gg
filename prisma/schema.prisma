@@ -18,6 +18,12 @@ enum UserRole {
   ADMIN
 }
 
+enum TestType {
+  NEW         // For first-time tests
+  REVIEW      // For reviewing previously seen questions
+  WEAK_AREAS  // For practicing questions from weak areas
+}
+
 model User {
   id        String        @id @default(uuid())
   clerkId   String        @unique
@@ -80,6 +86,7 @@ model Test {
   id          String    @id @default(uuid())
   userId      String
   user        User      @relation(fields: [userId], references: [id])
+  type        TestType  @default(NEW)  // Type of test
   startedAt   DateTime  @default(now()) @db.Timestamptz
   completedAt DateTime? @db.Timestamptz
   score       Int       @default(0)
@@ -96,6 +103,7 @@ model Test {
   updatedAt   DateTime  @updatedAt @db.Timestamptz
 
   @@index([userId])
+  @@index([type])  // Add index on type for faster queries
 }
 
 model TestQuestion {

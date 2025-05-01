@@ -7,67 +7,52 @@ export async function GET() {
     const { userId } = await auth()
 
     if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get the user's role
-    const user = await db.user.findUnique({
+    // Get the user from the database
+    const dbUser = await db.user.findUnique({
       where: { clerkId: userId },
-      select: { role: true }
+      select: {
+        id: true,
+        role: true
+      }
     })
 
-    // Only allow admins to access all tests
-    if (!user || user.role !== "ADMIN") {
-      return new NextResponse("Forbidden", { status: 403 })
+    if (!dbUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
+    // Only allow ADMIN users to view all tests
+    if (dbUser.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+    }
+
+    // Get all tests with only the fields we need
     const tests = await db.test.findMany({
-      include: {
-        user: {
-          select: {
-            firstName: true,
-            lastName: true,
-            email: true,
-          }
-        },
-        answers: {
-          select: {
-            isCorrect: true,
-            selectedAnswer: true
-          }
-        }
+      select: {
+        id: true,
+        userId: true,
+        type: true,
+        startedAt: true,
+        completedAt: true,
+        score: true,
+        totalQuestions: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
       },
       orderBy: {
         startedAt: 'desc'
       }
     })
 
-    // Transform the data to include calculated fields
-    const transformedTests = tests.map(test => {
-      const correctAnswers = test.answers.filter(answer => answer.isCorrect).length
-      const completedQuestions = test.answers.filter(answer => answer.selectedAnswer !== null).length
-      const score = test.totalQuestions > 0 
-        ? Math.round((correctAnswers / test.totalQuestions) * 100) 
-        : 0
-
-      return {
-        id: test.id,
-        userId: test.userId,
-        userName: `${test.user.firstName || ''} ${test.user.lastName || ''}`.trim() || 'Anonymous User',
-        userEmail: test.user.email || '',
-        totalQuestions: test.totalQuestions,
-        completedQuestions,
-        correctAnswers,
-        score,
-        status: test.status,
-        startedAt: test.startedAt,
-        completedAt: test.completedAt
-      }
-    })
-
-    return NextResponse.json(transformedTests)
+    return NextResponse.json(tests)
   } catch (error) {
-    console.error("[TESTS_GET]", error)
-    return new NextResponse("Internal Error", { status: 500 })
+    console.error('Error fetching tests:', error)
+    return NextResponse.json(
+      { error: 'Failed to fetch tests' },
+      { status: 500 }
+    )
   }
 } 

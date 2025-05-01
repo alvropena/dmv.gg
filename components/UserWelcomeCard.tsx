@@ -144,6 +144,9 @@ export function UserWelcomeCard() {
 					headers: {
 						"Content-Type": "application/json",
 					},
+					body: JSON.stringify({
+						type: "NEW"
+					}),
 				});
 
 				if (!response.ok) {
@@ -242,7 +245,7 @@ export function UserWelcomeCard() {
 												isCreatingTest || (!hasAccess && hasUsedFreeTest)
 											}
 										>
-											{!hasAccess && hasUsedFreeTest ? (
+											{hasUsedFreeTest && !hasAccess ? (
 												<Lock className="h-4 w-4" />
 											) : isCreatingTest ? (
 												<Loader2 className="h-4 w-4 animate-spin" />
@@ -260,7 +263,7 @@ export function UserWelcomeCard() {
 											className="flex items-center justify-center gap-2 rounded-[40px] min-w-[140px]"
 											disabled={!hasAccess && hasUsedFreeTest}
 										>
-											{!hasAccess && hasUsedFreeTest ? (
+											{!hasAccess ? (
 												<Lock className="h-4 w-4" />
 											) : (
 												<RotateCcw className="h-4 w-4" />
@@ -290,7 +293,7 @@ export function UserWelcomeCard() {
 												isCreatingTest || (!hasAccess && hasUsedFreeTest)
 											}
 										>
-											{!hasAccess && hasUsedFreeTest ? (
+											{hasUsedFreeTest && !hasAccess ? (
 												<Lock className="h-4 w-4" />
 											) : isCreatingTest ? (
 												<Loader2 className="h-4 w-4 animate-spin" />
@@ -321,7 +324,7 @@ export function UserWelcomeCard() {
 								className="flex items-center justify-center gap-2 rounded-[40px] min-w-[120px]"
 								disabled={isCreatingTest || (!hasAccess && hasUsedFreeTest)}
 							>
-								{!hasAccess && hasUsedFreeTest ? (
+								{hasUsedFreeTest && !hasAccess ? (
 									<Lock className="h-4 w-4" />
 								) : isCreatingTest ? (
 									<Loader2 className="h-4 w-4 animate-spin" />

@@ -16,9 +16,10 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 // Create a new test
-export async function POST() {
+export async function POST(request: Request) {
   try {
     const { userId } = await auth();
+    const { type = 'NEW', originalTestId } = await request.json();
 
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -59,24 +60,133 @@ export async function POST() {
       );
     }
 
-    // Get all questions 
-    const allQuestions = await db.question.findMany();
+    let selectedQuestions;
 
-    // Shuffle and select a random subset (up to MAX_QUESTIONS_PER_TEST)
-    const shuffledQuestions = shuffleArray(allQuestions);
-    const selectedQuestions = shuffledQuestions.slice(0, MAX_QUESTIONS_PER_TEST);
+    switch (type) {
+      case 'REVIEW': {
+        if (!originalTestId) {
+          return NextResponse.json(
+            { error: 'Original test ID is required for review' },
+            { status: 400 }
+          );
+        }
+
+        // Get questions from the original test
+        const originalTest = await db.test.findUnique({
+          where: { id: originalTestId },
+          include: {
+            questions: {
+              include: {
+                question: true
+              }
+            }
+          }
+        });
+
+        if (!originalTest) {
+          return NextResponse.json(
+            { error: 'Original test not found' },
+            { status: 404 }
+          );
+        }
+
+        selectedQuestions = originalTest.questions.map(q => q.question);
+        break;
+      }
+
+      case 'WEAK_AREAS': {
+        // Get all completed tests for the user
+        const completedTests = await db.test.findMany({
+            where: {
+                userId: dbUser.id,
+                status: 'completed'
+            },
+            include: {
+                answers: {
+                    where: {
+                        isCorrect: false
+                    },
+                    select: {
+                        questionId: true
+                    }
+                }
+            }
+        });
+
+        // Get unique question IDs from incorrect answers
+        const incorrectQuestionIds = Array.from(new Set(
+            completedTests.flatMap(test => 
+                test.answers.map(answer => answer.questionId)
+            )
+        ));
+
+        if (incorrectQuestionIds.length === 0) {
+            return NextResponse.json(
+                { error: 'No weak areas found. Complete more tests first.' },
+                { status: 400 }
+            );
+        }
+
+        // Get the questions
+        selectedQuestions = await db.question.findMany({
+            where: {
+                id: {
+                    in: incorrectQuestionIds
+                }
+            }
+        });
+
+        // Shuffle and limit the number of questions if needed
+        selectedQuestions = shuffleArray(selectedQuestions).slice(0, MAX_QUESTIONS_PER_TEST);
+        break;
+      }
+
+      case 'NEW':
+      default: {
+        // Get all questions excluding those from incomplete tests
+        const incompleteTests = await db.test.findMany({
+          where: {
+            userId: dbUser.id,
+            status: 'in_progress'
+          },
+          select: {
+            questions: {
+              select: {
+                questionId: true
+              }
+            }
+          }
+        });
+
+        const excludeQuestionIds = incompleteTests.flatMap(test =>
+          test.questions.map(q => q.questionId)
+        );
+
+        const allQuestions = await db.question.findMany({
+          where: {
+            id: {
+              notIn: excludeQuestionIds
+            }
+          }
+        });
+
+        selectedQuestions = shuffleArray(allQuestions).slice(0, MAX_QUESTIONS_PER_TEST);
+        break;
+      }
+    }
 
     // Create a new test
     const test = await db.test.create({
       data: {
         userId: dbUser.id,
+        type,
         totalQuestions: selectedQuestions.length,
         status: 'in_progress',
       },
     });
 
-    // If this is a free test, mark it as used
-    if (!hasActiveSubscription) {
+    // If this is a free test (NEW type only), mark it as used
+    if (!hasActiveSubscription && type === 'NEW') {
       await db.user.update({
         where: { id: dbUser.id },
         data: {

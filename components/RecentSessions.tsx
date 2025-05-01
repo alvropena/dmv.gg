@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Loader2 } from "lucide-react";
+import { Calendar, Loader2, Lock } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import type { Test, TestAnswer } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { PricingDialog } from "@/components/PricingDialog";
 import {
 	Tooltip,
 	TooltipContent,
@@ -25,10 +26,13 @@ export function RecentSessions({
 	isLoading: initialLoading = false,
 }: RecentSessionsProps) {
 	const router = useRouter();
-	const { dbUser, isLoading: isUserLoading } = useAuthContext();
+	const { dbUser, isLoading: isUserLoading, hasActiveSubscription } = useAuthContext();
 	const [tests, setTests] = useState<TestWithAnswers[]>([]);
 	const [isLoading, setIsLoading] = useState(initialLoading);
 	const [error, setError] = useState<string | null>(null);
+	const [isPricingOpen, setIsPricingOpen] = useState(false);
+
+	const hasAccess = hasActiveSubscription || dbUser?.role === "ADMIN";
 
 	useEffect(() => {
 		const fetchTests = async () => {
@@ -119,13 +123,61 @@ export function RecentSessions({
 	// Get the latest 3 tests for display
 	const recentTests = tests.slice(0, 3);
 
+	const handlePlanSelect = async (plan: "weekly" | "monthly" | "lifetime") => {
+		try {
+			const response = await fetch("/api/create-checkout-session", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					plan,
+				}),
+			});
+
+			const data = await response.json();
+
+			if (data.url) {
+				window.location.href = data.url;
+			}
+		} catch (error) {
+			console.error("Error:", error);
+		}
+	};
+
 	// Navigate to test page
-	const handleTestNavigation = (testId: string, isCompleted: boolean) => {
+	const handleTestNavigation = async (testId: string, isCompleted: boolean) => {
+		if (isCompleted && !hasAccess) {
+			setIsPricingOpen(true);
+			return;
+		}
 		if (isCompleted) {
-			// Navigate to review page
-			router.push(`/test/${testId}?review=true`);
+			// For completed tests, create a new REVIEW test
+			try {
+				const response = await fetch("/api/tests", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						type: "REVIEW",
+						originalTestId: testId
+					}),
+				});
+
+				if (!response.ok) {
+					throw new Error("Failed to create review test");
+				}
+
+				const data = await response.json();
+				if (data?.test?.id) {
+					router.push(`/test/${data.test.id}`);
+				}
+			} catch (error) {
+				console.error("Error creating review test:", error);
+			}
 		} else {
-			// Continue the test
+			// Continue the in-progress test
 			router.push(`/test/${testId}`);
 		}
 	};
@@ -201,7 +253,14 @@ export function RecentSessions({
 											}
 											className="min-w-[100px] flex items-center justify-center gap-2"
 										>
-											{test.status === "completed" ? "Review" : "Continue"}
+											{test.status === "completed" ? (
+												<>
+													{!hasAccess ? <Lock className="h-4 w-4" /> : null}
+													Review
+												</>
+											) : (
+												"Continue"
+											)}
 										</Button>
 									</div>
 
@@ -309,6 +368,12 @@ export function RecentSessions({
 					</div>
 				)}
 			</div>
+
+			<PricingDialog
+				isOpen={isPricingOpen}
+				onClose={() => setIsPricingOpen(false)}
+				onPlanSelect={handlePlanSelect}
+			/>
 		</div>
 	);
 }

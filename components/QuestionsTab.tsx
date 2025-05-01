@@ -21,7 +21,7 @@ function SortIcon({ direction }: { direction: SortDirection | null }) {
   return <ChevronDown className="h-4 w-4" />
 }
 
-export function ContentTab() {
+export function QuestionsTab() {
   const [searchQuery, setSearchQuery] = useState("")
   const [refreshKey, setRefreshKey] = useState(0)
   const [sortField, setSortField] = useState<SortField>("createdAt")
@@ -37,7 +37,7 @@ export function ContentTab() {
   }
 
   return (
-    <TabsContent value="content" className="space-y-4 mt-4">
+    <TabsContent value="questions" className="space-y-4 mt-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 w-full max-w-sm">
           <div className="relative w-full">
