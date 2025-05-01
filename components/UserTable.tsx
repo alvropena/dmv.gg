@@ -13,6 +13,14 @@ import { Badge } from "@/components/ui/badge"
 import { useEffect, useState } from "react"
 import { getUsers } from "@/app/actions/users"
 import { useToast } from "@/hooks/use-toast"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 
 type User = {
   id: string
@@ -34,14 +42,17 @@ export function UserTable({ searchQuery }: { searchQuery?: string }) {
   const [loading, setLoading] = useState(true)
   const [sortField, setSortField] = useState<SortField>("joined")
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc")
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
   const { toast } = useToast()
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoading(true)
-        const data = await getUsers(searchQuery)
-        setUsers(data)
+        const result = await getUsers(searchQuery, page, 21)
+        setUsers(result.users)
+        setTotalPages(result.totalPages)
       } catch (error) {
         console.error("Error fetching users:", error)
         toast({
@@ -55,7 +66,7 @@ export function UserTable({ searchQuery }: { searchQuery?: string }) {
     }
 
     fetchUsers()
-  }, [searchQuery, toast])
+  }, [searchQuery, page, toast])
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -64,6 +75,10 @@ export function UserTable({ searchQuery }: { searchQuery?: string }) {
       setSortField(field)
       setSortDirection("asc")
     }
+  }
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage)
   }
 
   const sortedUsers = [...users].sort((a, b) => {
@@ -220,6 +235,73 @@ export function UserTable({ searchQuery }: { searchQuery?: string }) {
           )}
         </tbody>
       </table>
+
+      {/* Pagination */}
+      {!loading && users.length > 0 && (
+        <div className="mt-4">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious 
+                  onClick={() => handlePageChange(page - 1)}
+                  className={`cursor-pointer ${page === 1 ? 'pointer-events-none opacity-50' : ''}`}
+                />
+              </PaginationItem>
+              
+              {(() => {
+                const pageNumbers = [];
+                const totalPagesToShow = 7;
+                let startPage: number;
+                let endPage: number;
+
+                if (totalPages <= totalPagesToShow) {
+                  // If total pages is less than 7, show all pages
+                  startPage = 1;
+                  endPage = totalPages;
+                } else {
+                  // Calculate start and end pages
+                  if (page <= 4) {
+                    // First 7 pages
+                    startPage = 1;
+                    endPage = 7;
+                  } else if (page >= totalPages - 3) {
+                    // Last 7 pages
+                    startPage = totalPages - 6;
+                    endPage = totalPages;
+                  } else {
+                    // Middle pages - center current page
+                    startPage = page - 3;
+                    endPage = page + 3;
+                  }
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                  pageNumbers.push(
+                    <PaginationItem key={i}>
+                      <PaginationLink
+                        onClick={() => handlePageChange(i)}
+                        isActive={i === page}
+                        className="cursor-pointer"
+                      >
+                        {i}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                }
+
+                return pageNumbers;
+              })()}
+
+              <PaginationItem>
+                <PaginationNext 
+                  onClick={() => handlePageChange(page + 1)}
+                  className={`cursor-pointer ${page === totalPages ? 'pointer-events-none opacity-50' : ''}`}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
     </div>
   )
 }
