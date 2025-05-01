@@ -9,7 +9,7 @@ export async function getQuestions(
   pageSize: number = 20,
   sortField: string = 'createdAt',
   sortOrder: 'asc' | 'desc' = 'desc'
-): Promise<{ questions: Question[], hasMore: boolean }> {
+): Promise<{ questions: Question[], total: number }> {
   try {
     let whereClause = {}
     
@@ -58,22 +58,20 @@ export async function getQuestions(
       [sortField]: sortOrder
     };
     
+    // Get total count
+    const total = await db.question.count({
+      where: whereClause
+    });
+    
     // Fetch questions with pagination
     const questions = await db.question.findMany({
       where: whereClause,
       orderBy,
       skip,
-      take: pageSize + 1 // Fetch one extra to determine if there are more
-    })
+      take: pageSize
+    });
     
-    // Check if there are more items
-    const hasMore = questions.length > pageSize;
-    
-    // Return only requested pageSize
-    return { 
-      questions: hasMore ? questions.slice(0, pageSize) : questions,
-      hasMore
-    }
+    return { questions, total };
   } catch (error) {
     console.error('Error fetching questions:', error)
     throw new Error('Failed to fetch questions')
