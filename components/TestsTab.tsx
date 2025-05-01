@@ -14,6 +14,14 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { EditTestDialog } from "@/components/EditTestDialog"
 import { Test, TestType } from "@/types"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 
 type SortField = "score" | "status" | "startedAt" | "type"
 type SortDirection = "asc" | "desc"
@@ -45,16 +53,21 @@ export function TestsTab() {
   const [sortField, setSortField] = useState<SortField>("startedAt")
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc")
   const [selectedTest, setSelectedTest] = useState<Test | null>(null)
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
   const { toast } = useToast()
 
   useEffect(() => {
     const fetchTests = async () => {
       try {
         setLoading(true)
-        const response = await fetch('/api/tests/all')
+        const response = await fetch(
+          `/api/tests/all?page=${page}&sortField=${sortField}&sortDirection=${sortDirection}`
+        )
         if (!response.ok) throw new Error('Failed to fetch tests')
         const data = await response.json()
-        setTests(data)
+        setTests(data.tests)
+        setTotalPages(data.totalPages)
       } catch (error) {
         console.error("Error fetching tests:", error)
         toast({
@@ -68,7 +81,7 @@ export function TestsTab() {
     }
 
     fetchTests()
-  }, [toast])
+  }, [page, sortField, sortDirection, toast])
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -77,24 +90,16 @@ export function TestsTab() {
       setSortField(field)
       setSortDirection("asc")
     }
+    // Reset to first page when sorting changes
+    setPage(1)
   }
 
-  const sortedTests = [...tests].sort((a, b) => {
-    const direction = sortDirection === "asc" ? 1 : -1
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage)
+  }
 
-    switch (sortField) {
-      case "score":
-        return direction * (a.score - b.score)
-      case "status":
-        return direction * a.status.localeCompare(b.status)
-      case "startedAt":
-        return direction * (new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime())
-      case "type":
-        return direction * (a.type || '').localeCompare(b.type || '')
-      default:
-        return 0
-    }
-  })
+  // Remove client-side sorting since it's now handled by the server
+  const sortedTests = tests
 
   return (
     <>
@@ -195,9 +200,16 @@ export function TestsTab() {
                           {test.status === 'in_progress' ? (
                             <span className="text-muted-foreground">-</span>
                           ) : (
-                            <span className={test.score >= 89.13 ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>
+                            <Badge
+                              variant="outline"
+                              className={`${
+                                test.score >= 89.13 
+                                  ? 'bg-green-50 text-green-600 border-green-200 dark:bg-green-950/20 dark:text-green-400 dark:border-green-900/30' 
+                                  : 'bg-red-50 text-red-600 border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900/30'
+                              } w-16 flex items-center justify-center`}
+                            >
                               {test.score}%
-                            </span>
+                            </Badge>
                           )}
                         </td>
                         <td className="p-4 align-middle">
@@ -240,6 +252,73 @@ export function TestsTab() {
                   )}
                 </tbody>
               </table>
+
+              {/* Pagination */}
+              {!loading && tests.length > 0 && (
+                <div className="mt-4">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious 
+                          onClick={() => handlePageChange(page - 1)}
+                          className={`cursor-pointer ${page === 1 ? 'pointer-events-none opacity-50' : ''}`}
+                        />
+                      </PaginationItem>
+                      
+                      {(() => {
+                        const pageNumbers = [];
+                        const totalPagesToShow = 7;
+                        let startPage: number;
+                        let endPage: number;
+
+                        if (totalPages <= totalPagesToShow) {
+                          // If total pages is less than 7, show all pages
+                          startPage = 1;
+                          endPage = totalPages;
+                        } else {
+                          // Calculate start and end pages
+                          if (page <= 4) {
+                            // First 7 pages
+                            startPage = 1;
+                            endPage = 7;
+                          } else if (page >= totalPages - 3) {
+                            // Last 7 pages
+                            startPage = totalPages - 6;
+                            endPage = totalPages;
+                          } else {
+                            // Middle pages - center current page
+                            startPage = page - 3;
+                            endPage = page + 3;
+                          }
+                        }
+
+                        for (let i = startPage; i <= endPage; i++) {
+                          pageNumbers.push(
+                            <PaginationItem key={i}>
+                              <PaginationLink
+                                onClick={() => handlePageChange(i)}
+                                isActive={i === page}
+                                className="cursor-pointer"
+                              >
+                                {i}
+                              </PaginationLink>
+                            </PaginationItem>
+                          );
+                        }
+
+                        return pageNumbers;
+                      })()}
+
+                      <PaginationItem>
+                        <PaginationNext 
+                          onClick={() => handlePageChange(page + 1)}
+                          className={`cursor-pointer ${page === totalPages ? 'pointer-events-none opacity-50' : ''}`}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
