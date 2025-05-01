@@ -8,6 +8,7 @@ type UserWithTests = Prisma.UserGetPayload<{
     tests: {
       select: {
         totalQuestions: true
+        status: true
         answers: {
           select: {
             isCorrect: true
@@ -30,11 +31,9 @@ export async function getUsers(searchQuery?: string) {
       } : undefined,
       include: {
         tests: {
-          where: {
-            status: 'completed'
-          },
           select: {
             totalQuestions: true,
+            status: true,
             answers: {
               where: {
                 isCorrect: true
@@ -52,9 +51,10 @@ export async function getUsers(searchQuery?: string) {
     }) as UserWithTests[]
 
     return users.map(user => {
-      const completedTests = user.tests.length
-      const totalCorrectAnswers = user.tests.reduce((sum: number, test) => sum + test.answers.length, 0)
-      const totalAnswers = user.tests.reduce((sum: number, test) => sum + (test.totalQuestions || 0), 0)
+      const allTests = user.tests.length
+      const completedTests = user.tests.filter(test => test.status === 'completed')
+      const totalCorrectAnswers = completedTests.reduce((sum: number, test) => sum + test.answers.length, 0)
+      const totalAnswers = completedTests.reduce((sum: number, test) => sum + (test.totalQuestions || 0), 0)
       const avgScore = totalAnswers > 0 ? Math.round((totalCorrectAnswers / totalAnswers) * 100) : 0
       
       // Calculate if the user passed or failed
@@ -73,9 +73,9 @@ export async function getUsers(searchQuery?: string) {
           day: 'numeric',
           year: 'numeric'
         }),
-        tests: completedTests,
-        avgScore: `${avgScore}%`,
-        passed
+        tests: allTests,
+        avgScore: completedTests.length > 0 ? `${avgScore}%` : '-',
+        passed: completedTests.length > 0 ? passed : false
       }
     })
   } catch (error) {

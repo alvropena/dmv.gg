@@ -205,14 +205,7 @@ export function RecentSessions({
 										</Button>
 									</div>
 
-									<div className="flex items-center gap-2 text-muted-foreground mb-4">
-										<Calendar className="h-4 w-4" />
-										<span className="text-sm">
-											{formatDate(test.startedAt)}
-										</span>
-									</div>
-
-									<div className="flex justify-between items-center mt-4">
+									<div className="flex justify-between items-center mt-4 text-sm">
 										{test.status === "completed" ? (
 											<>
 												<span className="text-sm">
@@ -274,14 +267,11 @@ export function RecentSessions({
 											</>
 										) : (
 											<>
-												<span className="text-sm">
-													Progress:{" "}
-													<span className="font-bold">
-														{getAnsweredCount(test)} completed,{" "}
-														{test.totalQuestions - getAnsweredCount(test)} left
-													</span>
+												<span className="text-muted-foreground flex items-center gap-2">
+													<Calendar className="h-4 w-4" />
+													{formatDate(test.startedAt)}
 												</span>
-												<span className="text-sm font-bold">
+												<span className="">
 													{Math.round(
 														(getAnsweredCount(test) / test.totalQuestions) *
 															100,
@@ -305,6 +295,14 @@ export function RecentSessions({
 											}}
 										/>
 									</div>
+									{test.status !== "completed" && (
+										<div className="flex justify-between text-sm text-muted-foreground mt-1">
+											<span>{getAnsweredCount(test)} completed</span>
+											<span>
+												{test.totalQuestions - getAnsweredCount(test)} remaining
+											</span>
+										</div>
+									)}
 								</div>
 							))
 						)}
