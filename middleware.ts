@@ -9,6 +9,7 @@ const isPublicRoute = createRouteMatcher([
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/terms",
+  "/admin(.*)", // Add admin routes
   "/api/webhooks(.*)", // Allow Stripe webhook endpoint
   "/api/prices(.*)", // Allow public access to pricing data
 ]);
