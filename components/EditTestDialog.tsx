@@ -185,37 +185,3 @@ function StatusBadge({ status }: { status: string }) {
       return null
   }
 }
-
-function TestTypeBadge({ type }: { type: TestType }) {
-  switch (type) {
-    case "NEW":
-      return (
-        <Badge
-          variant="outline"
-          className="bg-purple-50 text-purple-600 border-purple-200 dark:bg-purple-950/20 dark:text-purple-400 dark:border-purple-900/30"
-        >
-          New Test
-        </Badge>
-      )
-    case "REVIEW":
-      return (
-        <Badge
-          variant="outline"
-          className="bg-orange-50 text-orange-600 border-orange-200 dark:bg-orange-950/20 dark:text-orange-400 dark:border-orange-900/30"
-        >
-          Review
-        </Badge>
-      )
-    case "WEAK_AREAS":
-      return (
-        <Badge
-          variant="outline"
-          className="bg-yellow-50 text-yellow-600 border-yellow-200 dark:bg-yellow-950/20 dark:text-yellow-400 dark:border-yellow-900/30"
-        >
-          Weak Areas
-        </Badge>
-      )
-    default:
-      return null
-  }
-} 
