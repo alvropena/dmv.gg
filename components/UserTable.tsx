@@ -1,5 +1,5 @@
 "use client"
-import { CheckCircle, MoreHorizontal, Shield, XCircle, ArrowUpDown, Glasses } from "lucide-react"
+import { MoreHorizontal, Shield, ArrowUpDown, Glasses } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,

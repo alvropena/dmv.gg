@@ -19,7 +19,7 @@ function shuffleArray<T>(array: T[]): T[] {
 export async function POST(request: Request) {
   try {
     const { userId } = await auth();
-    const { type = 'NEW', questionIds, originalTestId } = await request.json();
+    const { type = 'NEW', originalTestId } = await request.json();
 
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

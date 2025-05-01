@@ -96,37 +96,6 @@ export function TestsTab() {
     }
   })
 
-  const handleEditType = async (testId: string, newType: 'NEW' | 'REVIEW' | 'WEAK_AREAS') => {
-    try {
-      const response = await fetch(`/api/tests/${testId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ type: newType }),
-      });
-
-      if (!response.ok) throw new Error('Failed to update test');
-
-      // Update local state
-      setTests(tests.map(test => 
-        test.id === testId ? { ...test, type: newType } : test
-      ));
-
-      toast({
-        title: "Success",
-        description: "Test type updated successfully",
-      });
-    } catch (error) {
-      console.error("Error updating test:", error);
-      toast({
-        title: "Error",
-        description: "Failed to update test type",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <>
       <div className="space-y-4">
@@ -143,7 +112,7 @@ export function TestsTab() {
                     <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                       ID
                     </th>
-                    <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                    <th className="h-12 px-4 text-left align-middle font-medium">
                       User ID
                     </th>
                     <th className="h-12 px-4 text-left align-middle font-medium">

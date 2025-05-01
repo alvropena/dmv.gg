@@ -3,22 +3,6 @@
 import { db } from '@/lib/db'
 import { Prisma } from '@prisma/client'
 
-type UserWithTests = Prisma.UserGetPayload<{
-  include: {
-    tests: {
-      select: {
-        totalQuestions: true
-        status: true
-        answers: {
-          select: {
-            isCorrect: true
-          }
-        }
-      }
-    }
-  }
-}>
-
 export async function getUsers(searchQuery?: string) {
   try {
     const users = await db.user.findMany({
