@@ -40,3 +40,10 @@ app/data/questions.ts
 app/data/bank.csv
 
 .insert_questions.sql
+
+# database backups
+*_backup_*.sql
+dmvgg_prod_backup_*.sql
+
+# task runner
+Taskfile.yml
