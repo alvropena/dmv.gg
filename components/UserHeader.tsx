@@ -9,6 +9,7 @@ import { SubscriptionDetailsDialog } from "@/components/SubscriptionDetailsDialo
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
+import { usePostHog } from 'posthog-js/react';
 
 export function UserHeader() {
   const { signOut } = useClerk();
@@ -19,6 +20,7 @@ export function UserHeader() {
     useState(false);
   const [userBirthday, setUserBirthday] = useState<string | null>(null);
   const router = useRouter();
+  const posthog = usePostHog();
   const displayName =
     dbUser?.firstName && dbUser?.lastName
       ? `${dbUser.firstName} ${dbUser.lastName}`
@@ -109,7 +111,10 @@ export function UserHeader() {
                 </Button>
               ) : (
                 <Button
-                  onClick={() => setIsPricingOpen(true)}
+                  onClick={() => {
+                    posthog?.capture('upgrade_button_clicked');
+                    setIsPricingOpen(true);
+                  }}
                   className="flex items-center justify-center gap-2 w-[100px] sm:w-auto"
                 >
                   <Zap className="h-4 w-4" />
