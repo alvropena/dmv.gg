@@ -9,6 +9,7 @@ import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
 import growthbook, { trackEvent } from "@/lib/growthbook";
+import { v4 as uuidv4 } from 'uuid';
 
 interface Price {
 	id: string;
@@ -31,14 +32,20 @@ export default function PricingPage() {
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
-		// Initialize GrowthBook with user attributes
-		if (user) {
-			growthbook.setAttributes({
-				id: user.id,
-				email: user.emailAddresses[0]?.emailAddress,
-				createdAt: user.createdAt,
-			});
+		let anonId: string | null = null;
+		if (typeof window !== 'undefined') {
+			anonId = localStorage.getItem('anonId');
+			if (!anonId) {
+				anonId = uuidv4();
+				localStorage.setItem('anonId', anonId);
+			}
 		}
+
+		growthbook.setAttributes({
+			id: user?.id || anonId || '',
+			email: user?.emailAddresses[0]?.emailAddress,
+			createdAt: user?.createdAt,
+		});
 	}, [user]);
 
 	useEffect(() => {
