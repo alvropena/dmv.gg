@@ -7,6 +7,9 @@ import Footer from "@/components/landing/Footer";
 import { formatCurrency } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useClerk } from "@clerk/nextjs";
+import growthbook, { trackEvent } from "@/lib/growthbook";
+import { v4 as uuidv4 } from 'uuid';
 
 interface Price {
 	id: string;
@@ -22,10 +25,28 @@ interface Price {
 
 export default function PricingPage() {
 	const router = useRouter();
+	const { user } = useClerk();
 	const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
 	const [prices, setPrices] = useState<Price[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		let anonId: string | null = null;
+		if (typeof window !== 'undefined') {
+			anonId = localStorage.getItem('anonId');
+			if (!anonId) {
+				anonId = uuidv4();
+				localStorage.setItem('anonId', anonId);
+			}
+		}
+
+		growthbook.setAttributes({
+			id: user?.id || anonId || '',
+			email: user?.emailAddresses[0]?.emailAddress,
+			createdAt: user?.createdAt,
+		});
+	}, [user]);
 
 	useEffect(() => {
 		const fetchPrices = async () => {
@@ -53,7 +74,16 @@ export default function PricingPage() {
 		fetchPrices();
 	}, []);
 
-	const handlePlanSelect = () => {
+	const handlePlanSelect = (price: Price) => {
+		// Track the plan selection
+		trackEvent("plan_selected", {
+			plan: price.name,
+			price: price.unitAmount,
+			variation: price.metadata.variation,
+			userId: user?.id || 'anonymous',
+		});
+		
+		setSelectedPlan(price.name);
 		router.push("/sign-up");
 	};
 
@@ -165,10 +195,7 @@ export default function PricingPage() {
 										selectedPlan === price.name ? "bg-[#FFF25F] hover:bg-[#FFF25F]/90 text-[#3F3500]" : "text-black"
 									}`}
 									variant={selectedPlan === price.name ? "default" : "outline"}
-									onClick={() => {
-										setSelectedPlan(price.name);
-										handlePlanSelect();
-									}}
+									onClick={() => handlePlanSelect(price)}
 								>
 									Get started
 								</Button>
