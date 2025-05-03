@@ -14,9 +14,8 @@ const growthbook = new GrowthBook({
 });
 
 // Set up tracking callback
-growthbook.setTrackingCallback((experiment, result) => {
-  // You can implement your own tracking here
-  console.log('Experiment tracked:', experiment, result);
+growthbook.setTrackingCallback((_experiment: unknown, _result: unknown) => {
+  // Tracking callback intentionally left blank
 });
 
 // Helper function to get price variations
@@ -36,7 +35,7 @@ export const getPriceVariation = (priceId: string, userId: string): PriceVariati
 // Helper function to track events
 export const trackEvent = (event: string, properties: Record<string, any>) => {
   growthbook.setTrackingCallback((experiment, result) => {
-    console.log('Event tracked:', event, properties);
+    // Tracking callback intentionally left blank
   });
 };
 
