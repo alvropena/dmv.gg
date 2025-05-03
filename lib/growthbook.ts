@@ -33,9 +33,11 @@ export const getPriceVariation = (priceId: string, userId: string): PriceVariati
 };
 
 // Helper function to track events
-export const trackEvent = () => {
-  growthbook.setTrackingCallback(() => {
-    // Tracking callback intentionally left blank
+export const trackEvent = (eventName: string, properties?: Record<string, string | number | boolean>) => {
+  growthbook.setAttributes({
+    ...growthbook.getAttributes(),
+    lastEvent: eventName,
+    lastEventProperties: properties
   });
 };
 
