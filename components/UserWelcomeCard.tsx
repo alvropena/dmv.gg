@@ -14,6 +14,7 @@ import {
 	RotateCcw,
 } from "lucide-react";
 import { PricingDialog } from "@/components/PricingDialog";
+import { usePostHog } from 'posthog-js/react';
 
 type Test = {
 	id: string;
@@ -40,6 +41,7 @@ export function UserWelcomeCard() {
 	const [isPricingOpen, setIsPricingOpen] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [isTestCompleted, setIsTestCompleted] = useState(false);
+	const posthog = usePostHog();
 
 	const displayName = dbUser?.firstName || "User";
 	const hasAccess = hasActiveSubscription || dbUser?.role === "ADMIN";
@@ -186,6 +188,12 @@ export function UserWelcomeCard() {
 			router.push(`/test/${latestTestId}`);
 		}
 	};
+
+	useEffect(() => {
+		if (isPricingOpen) {
+			posthog?.capture('pricing_dialog_opened');
+		}
+	}, [isPricingOpen, posthog]);
 
 	return (
 		<div className="container mx-auto px-4 sm:px-6 mb-6">
