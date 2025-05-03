@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { formatCurrency } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { Card } from "@/components/ui/card";
+import { usePostHog } from 'posthog-js/react';
+
 
 interface Price {
 	id: string;
@@ -36,6 +38,7 @@ export function PricingDialog({
 		"weekly" | "monthly" | "lifetime" | null
 	>(null);
 	const isMobile = useIsMobile();
+	const posthog = usePostHog();
 
 	useEffect(() => {
 		const fetchPrices = async () => {
@@ -72,6 +75,15 @@ export function PricingDialog({
 			fetchPrices();
 		}
 	}, [isOpen]);
+
+	useEffect(() => {
+		if (!posthog) return;
+		if (isOpen) {
+			posthog.capture('pricing_dialog_opened');
+		} else {
+			posthog.capture('pricing_dialog_closed');
+		}
+	}, [isOpen, posthog]);
 
 	const getPlanType = (price: Price): "weekly" | "monthly" | "lifetime" => {
 		if (price.type === "one_time") return "lifetime";
@@ -151,6 +163,7 @@ export function PricingDialog({
 					}
 					className='mt-6 rounded-full font-bold'
 					onClick={() => {
+						posthog?.capture('pricing_get_started_clicked', { planType });
 						setSelectedPlan(planType);
 						onPlanSelect(planType);
 					}}

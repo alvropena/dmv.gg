@@ -13,6 +13,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { usePostHog } from 'posthog-js/react';
 
 type TestWithAnswers = Test & {
 	answers: TestAnswer[];
@@ -31,6 +32,7 @@ export function RecentSessions({
 	const [isLoading, setIsLoading] = useState(initialLoading);
 	const [error, setError] = useState<string | null>(null);
 	const [isPricingOpen, setIsPricingOpen] = useState(false);
+	const posthog = usePostHog();
 
 	const hasAccess = hasActiveSubscription || dbUser?.role === "ADMIN";
 
@@ -181,6 +183,12 @@ export function RecentSessions({
 			router.push(`/test/${testId}`);
 		}
 	};
+
+	useEffect(() => {
+		if (isPricingOpen) {
+			posthog?.capture('pricing_dialog_opened');
+		}
+	}, [isPricingOpen, posthog]);
 
 	return (
 		<div className="w-full px-2">

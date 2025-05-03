@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { AlertCircle, Loader2, Lock } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { PricingDialog } from "@/components/PricingDialog";
+import { usePostHog } from 'posthog-js/react';
 
 type WeakArea = {
   question: {
@@ -29,6 +30,7 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
   const [isPricingOpen, setIsPricingOpen] = useState(false);
   const router = useRouter();
   const { dbUser, hasActiveSubscription } = useAuthContext();
+  const posthog = usePostHog();
 
   const hasAccess = hasActiveSubscription || dbUser?.role === "ADMIN";
 
@@ -114,6 +116,12 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
     }
   };
 
+  useEffect(() => {
+    if (isPricingOpen) {
+      posthog?.capture('pricing_dialog_opened');
+    }
+  }, [isPricingOpen, posthog]);
+
   if (loading || isLoading) {
     return (
       <div className="w-full px-2">
@@ -149,7 +157,10 @@ export function WeakAreas({ isLoading = false }: WeakAreasProps) {
                   Subscribe to access your weak areas and targeted practice
                 </p>
                 <Button
-                  onClick={() => setIsPricingOpen(true)}
+                  onClick={() => {
+                    posthog?.capture('upgrade_button_clicked');
+                    setIsPricingOpen(true);
+                  }}
                   className="rounded-xl"
                 >
                   Upgrade Now
