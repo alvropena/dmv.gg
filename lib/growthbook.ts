@@ -14,7 +14,7 @@ const growthbook = new GrowthBook({
 });
 
 // Set up tracking callback
-growthbook.setTrackingCallback((_experiment: unknown, _result: unknown) => {
+growthbook.setTrackingCallback(() => {
   // Tracking callback intentionally left blank
 });
 
@@ -33,9 +33,11 @@ export const getPriceVariation = (priceId: string, userId: string): PriceVariati
 };
 
 // Helper function to track events
-export const trackEvent = (event: string, properties: Record<string, any>) => {
-  growthbook.setTrackingCallback((experiment, result) => {
-    // Tracking callback intentionally left blank
+export const trackEvent = (eventName: string, properties?: Record<string, string | number | boolean>) => {
+  growthbook.setAttributes({
+    ...growthbook.getAttributes(),
+    lastEvent: eventName,
+    lastEventProperties: properties
   });
 };
 
