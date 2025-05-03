@@ -1,5 +1,7 @@
 import { stripe } from '@/lib/stripe';
 import { NextResponse } from 'next/server';
+import { getPriceVariation } from '@/lib/growthbook';
+import { auth } from '@clerk/nextjs/server';
 
 // Default price IDs from environment variables
 const DEFAULT_PRICE_IDS = [
@@ -10,6 +12,8 @@ const DEFAULT_PRICE_IDS = [
 
 export async function GET() {
   try {
+    const { userId } = await auth();
+    
     const [products, prices] = await Promise.all([
       stripe.products.list({ active: true }),
       stripe.prices.list({ active: true }),
@@ -38,6 +42,13 @@ export async function GET() {
           metadata: { features: '' }
         };
 
+        // Get price variation from GrowthBook
+        const variation = userId ? getPriceVariation(price.id, userId) : {
+          priceId: price.id,
+          multiplier: 1.0,
+          userId: null
+        };
+
         // Parse features from metadata if available
         let features: string[] = [];
         try {
@@ -54,12 +65,15 @@ export async function GET() {
           id: price.id,
           name: product.name.replace('DMV.gg ', ''),
           description: product.description,
-          unitAmount: price.unit_amount,
+          unitAmount: Math.round((price.unit_amount || 0) * variation.multiplier),
           currency: price.currency,
           type: price.type,
           interval: price.recurring?.interval,
           features: features,
-          metadata: product.metadata,
+          metadata: {
+            ...product.metadata,
+            variation: variation,
+          },
         };
       })
       .sort((a, b) => {
