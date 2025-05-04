@@ -239,11 +239,11 @@ export function TestsTable({
 										) : (
 											<Badge
 												variant="outline"
-												className={`$ {
-													test.score >= 89.13
+												className={
+													(test.score >= 89.13
 														? "bg-green-50 text-green-600 border-green-200 dark:bg-green-950/20 dark:text-green-400 dark:border-green-900/30"
 														: "bg-red-50 text-red-600 border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900/30"
-													} w-16 flex items-center justify-center`}
+													) + " w-16 flex items-center justify-center"}
 											>
 												{test.score}%
 											</Badge>
