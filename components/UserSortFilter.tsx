@@ -1,5 +1,5 @@
 "use client";
-import { Filter } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
@@ -7,10 +7,19 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ChevronDown, ArrowDownAZ, ArrowUpAZ } from "lucide-react";
+
+type SortDirection = "asc" | "desc" | null;
+
+function SortIcon({ direction }: { direction: SortDirection }) {
+	if (direction === "asc") return <ArrowUpAZ className="h-4 w-4" />;
+	if (direction === "desc") return <ArrowDownAZ className="h-4 w-4" />;
+	return <ChevronDown className="h-4 w-4" />;
+}
 
 interface UserSortFilterProps {
 	sortField: string;
-	sortDirection: "asc" | "desc";
+	sortDirection: SortDirection;
 	onSortChange: (field: string) => void;
 }
 
@@ -22,76 +31,29 @@ export function UserSortFilter({
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant="outline" size="sm" className="flex items-center gap-2">
-					<Filter className="h-4 w-4" />
-					Filter
+				<Button variant="outline" size="sm">
+					<SortIcon direction={sortDirection} />
+					<span className="ml-2 text-xs hidden sm:inline">
+						{sortField === "name" && "Sort by Name"}
+						{sortField === "role" && "Sort by Role"}
+						{sortField === "createdAt" &&
+							(sortDirection === "desc" ? "Latest" : "Oldest")}
+						{sortField === "updatedAt" && "Last Updated"}
+					</span>
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end">
-				<DropdownMenuItem
-					onClick={() => onSortChange("name")}
-					className={sortField === "name" ? "font-medium bg-muted" : ""}
-				>
-					<span className="flex w-full justify-between items-center">
-						Name
-						{sortField === "name" && (
-							<span className="ml-2">
-								{sortDirection === "asc" ? "↑" : "↓"}
-							</span>
-						)}
-					</span>
+				<DropdownMenuItem onClick={() => onSortChange("name")}>
+					Sort by Name
 				</DropdownMenuItem>
-				<DropdownMenuItem
-					onClick={() => onSortChange("role")}
-					className={sortField === "role" ? "font-medium bg-muted" : ""}
-				>
-					<span className="flex w-full justify-between items-center">
-						Role
-						{sortField === "role" && (
-							<span className="ml-2">
-								{sortDirection === "asc" ? "↑" : "↓"}
-							</span>
-						)}
-					</span>
+				<DropdownMenuItem onClick={() => onSortChange("role")}>
+					Sort by Role
 				</DropdownMenuItem>
-				<DropdownMenuItem
-					onClick={() => onSortChange("createdAt")}
-					className={sortField === "createdAt" ? "font-medium bg-muted" : ""}
-				>
-					<span className="flex w-full justify-between items-center">
-						Joined
-						{sortField === "createdAt" && (
-							<span className="ml-2">
-								{sortDirection === "asc" ? "↑" : "↓"}
-							</span>
-						)}
-					</span>
+				<DropdownMenuItem onClick={() => onSortChange("createdAt")}>
+					Latest
 				</DropdownMenuItem>
-				<DropdownMenuItem
-					onClick={() => onSortChange("tests")}
-					className={sortField === "tests" ? "font-medium bg-muted" : ""}
-				>
-					<span className="flex w-full justify-between items-center">
-						Tests
-						{sortField === "tests" && (
-							<span className="ml-2">
-								{sortDirection === "asc" ? "↑" : "↓"}
-							</span>
-						)}
-					</span>
-				</DropdownMenuItem>
-				<DropdownMenuItem
-					onClick={() => onSortChange("avgScore")}
-					className={sortField === "avgScore" ? "font-medium bg-muted" : ""}
-				>
-					<span className="flex w-full justify-between items-center">
-						Score
-						{sortField === "avgScore" && (
-							<span className="ml-2">
-								{sortDirection === "asc" ? "↑" : "↓"}
-							</span>
-						)}
-					</span>
+				<DropdownMenuItem onClick={() => onSortChange("updatedAt")}>
+					Last Updated
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

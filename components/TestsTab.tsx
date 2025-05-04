@@ -6,6 +6,7 @@ import { TabsContent } from "@/components/ui/tabs";
 import { TestSortFilter } from "./TestSortFilter";
 import { TestsTable } from "./TestsTable";
 import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 export function TestsTab() {
 	const [sortField, setSortField] = useState<string>("startedAt");
@@ -25,13 +26,16 @@ export function TestsTab() {
 		<TabsContent value="tests" className="space-y-4 mt-4">
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-4">
-					<Input
-						type="search"
-						placeholder="Search by name or email..."
-						value={searchQuery}
-						onChange={(e) => setSearchQuery(e.target.value)}
-						className="w-64 bg-white"
-					/>
+					<div className="relative w-[300px]">
+						<Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+						<Input
+							type="search"
+							placeholder="Search by name or email..."
+							value={searchQuery}
+							onChange={(e) => setSearchQuery(e.target.value)}
+							className="pl-8 bg-white"
+						/>
+					</div>
 					<TestSortFilter
 						sortField={sortField}
 						sortDirection={sortDirection}
