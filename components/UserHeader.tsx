@@ -8,7 +8,6 @@ import { PricingDialog } from "@/components/PricingDialog";
 import { SubscriptionDetailsDialog } from "@/components/SubscriptionDetailsDialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 
 export function UserHeader() {
@@ -19,7 +18,6 @@ export function UserHeader() {
 	const [isSubscriptionDetailsOpen, setIsSubscriptionDetailsOpen] =
 		useState(false);
 	const [userBirthday, setUserBirthday] = useState<string | null>(null);
-	const router = useRouter();
 	const posthog = usePostHog();
 	const displayName =
 		dbUser?.firstName && dbUser?.lastName
@@ -95,7 +93,13 @@ export function UserHeader() {
 						<div className="flex flex-row items-center justify-end sm:gap-2">
 							{dbUser?.role === "ADMIN" ? (
 								<Button
-									onClick={() => router.push("/admin")}
+									onClick={() => {
+										if (window.location.hostname === "localhost") {
+											window.location.href = "/admin";
+										} else {
+											window.location.href = "https://admin.dmv.gg";
+										}
+									}}
 									className="flex items-center justify-center gap-2 w-[100px] sm:w-auto bg-zinc-800 hover:bg-zinc-900 text-white h-9"
 								>
 									<Crown className="h-4 w-4" />
