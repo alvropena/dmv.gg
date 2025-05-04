@@ -22,7 +22,7 @@ export function IssuesCard() {
         const res = await fetch("/api/questions/admin")
         const data = await res.json()
         setQuestions(data.questions)
-      } catch (e) {
+      } catch {
         setQuestions([])
       } finally {
         setLoading(false)
