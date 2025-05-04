@@ -1,7 +1,7 @@
 "use client";
 
 import { useClerk, useUser } from "@clerk/nextjs";
-import { Gift, LogOut, Zap, Star, Crown, Mail } from "lucide-react";
+import { Gift, LogOut, Zap, Star, Crown } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useState, useEffect } from "react";
 import { PricingDialog } from "@/components/PricingDialog";
@@ -67,30 +67,6 @@ export function UserHeader() {
 		}
 	};
 
-	const handleSendWelcomeEmail = async () => {
-		try {
-			const response = await fetch("/api/email/welcome", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					email: dbUser?.email,
-					firstName: dbUser?.firstName,
-				}),
-			});
-
-			if (!response.ok) {
-				throw new Error("Failed to send welcome email");
-			}
-
-			// You might want to add a toast notification here
-			console.log("Welcome email sent successfully");
-		} catch (error) {
-			console.error("Error sending welcome email:", error);
-		}
-	};
-
 	return (
 		<>
 			<header className="w-full z-50 pt-6 md:pt-12 px-2">
@@ -143,15 +119,6 @@ export function UserHeader() {
 								>
 									<Zap className="h-4 w-4" />
 									Upgrade
-								</Button>
-							)}
-							{dbUser?.role === "ADMIN" && (
-								<Button
-									onClick={handleSendWelcomeEmail}
-									className="flex items-center justify-center gap-2 w-[100px] sm:w-auto bg-blue-500 hover:bg-blue-600 text-white h-9"
-								>
-									<Mail className="h-4 w-4" />
-									<span className="inline-flex items-center">Send Welcome</span>
 								</Button>
 							)}
 							<Button
