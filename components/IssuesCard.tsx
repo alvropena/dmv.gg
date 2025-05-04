@@ -3,24 +3,25 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useEffect, useState } from "react"
 
-type Question = {
+type QuestionStats = {
   id: string
   title: string
-  answers: { isCorrect: boolean | null }[]
-  flags: { status: string }[]
+  totalAnswers: number
+  incorrectAnswers: number
+  unresolvedFlags: number
 }
 
 export function IssuesCard() {
-  const [questions, setQuestions] = useState<Question[]>([])
+  const [questions, setQuestions] = useState<QuestionStats[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchQuestions = async () => {
       setLoading(true)
       try {
-        const res = await fetch("/api/questions")
+        const res = await fetch("/api/questions/admin")
         const data = await res.json()
-        setQuestions(data)
+        setQuestions(data.questions)
       } catch (e) {
         setQuestions([])
       } finally {
@@ -32,19 +33,12 @@ export function IssuesCard() {
 
   // Calculate high failure rate questions
   const highFailureQuestions = questions.filter(q => {
-    const total = q.answers.length
-    if (total === 0) return false
-    const incorrect = q.answers.filter(a => a.isCorrect === false).length
-    return (incorrect / total) > 0.8
+    if (q.totalAnswers === 0) return false
+    return (q.incorrectAnswers / q.totalAnswers) > 0.8
   })
 
   // Calculate flagged questions (pending or reviewed)
-  const flaggedQuestions = questions.filter(q =>
-    q.flags.some(f => f.status !== "resolved" && f.status !== "dismissed")
-  )
-
-  // Optionally, you could have a content update section if you want:
-  // const contentUpdateRequired = false // or some logic
+  const flaggedQuestions = questions.filter(q => q.unresolvedFlags > 0)
 
   return (
     <Card>
@@ -84,25 +78,8 @@ export function IssuesCard() {
               </Button>
             </div>
           </div>
-          {/* 
-          // Uncomment and implement logic if you want to show content update required
-          {contentUpdateRequired && (
-            <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-blue-500 mt-0.5" />
-              <div>
-                <p className="font-medium">Content Update Required</p>
-                <p className="text-sm text-muted-foreground">
-                  California DMV regulations updated on 4/1/2025
-                </p>
-                <Button variant="link" size="sm" className="px-0 h-auto">
-                  Update Content
-                </Button>
-              </div>
-            </div>
-          )}
-          */}
         </div>
       </CardContent>
     </Card>
   )
-} 
+}

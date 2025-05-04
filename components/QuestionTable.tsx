@@ -10,7 +10,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { useState, useEffect } from "react";
-import type { Question } from "@prisma/client";
+import type { Question as PrismaQuestion } from "@prisma/client";
 import { getQuestions } from "@/app/actions/questions";
 import { useToast } from "@/hooks/use-toast";
 import { MoreHorizontal, Loader2 } from "lucide-react";
@@ -47,6 +47,8 @@ const shortenId = (id: string, length = 6) => {
 
 export type SortDirection = "asc" | "desc";
 export type SortField = "title" | "correctAnswer" | "createdAt" | null;
+
+type Question = PrismaQuestion & { totalAnswers: number; incorrectAnswers: number; successRate: number; unresolvedFlags: number };
 
 export function QuestionTable({
 	searchQuery,
@@ -227,8 +229,12 @@ export function QuestionTable({
 										Active
 									</Badge>
 								</TableCell>
-								<TableCell className="text-center">78%</TableCell>
-								<TableCell className="text-center">0</TableCell>
+								<TableCell className="text-center">
+									{Number.isFinite(question.successRate) && question.totalAnswers > 0
+										? (question.successRate * 100).toFixed(0) + "%"
+										: "0%"}
+								</TableCell>
+								<TableCell className="text-center">{question.unresolvedFlags || 0}</TableCell>
 								<TableCell className="text-center">
 									<div className="flex justify-center">
 										<DropdownMenu>
