@@ -268,7 +268,7 @@ export function QuestionTable({
 
 			{/* Pagination */}
 			{!loading && questions.length > 0 && (
-				<div className="mt-4">
+				<div className="my-4">
 					<Pagination>
 						<PaginationContent>
 							<PaginationItem>

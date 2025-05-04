@@ -29,7 +29,7 @@ export function UsersTab() {
 	return (
 		<TabsContent value="users" className="space-y-4 mt-4">
 			<div className="flex items-center justify-between">
-				<div className="flex items-center gap-2">
+				<div className="flex items-center gap-4">
 					<div className="relative w-[300px]">
 						<Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 						<Input
@@ -40,12 +40,12 @@ export function UsersTab() {
 							onChange={handleSearch}
 						/>
 					</div>
+					<UserSortFilter
+						sortField={sortField}
+						sortDirection={sortDirection}
+						onSortChange={handleSort}
+					/>
 				</div>
-				<UserSortFilter
-					sortField={sortField}
-					sortDirection={sortDirection}
-					onSortChange={handleSort}
-				/>
 			</div>
 			<Card>
 				<CardContent className="p-0">

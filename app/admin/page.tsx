@@ -3,27 +3,16 @@ export const dynamic = "force-dynamic";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlertCircle, ClipboardList, MessageSquare, Users } from "lucide-react";
 import { AdminHeader } from "@/components/AdminHeader";
 import { StatCard } from "@/components/StatCard";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { RecentActivityList } from "@/components/RecentActivityList";
-import { IssuesCard } from "@/components/IssuesCard";
-import { PerformanceMetrics } from "@/components/PerformanceMetrics";
-import { QuickActions } from "@/components/QuickActions";
-import { UsersTab } from "@/components/UsersTab";
-import { ReportsTab } from "@/components/ReportsTab";
-import { TestsTab } from "@/components/TestsTab";
-import { QuestionsTab } from "@/components/QuestionsTab";
-import { SupportTab } from "@/components/SupportTab";
+import { AdminTabs } from "@/components/AdminTabs";
 import { getDashboardStats } from "@/app/actions/stats";
 
 export default async function AdminPage({
 	searchParams,
 }: {
-	searchParams: { timeHorizon?: string };
+	searchParams: { timeHorizon?: string; tab?: string };
 }) {
 	const { userId } = await auth();
 
@@ -47,6 +36,7 @@ export default async function AdminPage({
 	}
 
 	const timeHorizon = searchParams.timeHorizon || "1d";
+	const defaultTab = searchParams.tab || "overview";
 	const stats = await getDashboardStats(timeHorizon);
 
 	return (
@@ -97,62 +87,7 @@ export default async function AdminPage({
 						</div>
 
 						{/* Main Content Tabs */}
-						<Tabs defaultValue="overview">
-							<TabsList className="grid w-full grid-cols-6 lg:w-auto">
-								<TabsTrigger value="overview">Overview</TabsTrigger>
-								<TabsTrigger value="users">Users</TabsTrigger>
-								<TabsTrigger value="tests">Tests</TabsTrigger>
-								<TabsTrigger value="questions">Questions</TabsTrigger>
-								<TabsTrigger value="support">Support</TabsTrigger>
-								<TabsTrigger value="reports">Reports</TabsTrigger>
-							</TabsList>
-
-							{/* Overview Tab */}
-							<TabsContent value="overview" className="space-y-4 mt-4">
-								<div className="grid gap-4 md:grid-cols-2">
-									{/* Recent Activity */}
-									<Card>
-										<CardHeader>
-											<CardTitle className="flex items-center justify-between">
-												<span>Recent Activity</span>
-												<Button variant="outline" size="sm">
-													View All
-												</Button>
-											</CardTitle>
-										</CardHeader>
-										<CardContent>
-											<RecentActivityList />
-										</CardContent>
-									</Card>
-
-									{/* Issues Requiring Attention */}
-									<IssuesCard />
-								</div>
-
-								{/* Performance Metrics */}
-								<PerformanceMetrics timeHorizon={timeHorizon} />
-
-								{/* Quick Actions */}
-								<QuickActions />
-							</TabsContent>
-
-							{/* Users Tab */}
-							<UsersTab />
-
-							{/* Tests Tab */}
-							<TabsContent value="tests" className="space-y-4 mt-4">
-								<TestsTab />
-							</TabsContent>
-
-							{/* Questions Tab */}
-							<QuestionsTab />
-
-							{/* Support Tab */}
-							<SupportTab />
-
-							{/* Reports Tab */}
-							<ReportsTab />
-						</Tabs>
+						<AdminTabs defaultTab={defaultTab} timeHorizon={timeHorizon} />
 					</div>
 				</main>
 			</div>
