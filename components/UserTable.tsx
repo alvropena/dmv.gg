@@ -1,5 +1,5 @@
 "use client";
-import { MoreHorizontal, Star, User as UserIcon } from "lucide-react";
+import { MoreHorizontal, Star, User as UserIcon, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RoleBadge } from "@/components/RoleBadge";
 import { useEffect, useState } from "react";
@@ -271,6 +271,7 @@ export function UserTable({
 														setEditDialogOpen(true);
 													}}
 												>
+													<Pencil className="mr-2 h-4 w-4" />
 													Edit User
 												</DropdownMenuItem>
 											</DropdownMenuContent>

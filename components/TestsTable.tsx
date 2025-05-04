@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -287,7 +287,11 @@ export function TestsTable({
 												</Button>
 											</DropdownMenuTrigger>
 											<DropdownMenuContent align="end">
-												<DropdownMenuItem onClick={() => setSelectedTest(test)}>
+												<DropdownMenuItem
+													className="cursor-pointer"
+													onClick={() => setSelectedTest(test)}
+												>
+													<Pencil className="mr-4 h-4 w-4" />
 													Edit Test
 												</DropdownMenuItem>
 											</DropdownMenuContent>
