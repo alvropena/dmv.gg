@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
@@ -27,7 +28,7 @@ export async function GET() {
 
     // Get all completed tests for the user
     const completedTests = await db.test.findMany({
-      where: { 
+      where: {
         userId: dbUser.id,
         status: 'completed'
       },
@@ -38,7 +39,7 @@ export async function GET() {
 
     // Get completed tests from the last week
     const lastWeekCompletedTests = await db.test.findMany({
-      where: { 
+      where: {
         userId: dbUser.id,
         status: 'completed',
         completedAt: {
@@ -51,9 +52,9 @@ export async function GET() {
     // Get tests from the week before that for comparison
     const twoWeeksAgo = new Date(oneWeekAgo);
     twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 7);
-    
+
     const previousWeekCompletedTests = await db.test.findMany({
-      where: { 
+      where: {
         userId: dbUser.id,
         status: 'completed',
         completedAt: {
@@ -76,14 +77,14 @@ export async function GET() {
     // Get the last test score if available
     const lastTest = completedTests[0]; // They are ordered by completedAt desc
     const lastScore = lastTest ? lastTest.score : 0;
-    
+
     // Calculate score difference between last two tests
     let scoreDifference = 0;
     if (completedTests.length >= 2) {
       scoreDifference = lastTest.score - completedTests[1].score;
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       stats: {
         totalCompleted: completedTests.length,
         weeklyDifference: weeklyDifference,

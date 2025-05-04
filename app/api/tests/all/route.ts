@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { db } from "@/lib/db"
@@ -6,7 +8,7 @@ export async function GET(request: Request) {
   try {
     const { userId } = await auth()
     const { searchParams } = new URL(request.url)
-    const page = parseInt(searchParams.get('page') || '1')
+    const page = Number.parseInt(searchParams.get('page') || '1')
     const sortField = searchParams.get('sortField') || 'startedAt'
     const sortDirection = searchParams.get('sortDirection') || 'desc'
     const perPage = 21
@@ -47,7 +49,7 @@ export async function GET(request: Request) {
       case 'type':
         orderBy.type = sortDirection as 'asc' | 'desc'
         break
-      case 'startedAt':
+
       default:
         orderBy.startedAt = sortDirection as 'asc' | 'desc'
         break
