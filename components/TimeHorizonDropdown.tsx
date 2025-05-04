@@ -11,20 +11,20 @@ import { useSearchParams } from "next/navigation";
 const TIME_HORIZONS = [
 	{ label: "Today", value: "1d" },
 	{ label: "Yesterday", value: "yesterday" },
-	{ label: "Last 7 days", value: "7d" },
-	{ label: "Last 30 days", value: "30d" },
+	{ label: "Last week", value: "7d" },
+	{ label: "Last month", value: "30d" },
 	{ label: "Last 90 days", value: "90d" },
 	{ label: "All time", value: "all" },
 ];
 
 export function TimeHorizonDropdown() {
 	const searchParams = useSearchParams();
-	const timeHorizon = searchParams.get("timeHorizon") || "30d";
+	const timeHorizon = searchParams.get("timeHorizon") || "7d";
 
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant="outline" size="sm">
+				<Button variant="outline">
 					{TIME_HORIZONS.find((t) => t.value === timeHorizon)?.label ||
 						"Last 30 days"}
 				</Button>
