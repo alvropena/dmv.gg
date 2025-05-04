@@ -155,11 +155,31 @@ export function SupportTable({
 				</thead>
 				<tbody>
 					{loading ? (
-						<tr>
-							<td colSpan={7} className="px-4 py-3 text-center">
-								Loading support tickets...
-							</td>
-						</tr>
+						Array.from({ length: 21 }).map((_, idx) => (
+							<tr key={`loading-skel-${idx}`}> 
+								<td className="px-4 py-3 w-[180px]">
+									<div className="h-8 w-full bg-muted animate-pulse rounded" />
+								</td>
+								<td className="px-4 py-3 w-[300px]">
+									<div className="h-8 w-full bg-muted animate-pulse rounded" />
+								</td>
+								<td className="px-4 py-3 text-center w-[120px]">
+									<div className="h-8 w-full bg-muted animate-pulse rounded mx-auto" />
+								</td>
+								<td className="px-4 py-3 text-center w-[160px]">
+									<div className="h-8 w-full bg-muted animate-pulse rounded mx-auto" />
+								</td>
+								<td className="px-4 py-3 text-center w-[160px]">
+									<div className="h-8 w-full bg-muted animate-pulse rounded mx-auto" />
+								</td>
+								<td className="px-4 py-3 text-center w-[160px]">
+									<div className="h-8 w-full bg-muted animate-pulse rounded mx-auto" />
+								</td>
+								<td className="px-4 py-3 text-center w-[80px]">
+									<div className="h-8 w-full bg-muted animate-pulse rounded mx-auto" />
+								</td>
+							</tr>
+						))
 					) : tickets.length === 0 ? (
 						<tr>
 							<td colSpan={7} className="px-4 py-3 text-center">

@@ -179,14 +179,37 @@ export function QuestionTable({
 				</TableHeader>
 				<TableBody>
 					{loading ? (
-						<TableRow>
-							<TableCell colSpan={9} className="h-24 text-center">
-								<div className="flex items-center justify-center gap-2">
-									<Loader2 className="h-4 w-4 animate-spin" />
-									<span>Loading questions...</span>
-								</div>
-							</TableCell>
-						</TableRow>
+						Array.from({ length: 21 }).map((_, idx) => (
+							<TableRow key={`loading-skel-${idx}`}> 
+								<TableCell className="font-mono text-xs w-[60px]">
+									<div className="h-8 w-full bg-muted animate-pulse rounded" />
+								</TableCell>
+								<TableCell className="font-medium w-[350px]">
+									<div className="h-8 w-full bg-muted animate-pulse rounded" />
+								</TableCell>
+								<TableCell className="text-center w-[60px]">
+									<div className="h-8 w-full bg-muted animate-pulse rounded mx-auto" />
+								</TableCell>
+								<TableCell className="text-center w-[100px]">
+									<div className="h-8 w-full bg-muted animate-pulse rounded mx-auto" />
+								</TableCell>
+								<TableCell className="text-center w-[100px]">
+									<div className="h-8 w-full bg-muted animate-pulse rounded mx-auto" />
+								</TableCell>
+								<TableCell className="text-center w-[80px]">
+									<div className="h-8 w-full bg-muted animate-pulse rounded mx-auto" />
+								</TableCell>
+								<TableCell className="text-center w-[100px]">
+									<div className="h-8 w-full bg-muted animate-pulse rounded mx-auto" />
+								</TableCell>
+								<TableCell className="text-center w-[60px]">
+									<div className="h-8 w-full bg-muted animate-pulse rounded mx-auto" />
+								</TableCell>
+								<TableCell className="text-center w-[60px]">
+									<div className="h-8 w-full bg-muted animate-pulse rounded mx-auto" />
+								</TableCell>
+							</TableRow>
+						))
 					) : questions.length === 0 ? (
 						<TableRow>
 							<TableCell colSpan={9} className="h-24 text-center">

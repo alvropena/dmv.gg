@@ -111,11 +111,43 @@ export function UserTable({
         </thead>
         <tbody>
           {loading ? (
-            <tr>
-              <td colSpan={7} className="px-4 py-3 text-center">
-                Loading users...
-              </td>
-            </tr>
+            Array.from({ length: 21 }).map((_, idx) => (
+              <tr key={`loading-skel-${idx}`}> 
+                <td className="px-4 py-3">
+                  <div className="h-4 w-full bg-muted animate-pulse rounded" />
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <div className="h-4 w-16 bg-muted animate-pulse rounded mx-auto" />
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <div className="h-4 w-8 bg-muted animate-pulse rounded mx-auto" />
+                </td>
+              </tr>
+            ))
           ) : users.length === 0 ? (
             <tr>
               <td colSpan={7} className="px-4 py-3 text-center">

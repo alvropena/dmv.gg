@@ -198,4 +198,14 @@ export async function getDashboardStats(timeHorizon = "1d") {
     console.error('Error fetching dashboard stats:', error);
     throw new Error('Failed to fetch dashboard statistics');
   }
+}
+
+export async function getSubscriptionsCount() {
+  try {
+    const count = await db.subscription.count();
+    return count;
+  } catch (error) {
+    console.error('Error fetching subscriptions count:', error);
+    throw error;
+  }
 } 

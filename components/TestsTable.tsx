@@ -186,11 +186,41 @@ export function TestsTable({
 				</thead>
 				<tbody>
 					{loading ? (
-						<tr>
-							<td colSpan={10} className="p-4 text-center">
-								Loading tests...
-							</td>
-						</tr>
+						Array.from({ length: 21 }).map((_, idx) => (
+							<tr key={`loading-skel-${idx}`}> 
+								<td className="p-4 align-middle text-muted-foreground">
+									<div className="h-4 w-full bg-muted animate-pulse rounded" />
+								</td>
+								<td className="p-4 align-middle">
+									<div className="h-4 w-full bg-muted animate-pulse rounded" />
+									<div className="h-3 w-3/4 bg-muted animate-pulse rounded mt-1" />
+								</td>
+								<td className="p-4 align-middle">
+									<div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
+								</td>
+								<td className="p-4 align-middle">
+									<div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
+								</td>
+								<td className="p-4 align-middle">
+									<div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
+								</td>
+								<td className="p-4 align-middle">
+									<div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
+								</td>
+								<td className="p-4 align-middle">
+									<div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
+								</td>
+								<td className="p-4 align-middle">
+									<div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
+								</td>
+								<td className="p-4 align-middle">
+									<div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
+								</td>
+								<td className="p-4 align-middle">
+									<div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
+								</td>
+							</tr>
+						))
 					) : tests.length === 0 ? (
 						<tr>
 							<td colSpan={10} className="p-4 text-center">
