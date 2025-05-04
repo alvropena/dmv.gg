@@ -70,15 +70,12 @@ export function PerformanceMetrics({
 								{metrics.userEngagement.change}%
 							</span>
 						</div>
-						<Progress
-							value={metrics.userEngagement.value}
-							className="h-2 bg-slate-100 rounded-full overflow-hidden"
-						>
+						<div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
 							<div
 								className="h-full bg-blue-600 transition-all duration-500 rounded-full"
 								style={{ width: `${metrics.userEngagement.value}%` }}
 							/>
-						</Progress>
+						</div>
 						<p className="text-xs text-muted-foreground">
 							{metrics.userEngagement.value}% of users complete at least one
 							test per week
@@ -94,15 +91,12 @@ export function PerformanceMetrics({
 								{metrics.contentCompletion.change}%
 							</span>
 						</div>
-						<Progress
-							value={metrics.contentCompletion.value}
-							className="h-2 bg-slate-100 rounded-full overflow-hidden"
-						>
+						<div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
 							<div
 								className="h-full bg-blue-600 transition-all duration-500 rounded-full"
 								style={{ width: `${metrics.contentCompletion.value}%` }}
 							/>
-						</Progress>
+						</div>
 						<p className="text-xs text-muted-foreground">
 							{metrics.contentCompletion.value}% of users complete all study
 							materials
@@ -118,15 +112,12 @@ export function PerformanceMetrics({
 								{metrics.firstTimePassRate.change}%
 							</span>
 						</div>
-						<Progress
-							value={metrics.firstTimePassRate.value}
-							className="h-2 bg-slate-100 rounded-full overflow-hidden"
-						>
+						<div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
 							<div
 								className="h-full bg-blue-600 transition-all duration-500 rounded-full"
 								style={{ width: `${metrics.firstTimePassRate.value}%` }}
 							/>
-						</Progress>
+						</div>
 						<p className="text-xs text-muted-foreground">
 							{metrics.firstTimePassRate.value}% of users pass their DMV test on
 							first attempt

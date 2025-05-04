@@ -52,7 +52,7 @@ export function RecentActivityList() {
 
 	return (
 		<div className="space-y-4">
-			{activities.map((activity) => (
+			{activities.slice(0, 5).map((activity) => (
 				<div
 					key={activity.id}
 					className="flex items-start gap-3 pb-4 border-b last:border-0 last:pb-0"
