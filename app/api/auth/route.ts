@@ -75,50 +75,50 @@ export async function GET() {
             });
         } else {
             // Create new user only if no existing user found by email or clerkId
-        try {
-            dbUser = await db.user.create({
-                data: {
-                    clerkId: userId,
+            try {
+                dbUser = await db.user.create({
+                    data: {
+                        clerkId: userId,
                         email: userEmail,
-                    firstName: user.firstName || null,
-                    lastName: user.lastName || null,
-                    role: "STUDENT", // Set default role
-                },
-                select: {
-                    id: true,
-                    clerkId: true,
-                    email: true,
-                    firstName: true,
-                    lastName: true,
-                    birthday: true,
-                    role: true,
-                    createdAt: true,
-                    updatedAt: true,
-                    subscriptions: true
-                }
-            });
+                        firstName: user.firstName || null,
+                        lastName: user.lastName || null,
+                        role: "STUDENT", // Set default role
+                    },
+                    select: {
+                        id: true,
+                        clerkId: true,
+                        email: true,
+                        firstName: true,
+                        lastName: true,
+                        birthday: true,
+                        role: true,
+                        createdAt: true,
+                        updatedAt: true,
+                        subscriptions: true
+                    }
+                });
 
-            // Send welcome email ONLY if user creation succeeded
-            if (dbUser.email) {
-                try {
-                    await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/email/welcome`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            email: dbUser.email,
-                            firstName: dbUser.firstName
-                        })
-                    });
-                } catch (error) {
-                    console.error('Error sending welcome email:', error);
-                    // Continue without failing the request
+                // Send welcome email ONLY if user creation succeeded
+                if (dbUser.email) {
+                    try {
+                        await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/email/welcome`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                email: dbUser.email,
+                                firstName: dbUser.firstName
+                            })
+                        });
+                    } catch (error) {
+                        console.error('Error sending welcome email:', error);
+                        // Continue without failing the request
+                    }
                 }
-            }
-        } catch (error) {
-            console.error('Error creating user:', error);
-            return NextResponse.json({ error: "Failed to process sign up" }, { status: 500 });
+            } catch (error) {
+                console.error('Error creating user:', error);
+                return NextResponse.json({ error: "Failed to process sign up" }, { status: 500 });
             }
         }
     }
