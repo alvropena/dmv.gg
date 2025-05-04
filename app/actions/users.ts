@@ -2,7 +2,13 @@
 
 import { db } from '@/lib/db'
 
-export async function getUsers(searchQuery?: string, page: number = 1, perPage: number = 21) {
+export async function getUsers(
+  searchQuery?: string,
+  page = 1,
+  perPage = 21,
+  sortField = 'createdAt',
+  sortOrder: 'asc' | 'desc' = 'desc'
+) {
   try {
     const skip = (page - 1) * perPage;
     const [users, total] = await Promise.all([
@@ -38,7 +44,7 @@ export async function getUsers(searchQuery?: string, page: number = 1, perPage: 
           }
         },
         orderBy: {
-          createdAt: 'desc'
+          [sortField]: sortOrder
         },
         skip,
         take: perPage

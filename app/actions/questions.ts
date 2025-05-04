@@ -1,18 +1,18 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { Question } from '@prisma/client'
+import type { Question } from '@prisma/client'
 
 export async function getQuestions(
-  search?: string, 
-  page: number = 1, 
-  pageSize: number = 20,
-  sortField: string = 'createdAt',
+  search?: string,
+  page = 1,
+  pageSize = 20,
+  sortField = 'createdAt',
   sortOrder: 'asc' | 'desc' = 'desc'
 ): Promise<{ questions: Question[], total: number }> {
   try {
     let whereClause = {}
-    
+
     if (search) {
       whereClause = {
         OR: [
@@ -52,17 +52,17 @@ export async function getQuestions(
 
     // Calculate skip value based on page and pageSize
     const skip = (page - 1) * pageSize;
-    
+
     // Create dynamic orderBy object
     const orderBy = {
       [sortField]: sortOrder
     };
-    
+
     // Get total count
     const total = await db.question.count({
       where: whereClause
     });
-    
+
     // Fetch questions with pagination
     const questions = await db.question.findMany({
       where: whereClause,
@@ -70,7 +70,7 @@ export async function getQuestions(
       skip,
       take: pageSize
     });
-    
+
     return { questions, total };
   } catch (error) {
     console.error('Error fetching questions:', error)
@@ -91,7 +91,7 @@ export async function addQuestion(data: {
     const question = await db.question.create({
       data
     })
-    
+
     return question
   } catch (error) {
     console.error('Error adding question:', error)
@@ -111,12 +111,12 @@ export async function updateQuestion(data: {
 }): Promise<Question> {
   try {
     const { id, ...updateData } = data
-    
+
     const question = await db.question.update({
       where: { id },
       data: updateData
     })
-    
+
     return question
   } catch (error) {
     console.error('Error updating question:', error)
