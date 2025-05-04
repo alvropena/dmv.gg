@@ -19,7 +19,11 @@ import { TestsTab } from "@/components/TestsTab";
 import { QuestionsTab } from "@/components/QuestionsTab";
 import { getDashboardStats } from "@/app/actions/stats";
 
-export default async function AdminPage() {
+export default async function AdminPage({
+	searchParams,
+}: {
+	searchParams: { timeHorizon?: string };
+}) {
 	const { userId } = await auth();
 
 	if (!userId) {
@@ -41,7 +45,8 @@ export default async function AdminPage() {
 		redirect("/");
 	}
 
-	const stats = await getDashboardStats();
+	const timeHorizon = searchParams.timeHorizon || "1d";
+	const stats = await getDashboardStats(timeHorizon);
 
 	return (
 		<div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -63,29 +68,29 @@ export default async function AdminPage() {
 							<StatCard
 								title="Total Users"
 								value={stats.totalUsers.toLocaleString()}
-								change="+12%"
-								trend="up"
+								change={stats.changes.users.change}
+								trend={stats.changes.users.trend}
 								icon={<Users className="h-5 w-5" />}
 							/>
 							<StatCard
 								title="Active Tests"
 								value={stats.activeTests.toLocaleString()}
-								change="+5%"
-								trend="up"
+								change={stats.changes.activeTests.change}
+								trend={stats.changes.activeTests.trend}
 								icon={<ClipboardList className="h-5 w-5" />}
 							/>
 							<StatCard
 								title="Pass Rate"
 								value={`${stats.passRate}%`}
-								change="-2%"
-								trend="down"
+								change={stats.changes.passRate.change}
+								trend={stats.changes.passRate.trend}
 								icon={<AlertCircle className="h-5 w-5" />}
 							/>
 							<StatCard
 								title="Support Tickets"
 								value={stats.supportTickets.toLocaleString()}
-								change="+3"
-								trend="up"
+								change={stats.changes.supportTickets.change}
+								trend={stats.changes.supportTickets.trend}
 								icon={<MessageSquare className="h-5 w-5" />}
 							/>
 						</div>
@@ -123,7 +128,7 @@ export default async function AdminPage() {
 								</div>
 
 								{/* Performance Metrics */}
-								<PerformanceMetrics />
+								<PerformanceMetrics timeHorizon={timeHorizon} />
 
 								{/* Quick Actions */}
 								<QuickActions />

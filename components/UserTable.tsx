@@ -1,5 +1,5 @@
 "use client";
-import { MoreHorizontal, ArrowUpDown } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RoleBadge } from "@/components/RoleBadge";
 import { useEffect, useState } from "react";
@@ -26,14 +26,17 @@ type User = {
 	birthday?: Date | null;
 };
 
-type SortField = "status" | "role" | "joined" | "tests" | "avgScore" | "age";
-type SortDirection = "asc" | "desc";
-
-export function UserTable({ searchQuery }: { searchQuery?: string }) {
+export function UserTable({
+	searchQuery,
+	sortField,
+	sortDirection,
+}: {
+	searchQuery?: string;
+	sortField: string;
+	sortDirection: "asc" | "desc";
+}) {
 	const [users, setUsers] = useState<User[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [sortField, setSortField] = useState<SortField>("joined");
-	const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 	const [page, setPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
 	const { toast } = useToast();
@@ -66,15 +69,6 @@ export function UserTable({ searchQuery }: { searchQuery?: string }) {
 		fetchUsers();
 	}, [searchQuery, page, sortField, sortDirection, toast]);
 
-	const handleSort = (field: SortField) => {
-		if (sortField === field) {
-			setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-		} else {
-			setSortField(field);
-			setSortDirection("asc");
-		}
-	};
-
 	const handlePageChange = (newPage: number) => {
 		setPage(newPage);
 	};
@@ -85,56 +79,11 @@ export function UserTable({ searchQuery }: { searchQuery?: string }) {
 				<thead className="border-b">
 					<tr className="text-left">
 						<th className="px-4 py-3 font-medium">Name</th>
-						<th className="px-4 py-3 font-medium">
-							<Button
-								variant="ghost"
-								onClick={() => handleSort("age")}
-								className="flex items-center gap-1 mx-auto"
-							>
-								Age
-								<ArrowUpDown className="h-4 w-4" />
-							</Button>
-						</th>
-						<th className="px-4 py-3 font-medium">
-							<Button
-								variant="ghost"
-								onClick={() => handleSort("role")}
-								className="flex items-center gap-1 mx-auto"
-							>
-								Role
-								<ArrowUpDown className="h-4 w-4" />
-							</Button>
-						</th>
-						<th className="px-4 py-3 font-medium">
-							<Button
-								variant="ghost"
-								onClick={() => handleSort("joined")}
-								className="flex items-center gap-1 mx-auto"
-							>
-								Joined
-								<ArrowUpDown className="h-4 w-4" />
-							</Button>
-						</th>
-						<th className="px-4 py-3 font-medium">
-							<Button
-								variant="ghost"
-								onClick={() => handleSort("tests")}
-								className="flex items-center gap-1 mx-auto"
-							>
-								Tests
-								<ArrowUpDown className="h-4 w-4" />
-							</Button>
-						</th>
-						<th className="px-4 py-3 font-medium">
-							<Button
-								variant="ghost"
-								onClick={() => handleSort("avgScore")}
-								className="flex items-center gap-1 mx-auto"
-							>
-								Avg. Score
-								<ArrowUpDown className="h-4 w-4" />
-							</Button>
-						</th>
+						<th className="px-4 py-3 font-medium text-center">Age</th>
+						<th className="px-4 py-3 font-medium text-center">Role</th>
+						<th className="px-4 py-3 font-medium text-center">Joined</th>
+						<th className="px-4 py-3 font-medium text-center">Tests</th>
+						<th className="px-4 py-3 font-medium text-center">Avg. Score</th>
 						<th className="px-4 py-3 font-medium sr-only">Actions</th>
 					</tr>
 				</thead>
@@ -202,7 +151,7 @@ export function UserTable({ searchQuery }: { searchQuery?: string }) {
 
 			{/* Pagination */}
 			{!loading && users.length > 0 && (
-				<div className="mt-4">
+				<div className="mt-4 pb-4">
 					<Pagination>
 						<PaginationContent>
 							<PaginationItem>
@@ -219,21 +168,16 @@ export function UserTable({ searchQuery }: { searchQuery?: string }) {
 								let endPage: number;
 
 								if (totalPages <= totalPagesToShow) {
-									// If total pages is less than 7, show all pages
 									startPage = 1;
 									endPage = totalPages;
 								} else {
-									// Calculate start and end pages
 									if (page <= 4) {
-										// First 7 pages
 										startPage = 1;
 										endPage = 7;
 									} else if (page >= totalPages - 3) {
-										// Last 7 pages
 										startPage = totalPages - 6;
 										endPage = totalPages;
 									} else {
-										// Middle pages - center current page
 										startPage = page - 3;
 										endPage = page + 3;
 									}
