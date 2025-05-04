@@ -12,6 +12,7 @@ export async function GET(request: Request) {
     const sortField = searchParams.get('sortField') || 'startedAt'
     const sortDirection = searchParams.get('sortDirection') || 'desc'
     const perPage = 21
+    const search = searchParams.get('search') || ''
 
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -69,12 +70,41 @@ export async function GET(request: Request) {
           status: true,
           createdAt: true,
           updatedAt: true,
+          answers: {
+            select: {
+              answeredAt: true,
+              updatedAt: true,
+              selectedAnswer: true,
+            },
+          },
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
         },
+        where: search ? {
+          OR: [
+            { user: { firstName: { contains: search, mode: 'insensitive' } } },
+            { user: { lastName: { contains: search, mode: 'insensitive' } } },
+            { user: { email: { contains: search, mode: 'insensitive' } } },
+          ],
+        } : undefined,
         orderBy,
         skip,
         take: perPage
       }),
-      db.test.count()
+      db.test.count({
+        where: search ? {
+          OR: [
+            { user: { firstName: { contains: search, mode: 'insensitive' } } },
+            { user: { lastName: { contains: search, mode: 'insensitive' } } },
+            { user: { email: { contains: search, mode: 'insensitive' } } },
+          ],
+        } : undefined,
+      })
     ])
 
     return NextResponse.json({

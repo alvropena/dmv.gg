@@ -2,6 +2,7 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
+import { Prisma } from '@prisma/client';
 
 export async function POST(request: NextRequest) {
   try {
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Get all support requests (admin only)
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth();
 
@@ -62,9 +63,8 @@ export async function GET() {
     // Get the user from the database
     const dbUser = await db.user.findUnique({
       where: { clerkId: userId },
-      include: {
-        // You would need to add an isAdmin field to the User model
-        // or implement another way to check admin status
+      select: {
+        role: true
       }
     });
 
@@ -72,22 +72,51 @@ export async function GET() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Simple admin check - you should implement a proper role-based check
-    // For example, check if user.email matches admin email or user has admin role
-    const isAdmin = false; // Change this to actual admin check
-
-    if (!isAdmin) {
+    // Check if user is admin
+    if (dbUser.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Get support requests
+    // Get query parameters
+    const { searchParams } = new URL(request.url);
+    const page = Number.parseInt(searchParams.get('page') || '1', 10);
+    const limit = Number.parseInt(searchParams.get('limit') || '21', 10);
+    const sortField = searchParams.get('sortField') || 'createdAt';
+    const sortDirection = searchParams.get('sortDirection') || 'desc';
+    const search = searchParams.get('search');
+
+    // Build where clause for search
+    const where: Prisma.SupportRequestWhereInput = search ? {
+      OR: [
+        { message: { contains: search, mode: Prisma.QueryMode.insensitive } },
+        { email: { contains: search, mode: Prisma.QueryMode.insensitive } },
+        {
+          user: {
+            OR: [
+              { firstName: { contains: search, mode: Prisma.QueryMode.insensitive } },
+              { lastName: { contains: search, mode: Prisma.QueryMode.insensitive } },
+              { email: { contains: search, mode: Prisma.QueryMode.insensitive } }
+            ]
+          }
+        }
+      ]
+    } : {};
+
+    // Get total count for pagination
+    const totalCount = await db.supportRequest.count({ where });
+
+    // Get support requests with pagination and sorting
     const supportRequests = await db.supportRequest.findMany({
+      where,
       orderBy: {
-        createdAt: 'desc'
+        [sortField]: sortDirection as 'asc' | 'desc'
       },
+      skip: (page - 1) * limit,
+      take: limit,
       include: {
         user: {
           select: {
+            id: true,
             email: true,
             firstName: true,
             lastName: true
@@ -96,7 +125,10 @@ export async function GET() {
       }
     });
 
-    return NextResponse.json({ supportRequests });
+    return NextResponse.json({
+      supportRequests,
+      totalPages: Math.ceil(totalCount / limit)
+    });
   } catch (error) {
     console.error('Error fetching support requests:', error);
     return NextResponse.json(

@@ -285,7 +285,7 @@ export function UserTable({
 
 			{/* Pagination */}
 			{!loading && users.length > 0 && (
-				<div className="mt-4 pb-4">
+				<div className="my-4">
 					<Pagination>
 						<PaginationContent>
 							<PaginationItem>

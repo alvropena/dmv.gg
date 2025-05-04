@@ -17,6 +17,7 @@ import { UsersTab } from "@/components/UsersTab";
 import { ReportsTab } from "@/components/ReportsTab";
 import { TestsTab } from "@/components/TestsTab";
 import { QuestionsTab } from "@/components/QuestionsTab";
+import { SupportTab } from "@/components/SupportTab";
 import { getDashboardStats } from "@/app/actions/stats";
 
 export default async function AdminPage({
@@ -97,11 +98,12 @@ export default async function AdminPage({
 
 						{/* Main Content Tabs */}
 						<Tabs defaultValue="overview">
-							<TabsList className="grid w-full grid-cols-5 lg:w-auto">
+							<TabsList className="grid w-full grid-cols-6 lg:w-auto">
 								<TabsTrigger value="overview">Overview</TabsTrigger>
 								<TabsTrigger value="users">Users</TabsTrigger>
 								<TabsTrigger value="tests">Tests</TabsTrigger>
 								<TabsTrigger value="questions">Questions</TabsTrigger>
+								<TabsTrigger value="support">Support</TabsTrigger>
 								<TabsTrigger value="reports">Reports</TabsTrigger>
 							</TabsList>
 
@@ -144,6 +146,9 @@ export default async function AdminPage({
 
 							{/* Questions Tab */}
 							<QuestionsTab />
+
+							{/* Support Tab */}
+							<SupportTab />
 
 							{/* Reports Tab */}
 							<ReportsTab />
