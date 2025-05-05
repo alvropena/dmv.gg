@@ -6,9 +6,9 @@ import {
 	LayoutDashboard,
 	MessageSquare,
 	Bot,
-	Calendar,
 	Settings,
 	LogOut,
+	Megaphone,
 } from "lucide-react";
 import {
 	SidebarMenu,
@@ -50,12 +50,12 @@ export function AdminSidebarMenu() {
 				<SidebarMenuItem>
 					<SidebarMenuButton
 						asChild
-						isActive={pathname === "/admin/calendar"}
+						isActive={pathname === "/admin/marketing?tab=calendar"}
 						className="data-[active=true]:bg-gray-200 data-[active=true]:text-foreground"
 					>
-						<Link href="/admin/calendar">
-							<Calendar />
-							<span>Calendar</span>
+						<Link href="/admin/marketing?tab=calendar">
+							<Megaphone />
+							<span>Marketing</span>
 						</Link>
 					</SidebarMenuButton>
 				</SidebarMenuItem>

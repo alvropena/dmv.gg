@@ -35,7 +35,7 @@ export function AdminHeader() {
 					</Button>
 				</div>
 			</div>
-			<AdminChatSidebar open={chatOpen} onOpenChange={setChatOpen} />
+			{/* <AdminChatSidebar open={chatOpen} onOpenChange={setChatOpen} /> */}
 		</header>
 	);
 }

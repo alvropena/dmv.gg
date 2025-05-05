@@ -132,4 +132,17 @@ export type AuthContextType = {
   isLoading: boolean;
   hasActiveSubscription: boolean;
   refreshUser: () => Promise<void>;
+};
+
+export type Creator = {
+  id: string;
+  name: string;
+  handle: string;
+  category: string;
+  followers: number;
+  engagement: number;
+  status: string;
+  platforms: string[];
+  createdAt: Date;
+  updatedAt: Date;
 }; 
