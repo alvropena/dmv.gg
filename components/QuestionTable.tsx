@@ -13,7 +13,7 @@ import { useState, useEffect } from "react";
 import type { Question as PrismaQuestion } from "@prisma/client";
 import { getQuestions } from "@/app/actions/questions";
 import { useToast } from "@/hooks/use-toast";
-import { MoreHorizontal, Loader2 } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -48,7 +48,12 @@ const shortenId = (id: string, length = 6) => {
 export type SortDirection = "asc" | "desc";
 export type SortField = "title" | "correctAnswer" | "createdAt" | null;
 
-type Question = PrismaQuestion & { totalAnswers: number; incorrectAnswers: number; successRate: number; unresolvedFlags: number };
+type Question = PrismaQuestion & {
+	totalAnswers: number;
+	incorrectAnswers: number;
+	successRate: number;
+	unresolvedFlags: number;
+};
 
 export function QuestionTable({
 	searchQuery,
@@ -180,7 +185,7 @@ export function QuestionTable({
 				<TableBody>
 					{loading ? (
 						Array.from({ length: 21 }).map((_, idx) => (
-							<TableRow key={`loading-skel-${idx}`}> 
+							<TableRow key={`loading-skel-${idx}`}>
 								<TableCell className="font-mono text-xs w-[60px]">
 									<div className="h-8 w-full bg-muted animate-pulse rounded" />
 								</TableCell>
@@ -253,11 +258,14 @@ export function QuestionTable({
 									</Badge>
 								</TableCell>
 								<TableCell className="text-center">
-									{Number.isFinite(question.successRate) && question.totalAnswers > 0
+									{Number.isFinite(question.successRate) &&
+									question.totalAnswers > 0
 										? (question.successRate * 100).toFixed(0) + "%"
 										: "0%"}
 								</TableCell>
-								<TableCell className="text-center">{question.unresolvedFlags || 0}</TableCell>
+								<TableCell className="text-center">
+									{question.unresolvedFlags || 0}
+								</TableCell>
 								<TableCell className="text-center">
 									<div className="flex justify-center">
 										<DropdownMenu>
