@@ -47,22 +47,40 @@ export function UserProfileDialog({
 	initialData,
 	userId,
 }: UserProfileDialogProps) {
-	const birthdayDate = initialData?.birthday
-		? new Date(initialData.birthday)
-		: undefined;
+	const parseBirthday = (birthday: unknown) => {
+		if (!birthday) return { day: undefined, month: undefined, year: undefined };
+		if (typeof birthday === "string") {
+			const match = birthday.match(/^(\d{4})-(\d{2})-(\d{2})/);
+			if (match) {
+				return {
+					year: match[1],
+					month: String(Number(match[2])), // remove leading zero
+					day: String(Number(match[3])),
+				};
+			}
+		}
+		if (birthday instanceof Date && !Number.isNaN(birthday.getTime())) {
+			return {
+				day: birthday.getDate().toString(),
+				month: (birthday.getMonth() + 1).toString(),
+				year: birthday.getFullYear().toString(),
+			};
+		}
+		return { day: undefined, month: undefined, year: undefined };
+	};
+
+	const {
+		day: initialDay,
+		month: initialMonth,
+		year: initialYear,
+	} = parseBirthday(initialData?.birthday);
 
 	const [step, setStep] = useState<Step>(
 		initialData?.birthday ? "gender" : "birthday",
 	);
-	const [day, setDay] = useState<string | undefined>(
-		birthdayDate ? birthdayDate.getDate().toString() : undefined,
-	);
-	const [month, setMonth] = useState<string | undefined>(
-		birthdayDate ? (birthdayDate.getMonth() + 1).toString() : undefined,
-	);
-	const [year, setYear] = useState<string | undefined>(
-		birthdayDate ? birthdayDate.getFullYear().toString() : undefined,
-	);
+	const [day, setDay] = useState<string | undefined>(initialDay);
+	const [month, setMonth] = useState<string | undefined>(initialMonth);
+	const [year, setYear] = useState<string | undefined>(initialYear);
 	const [gender, setGender] = useState<string | undefined>(initialData?.gender);
 	const [ethnicity, setEthnicity] = useState<string | undefined>(
 		initialData?.ethnicity,

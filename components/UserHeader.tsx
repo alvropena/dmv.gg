@@ -2,7 +2,7 @@
 
 import { useClerk, useUser } from "@clerk/nextjs";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PricingDialog } from "@/components/PricingDialog";
 import { SubscriptionDetailsDialog } from "@/components/SubscriptionDetailsDialog";
 import { usePostHog } from "posthog-js/react";
@@ -50,6 +50,42 @@ export function UserHeader() {
 	const [gender, setGender] = useState<string | undefined>(undefined);
 	const [ethnicity, setEthnicity] = useState<string | undefined>(undefined);
 	const [language, setLanguage] = useState<string | undefined>(undefined);
+
+	// Prefill settings birthday fields from dbUser.birthday
+	useEffect(() => {
+		if (dbUser?.birthday) {
+			if (typeof dbUser.birthday === "string") {
+				const match = (dbUser.birthday as string).match(
+					/^([0-9]{4})-([0-9]{2})-([0-9]{2})/,
+				);
+				if (match) {
+					setSettingsYear(match[1]);
+					setSettingsMonth(String(Number(match[2])));
+					setSettingsDay(String(Number(match[3])));
+					return;
+				}
+			}
+			if (
+				dbUser.birthday instanceof Date &&
+				!Number.isNaN(dbUser.birthday.getTime())
+			) {
+				setSettingsDay(dbUser.birthday.getDate().toString());
+				setSettingsMonth((dbUser.birthday.getMonth() + 1).toString());
+				setSettingsYear(dbUser.birthday.getFullYear().toString());
+				return;
+			}
+			// fallback: try to parse as string if not string or Date
+			const str = String(dbUser.birthday);
+			const match = str.match(
+				/^([0-9]{4})-([0-9]{2})-([0-9]{2})/,
+			) as RegExpMatchArray | null;
+			if (match) {
+				setSettingsYear(match[1]);
+				setSettingsMonth(String(Number(match[2])));
+				setSettingsDay(String(Number(match[3])));
+			}
+		}
+	}, [dbUser]);
 
 	return (
 		<>

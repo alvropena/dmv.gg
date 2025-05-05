@@ -15,6 +15,8 @@ import {
 	DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { useEffect } from "react";
 
 interface SettingsDialogProps {
 	open: boolean;
@@ -53,7 +55,7 @@ const ethnicities = [
 ];
 const languages = [
 	{ value: "en", label: "English" },
-	{ value: "es", label: "Spanish" },
+	{ value: "es", label: "Español" },
 ];
 
 const SettingsDialog: React.FC<SettingsDialogProps> = ({
@@ -74,112 +76,164 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
 	setEthnicity,
 	language,
 	setLanguage,
-}) => (
-	<Dialog open={open} onOpenChange={onOpenChange}>
-		<DialogContent className="sm:max-w-[400px] w-[90%] mx-auto rounded-md">
-			<DialogHeader>
-				<DialogTitle>Settings</DialogTitle>
-			</DialogHeader>
-			<form className="flex flex-col gap-4">
-				<div>
-					<Label>Birthday</Label>
-					<div className="grid grid-cols-3 w-full gap-2">
-						<Select value={settingsMonth} onValueChange={setSettingsMonth}>
+}) => {
+	const { dbUser } = useAuthContext();
+
+	useEffect(() => {
+		if (open && dbUser) {
+			if (dbUser.gender) setGender(dbUser.gender);
+			if (dbUser.ethnicity) setEthnicity(dbUser.ethnicity);
+			if (dbUser.language) setLanguage(dbUser.language);
+		}
+	}, [open, dbUser, setGender, setEthnicity, setLanguage]);
+
+	return (
+		<Dialog open={open} onOpenChange={onOpenChange}>
+			<DialogContent className="sm:max-w-[400px] w-[90%] mx-auto rounded-md">
+				<DialogHeader>
+					<DialogTitle>Settings</DialogTitle>
+				</DialogHeader>
+				<form className="flex flex-col gap-4">
+					<div>
+						<Label>Birthday</Label>
+						<div className="grid grid-cols-3 w-full gap-2">
+							<Select value={settingsMonth} onValueChange={setSettingsMonth}>
+								<SelectTrigger>
+									<SelectValue placeholder="Month" />
+								</SelectTrigger>
+								<SelectContent>
+									{months.map((item) => (
+										<SelectItem key={item.value} value={item.value}>
+											{item.label}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+							<Select value={settingsDay} onValueChange={setSettingsDay}>
+								<SelectTrigger>
+									<SelectValue placeholder="Day" />
+								</SelectTrigger>
+								<SelectContent>
+									{days.map((day) => (
+										<SelectItem key={day} value={day}>
+											{day}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+							<Select value={settingsYear} onValueChange={setSettingsYear}>
+								<SelectTrigger>
+									<SelectValue placeholder="Year" />
+								</SelectTrigger>
+								<SelectContent>
+									{years.map((year) => (
+										<SelectItem key={year} value={year}>
+											{year}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
+					</div>
+					<div>
+						<Label>Gender</Label>
+						<Select value={gender} onValueChange={setGender}>
 							<SelectTrigger>
-								<SelectValue placeholder="Month" />
+								<SelectValue placeholder="Select your gender" />
 							</SelectTrigger>
 							<SelectContent>
-								{months.map((item) => (
+								{genders.map((item) => (
 									<SelectItem key={item.value} value={item.value}>
 										{item.label}
 									</SelectItem>
 								))}
 							</SelectContent>
 						</Select>
-						<Select value={settingsDay} onValueChange={setSettingsDay}>
+					</div>
+					<div>
+						<Label>Ethnicity</Label>
+						<Select value={ethnicity} onValueChange={setEthnicity}>
 							<SelectTrigger>
-								<SelectValue placeholder="Day" />
+								<SelectValue placeholder="Select your ethnicity" />
 							</SelectTrigger>
 							<SelectContent>
-								{days.map((day) => (
-									<SelectItem key={day} value={day}>
-										{day}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-						<Select value={settingsYear} onValueChange={setSettingsYear}>
-							<SelectTrigger>
-								<SelectValue placeholder="Year" />
-							</SelectTrigger>
-							<SelectContent>
-								{years.map((year) => (
-									<SelectItem key={year} value={year}>
-										{year}
+								{ethnicities.map((item) => (
+									<SelectItem key={item.value} value={item.value}>
+										{item.label}
 									</SelectItem>
 								))}
 							</SelectContent>
 						</Select>
 					</div>
-				</div>
-				<div>
-					<Label>Gender</Label>
-					<Select value={gender} onValueChange={setGender}>
-						<SelectTrigger>
-							<SelectValue placeholder="Select your gender" />
-						</SelectTrigger>
-						<SelectContent>
-							{genders.map((item) => (
-								<SelectItem key={item.value} value={item.value}>
-									{item.label}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-				</div>
-				<div>
-					<Label>Ethnicity</Label>
-					<Select value={ethnicity} onValueChange={setEthnicity}>
-						<SelectTrigger>
-							<SelectValue placeholder="Select your ethnicity" />
-						</SelectTrigger>
-						<SelectContent>
-							{ethnicities.map((item) => (
-								<SelectItem key={item.value} value={item.value}>
-									{item.label}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-				</div>
-				<div>
-					<Label>Language</Label>
-					<Select value={language} onValueChange={setLanguage}>
-						<SelectTrigger>
-							<SelectValue placeholder="Select your primary language" />
-						</SelectTrigger>
-						<SelectContent>
-							{languages.map((item) => (
-								<SelectItem key={item.value} value={item.value}>
-									{item.label}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-				</div>
-			</form>
-			<DialogFooter>
-				<Button
-					variant="outline"
-					onClick={() => onOpenChange(false)}
-					type="button"
-				>
-					Cancel
-				</Button>
-				<Button type="submit">Save</Button>
-			</DialogFooter>
-		</DialogContent>
-	</Dialog>
-);
+					<div>
+						<Label>Language</Label>
+						<Select value={language} onValueChange={setLanguage}>
+							<SelectTrigger>
+								<SelectValue placeholder="Select your primary language" />
+							</SelectTrigger>
+							<SelectContent>
+								{languages.map((item) => (
+									<SelectItem key={item.value} value={item.value}>
+										{item.label}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</div>
+				</form>
+				<DialogFooter className="flex flex-col gap-2">
+					<Button
+						variant="outline"
+						onClick={() => onOpenChange(false)}
+						type="button"
+					>
+						Cancel
+					</Button>
+					<Button
+						type="submit"
+						onClick={async () => {
+							if (
+								!settingsDay ||
+								!settingsMonth ||
+								!settingsYear ||
+								!gender ||
+								!ethnicity ||
+								!language
+							) {
+								return;
+							}
+							try {
+								const response = await fetch("/api/user/profile", {
+									method: "PUT",
+									headers: {
+										"Content-Type": "application/json",
+									},
+									body: JSON.stringify({
+										birthday: new Date(
+											Number.parseInt(settingsYear),
+											Number.parseInt(settingsMonth) - 1,
+											Number.parseInt(settingsDay),
+										),
+										gender,
+										ethnicity,
+										language,
+									}),
+								});
+
+								if (response.ok) {
+									onOpenChange(false);
+								}
+							} catch (error) {
+								console.error("Error saving settings:", error);
+							}
+						}}
+					>
+						Save
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	);
+};
 
 export default SettingsDialog;
