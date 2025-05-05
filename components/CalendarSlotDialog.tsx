@@ -24,12 +24,23 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 interface CalendarSlotDialogProps {
 	dateObj: Date;
 	startTime: number;
 	endTime: number;
 	children: React.ReactNode;
+	onSave?: (event: {
+		title: string;
+		date: string;
+		startTime: number;
+		endTime: number;
+		platform?: string;
+		allDay?: boolean;
+		repeat?: string;
+	}) => void;
 }
 
 export function CalendarSlotDialog({
@@ -37,6 +48,7 @@ export function CalendarSlotDialog({
 	startTime,
 	endTime,
 	children,
+	onSave,
 }: CalendarSlotDialogProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [platform, setPlatform] = useState("");
@@ -46,9 +58,9 @@ export function CalendarSlotDialog({
 	const [selectedStart, setSelectedStart] = useState(startTime);
 	const [selectedEnd, setSelectedEnd] = useState(endTime);
 	const [datePopoverOpen, setDatePopoverOpen] = useState(false);
+	const [title, setTitle] = useState("");
 
-	const formatTime = (hour: number, min: number) => {
-		const total = hour * 60 + min;
+	const formatTime = (total: number) => {
 		const h = Math.floor(total / 60) % 24;
 		const m = total % 60;
 		const ampm = h >= 12 ? "pm" : "am";
@@ -58,13 +70,32 @@ export function CalendarSlotDialog({
 
 	// Generate 15-min interval options
 	const timeOptions = Array.from({ length: 24 * 4 }, (_, i) => {
-		const hour = Math.floor(i / 4);
-		const min = (i % 4) * 15;
+		const total = i * 15;
 		return {
-			value: hour * 60 + min,
-			label: formatTime(hour, min),
+			value: total,
+			label: formatTime(total),
 		};
 	});
+
+	const handleSave = () => {
+		if (!title.trim()) {
+			toast.error("Title is required");
+			return;
+		}
+		if (onSave) {
+			onSave({
+				title,
+				date: selectedDate.toISOString().split("T")[0],
+				startTime: selectedStart,
+				endTime: selectedEnd,
+				platform,
+				allDay,
+				repeat,
+			});
+		}
+		toast.success("Event saved!");
+		setIsOpen(false);
+	};
 
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -87,6 +118,16 @@ export function CalendarSlotDialog({
 						})}
 					</DialogTitle>
 				</DialogHeader>
+				<div className="mb-2">
+					<Label htmlFor="event-title">Title</Label>
+					<Input
+						id="event-title"
+						value={title}
+						onChange={(e) => setTitle(e.target.value)}
+						placeholder="Add title"
+						className="mt-1"
+					/>
+				</div>
 				<div className="flex items-center gap-2 mb-2">
 					<Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
 						<PopoverTrigger asChild>
@@ -187,7 +228,9 @@ export function CalendarSlotDialog({
 					</SelectContent>
 				</Select>
 				<div className="flex justify-end">
-					<Button type="button">Save</Button>
+					<Button type="button" onClick={handleSave}>
+						Save
+					</Button>
 				</div>
 			</DialogContent>
 		</Dialog>

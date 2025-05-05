@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CalendarSlotDialog } from "./CalendarSlotDialog";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { v4 as uuidv4 } from "uuid";
+import { EventDetailsPopover } from "@/components/EventDetailsPopover";
 
 // Event types with different colors
 type EventType =
@@ -20,15 +22,25 @@ interface CalendarEvent {
 	id: string;
 	title: string;
 	day: number; // 0-6 (Sunday to Saturday)
-	startTime: number; // Hours in 24-hour format (7 = 7am, 13 = 1pm)
-	endTime: number; // Hours in 24-hour format
-	type: EventType;
+	startTime: number; // Minutes in day
+	endTime: number; // Minutes in day
+	type?: EventType;
 	location?: string;
 	description?: string;
+	date: string; // ISO date string for the day
+	platform?: string;
+	allDay?: boolean;
+	repeat?: string;
 }
 
 export default function WeeklyCalendar() {
 	const [currentDate, setCurrentDate] = useState(new Date());
+	const [events, setEvents] = useState<CalendarEvent[]>([]);
+	const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
+		null,
+	);
+	const [popoverOpen, setPopoverOpen] = useState(false);
+	const [popoverAnchor, setPopoverAnchor] = useState<HTMLElement | null>(null);
 
 	// Get the start of the current week (Sunday)
 	const getWeekStart = (date: Date) => {
@@ -57,13 +69,14 @@ export default function WeeklyCalendar() {
 	// Time slots from 7am to 11pm
 	const timeSlots = Array.from({ length: 17 }, (_, i) => i + 7);
 
-	// Sample events data
-	const events: CalendarEvent[] = [];
-
 	// Get events for a specific day and time
 	const getEventsForCell = (day: number, time: number) => {
+		const weekStart = getWeekStart(currentDate);
+		const cellDate = new Date(weekStart);
+		cellDate.setDate(weekStart.getDate() + day);
+		const cellDateStr = cellDate.toISOString().split("T")[0];
 		return events.filter(
-			(event) => event.day === day && event.startTime === time,
+			(event) => event.date === cellDateStr && event.startTime === time * 60,
 		);
 	};
 
@@ -159,24 +172,77 @@ export default function WeeklyCalendar() {
 												currentWeek[dayIndex].date,
 											)
 										}
-										startTime={time}
-										endTime={time + 1}
+										startTime={time * 60}
+										endTime={(time + 1) * 60}
+										onSave={(event) =>
+											setEvents((prev) => [
+												...prev,
+												{
+													...event,
+													id: uuidv4(),
+													day: dayIndex,
+												},
+											])
+										}
 									>
-										{getEventsForCell(dayIndex, time).map((event) => (
-											<div
-												key={event.id}
-												className="absolute left-0 right-0 mx-0.5 p-1 rounded-sm text-xs overflow-hidden"
-											>
-												<div className="font-medium">{event.title}</div>
-												{event.description && (
-													<div className="text-xs mt-0.5 opacity-90">
-														{event.description.split("\n").map((line, i) => (
-															<div key={`${event.id}-${i}`}>{line}</div>
-														))}
+										{getEventsForCell(dayIndex, time).map((event) => {
+											return (
+												<span
+													key={event.id}
+													ref={(el) => {
+														if (popoverOpen && selectedEvent?.id === event.id)
+															setPopoverAnchor(el);
+													}}
+													className="absolute left-0 right-0 mx-0.5 p-1 rounded-2xl text-xs overflow-hidden bg-[#000099] text-white flex flex-col items-center justify-center cursor-pointer"
+													style={{
+														height: `calc(${(event.endTime - event.startTime) / 60} * 3rem)`,
+														minHeight: "3rem",
+														top: 0,
+													}}
+													onClick={(e) => {
+														e.stopPropagation();
+														setSelectedEvent(event);
+														setPopoverOpen(true);
+													}}
+												>
+													<div className="font-medium w-full text-center">
+														{event.title}
 													</div>
-												)}
-											</div>
-										))}
+													{event.platform && (
+														<div className="text-[10px] opacity-80 w-full text-center">
+															{event.platform === "instagram"
+																? "Instagram"
+																: event.platform === "facebook"
+																	? "Facebook"
+																	: event.platform === "twitter"
+																		? "Twitter"
+																		: event.platform === "tiktok"
+																			? "TikTok"
+																			: event.platform === "linkedin"
+																				? "LinkedIn"
+																				: event.platform}
+														</div>
+													)}
+													{popoverOpen &&
+														selectedEvent?.id === event.id &&
+														popoverAnchor && (
+															<EventDetailsPopover
+																event={selectedEvent}
+																open={popoverOpen}
+																onOpenChange={setPopoverOpen}
+																anchorEl={
+																	<span
+																		ref={(node) =>
+																			node && setPopoverAnchor(node)
+																		}
+																	/>
+																}
+																// Add onEdit/onDelete handlers as needed
+															/>
+														)}
+												</span>
+											);
+										})}
 									</CalendarSlotDialog>
 								</div>
 							))}

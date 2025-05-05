@@ -11,6 +11,7 @@ import { AdminHeader } from "@/components/AdminHeader";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { AdminChatSidebar } from "@/components/AdminChatSidebar";
 
 export const metadata: Metadata = {
 	title: "Dashboard | DMV.gg - Ace your DMV Knowledge Test ",
@@ -48,6 +49,7 @@ export default function AdminLayout({
 				</header>
 				<main className="flex-1 p-6">{children}</main>
 			</SidebarInset>
+			<AdminChatSidebar />
 		</SidebarProvider>
 	);
 }
