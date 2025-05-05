@@ -28,7 +28,33 @@ interface SettingsDialogProps {
 	setSettingsMonth: (v: string) => void;
 	settingsYear: string | undefined;
 	setSettingsYear: (v: string) => void;
+	gender: string | undefined;
+	setGender: (v: string) => void;
+	ethnicity: string | undefined;
+	setEthnicity: (v: string) => void;
+	language: string | undefined;
+	setLanguage: (v: string) => void;
 }
+
+const genders = [
+	{ value: "male", label: "Male" },
+	{ value: "female", label: "Female" },
+	{ value: "non-binary", label: "Non-binary" },
+	{ value: "other", label: "Other" },
+	{ value: "prefer-not-to-say", label: "Prefer not to say" },
+];
+const ethnicities = [
+	{ value: "white", label: "White" },
+	{ value: "black", label: "Black or African American" },
+	{ value: "asian", label: "Asian" },
+	{ value: "hispanic", label: "Hispanic or Latino" },
+	{ value: "other", label: "Other" },
+	{ value: "prefer-not-to-say", label: "Prefer not to say" },
+];
+const languages = [
+	{ value: "en", label: "English" },
+	{ value: "es", label: "Spanish" },
+];
 
 const SettingsDialog: React.FC<SettingsDialogProps> = ({
 	open,
@@ -42,6 +68,12 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
 	setSettingsMonth,
 	settingsYear,
 	setSettingsYear,
+	gender,
+	setGender,
+	ethnicity,
+	setEthnicity,
+	language,
+	setLanguage,
 }) => (
 	<Dialog open={open} onOpenChange={onOpenChange}>
 		<DialogContent className="sm:max-w-[400px] w-[90%] mx-auto rounded-md">
@@ -90,7 +122,51 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
 						</Select>
 					</div>
 				</div>
-				{/* Gender, Ethnicity, Language fields can be added here as needed */}
+				<div>
+					<Label>Gender</Label>
+					<Select value={gender} onValueChange={setGender}>
+						<SelectTrigger>
+							<SelectValue placeholder="Select your gender" />
+						</SelectTrigger>
+						<SelectContent>
+							{genders.map((item) => (
+								<SelectItem key={item.value} value={item.value}>
+									{item.label}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</div>
+				<div>
+					<Label>Ethnicity</Label>
+					<Select value={ethnicity} onValueChange={setEthnicity}>
+						<SelectTrigger>
+							<SelectValue placeholder="Select your ethnicity" />
+						</SelectTrigger>
+						<SelectContent>
+							{ethnicities.map((item) => (
+								<SelectItem key={item.value} value={item.value}>
+									{item.label}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</div>
+				<div>
+					<Label>Language</Label>
+					<Select value={language} onValueChange={setLanguage}>
+						<SelectTrigger>
+							<SelectValue placeholder="Select your primary language" />
+						</SelectTrigger>
+						<SelectContent>
+							{languages.map((item) => (
+								<SelectItem key={item.value} value={item.value}>
+									{item.label}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</div>
 			</form>
 			<DialogFooter>
 				<Button

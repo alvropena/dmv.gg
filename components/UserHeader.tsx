@@ -47,6 +47,9 @@ export function UserHeader() {
 	const [settingsYear, setSettingsYear] = useState<string | undefined>(
 		undefined,
 	);
+	const [gender, setGender] = useState<string | undefined>(undefined);
+	const [ethnicity, setEthnicity] = useState<string | undefined>(undefined);
+	const [language, setLanguage] = useState<string | undefined>(undefined);
 
 	return (
 		<>
@@ -94,6 +97,12 @@ export function UserHeader() {
 				setSettingsMonth={setSettingsMonth}
 				settingsYear={settingsYear}
 				setSettingsYear={setSettingsYear}
+				gender={gender}
+				setGender={setGender}
+				ethnicity={ethnicity}
+				setEthnicity={setEthnicity}
+				language={language}
+				setLanguage={setLanguage}
 			/>
 		</>
 	);
