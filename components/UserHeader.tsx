@@ -53,9 +53,9 @@ export function UserHeader() {
 
 	return (
 		<>
-			<header className="w-full z-50 pt-6 md:pt-12 px-2">
-				<div className="container mx-auto px-2 md:px-6">
-					<div className="flex flex-row justify-between items-center sm:items-center bg-white rounded-xl border shadow-sm px-4 md:px-8 py-3 md:py-4">
+			<header className="w-full z-50 pt-6 md:pt-12">
+				<div className="container mx-auto px-4 sm:px-6">
+					<div className="flex flex-row justify-between items-center sm:items-center bg-white rounded-xl border shadow-sm px-4 py-3 md:py-4">
 						<Logo />
 						<div className="flex flex-row items-center justify-end sm:gap-2">
 							<UpgradeButton
