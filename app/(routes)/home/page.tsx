@@ -10,101 +10,132 @@ import { StudyTips } from "@/components/StudyTips";
 import { UserActivitySection } from "@/components/UserActivitySection";
 import { SupportButton } from "@/components/SupportButton";
 import { PricingDialog } from "@/components/PricingDialog";
-import { BirthdayDialog } from "@/components/BirthdayDialog";
+import { UserProfileDialog } from "@/components/UserProfileDialog";
 import { UserWelcomeCard } from "@/components/UserWelcomeCard";
 
 export default function HomePage() {
-  const [isPricingOpen, setIsPricingOpen] = useState(false);
-  const [isBirthdayDialogOpen, setIsBirthdayDialogOpen] = useState(false);
+	const [isPricingOpen, setIsPricingOpen] = useState(false);
+	const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
 
-  const { isLoaded } = useUser();
-  const { dbUser, isLoading, refreshUser } = useAuthContext();
+	const { isLoaded, user } = useUser();
+	const { dbUser, isLoading, refreshUser } = useAuthContext();
 
-  // Add handlePlanSelect function
-  const handlePlanSelect = async (plan: "weekly" | "monthly" | "lifetime") => {
-    try {
-      const response = await fetch("/api/create-checkout-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          plan,
-        }),
-      });
+	// Add handlePlanSelect function
+	const handlePlanSelect = async (plan: "weekly" | "monthly" | "lifetime") => {
+		try {
+			const response = await fetch("/api/create-checkout-session", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					plan,
+				}),
+			});
 
-      const data = await response.json();
+			const data = await response.json();
 
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error("Error creating checkout session:", error);
-    }
-  };
+			if (data.url) {
+				window.location.href = data.url;
+			}
+		} catch (error) {
+			console.error("Error creating checkout session:", error);
+		}
+	};
 
-  // Check if user has birthday set
-  useEffect(() => {
-    if (!isLoading && dbUser && !dbUser.birthday) {
-      setIsBirthdayDialogOpen(true);
-    }
-  }, [dbUser, isLoading]);
+	// Check if user has profile data set and if dialog was dismissed
+	useEffect(() => {
+		const dismissedKey = user
+			? `profileDialogDismissed_${user.id}`
+			: "profileDialogDismissed";
+		const dismissed =
+			typeof window !== "undefined" && localStorage.getItem(dismissedKey);
 
-  // Handle saving birthday
-  const handleSaveBirthday = async (birthday: Date) => {
-    try {
-      const response = await fetch("/api/user/birthday", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ birthday }),
-      });
+		if (
+			!isLoading &&
+			dbUser &&
+			(!dbUser.birthday ||
+				!dbUser.gender ||
+				!dbUser.ethnicity ||
+				!dbUser.language) &&
+			!dismissed
+		) {
+			setIsProfileDialogOpen(true);
+		}
+	}, [dbUser, isLoading, user]);
 
-      if (response.ok) {
-        setIsBirthdayDialogOpen(false);
-        // Refresh the user data to update the birthday
-        await refreshUser();
-      }
-    } catch (error) {
-      console.error("Error saving birthday:", error);
-    }
-  };
+	// Handle saving profile data
+	const handleSaveProfile = async (data: {
+		birthday: Date;
+		gender: string;
+		ethnicity: string;
+		language: string;
+	}) => {
+		try {
+			const method = dbUser?.birthday ? "PUT" : "POST";
+			const response = await fetch("/api/user/profile", {
+				method,
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(data),
+			});
 
-  if (!isLoaded || isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-[#F1F1EF]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
+			if (response.ok) {
+				setIsProfileDialogOpen(false);
+				// Refresh the user data to update the profile
+				await refreshUser();
+			}
+		} catch (error) {
+			console.error("Error saving profile:", error);
+		}
+	};
 
-  // Add PricingDialog component that will be used across all views
-  const pricingDialog = (
-    <PricingDialog
-      isOpen={isPricingOpen}
-      onClose={() => setIsPricingOpen(false)}
-      onPlanSelect={(plan) => {
-        handlePlanSelect(plan);
-        setIsPricingOpen(false);
-      }}
-    />
-  );
+	if (!isLoaded || isLoading) {
+		return (
+			<div className="flex items-center justify-center h-screen bg-[#F1F1EF]">
+				<Loader2 className="h-8 w-8 animate-spin text-primary" />
+			</div>
+		);
+	}
 
-  return (
-    <div className="min-h-screen bg-[#FFFFFF] space-y-4">
-      <UserHeader />
-      <UserWelcomeCard />
-      <UserStats />
-      <UserActivitySection />
-      <StudyTips />
-      {pricingDialog}
-      <BirthdayDialog
-        isOpen={isBirthdayDialogOpen}
-        onSave={handleSaveBirthday}
-        onClose={() => setIsBirthdayDialogOpen(false)}
-      />
-      <SupportButton />
-    </div>
-  );
+	// Add PricingDialog component that will be used across all views
+	const pricingDialog = (
+		<PricingDialog
+			isOpen={isPricingOpen}
+			onClose={() => setIsPricingOpen(false)}
+			onPlanSelect={(plan) => {
+				handlePlanSelect(plan);
+				setIsPricingOpen(false);
+			}}
+		/>
+	);
+
+	return (
+		<div className="min-h-screen bg-[#FFFFFF] space-y-4">
+			<UserHeader />
+			<UserWelcomeCard />
+			<UserStats />
+			<UserActivitySection />
+			<StudyTips />
+			{pricingDialog}
+			<UserProfileDialog
+				isOpen={isProfileDialogOpen}
+				onSave={handleSaveProfile}
+				onClose={() => setIsProfileDialogOpen(false)}
+				initialData={
+					dbUser
+						? {
+								birthday: dbUser.birthday || undefined,
+								gender: dbUser.gender || undefined,
+								ethnicity: dbUser.ethnicity || undefined,
+								language: dbUser.language || undefined,
+							}
+						: undefined
+				}
+				userId={user?.id}
+			/>
+			<SupportButton />
+		</div>
+	);
 }

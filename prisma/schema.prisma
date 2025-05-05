@@ -31,6 +31,10 @@ model User {
   firstName String?
   lastName  String?
   birthday  DateTime?     @db.Date
+  gender    String?       // 'male', 'female', 'non-binary', 'other', 'prefer-not-to-say'
+  ethnicity String?       // 'white', 'black', 'asian', 'hispanic', 'other', 'prefer-not-to-say'
+  language  String?       // 'en', 'es', etc.
+  
   role      UserRole      @default(STUDENT)
   hasUsedFreeTest Boolean @default(false)
   createdAt DateTime      @default(now()) @db.Timestamptz

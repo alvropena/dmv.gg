@@ -31,14 +31,17 @@ export type User = {
   firstName: string | null;
   lastName: string | null;
   birthday: Date | null;
+  gender: 'male' | 'female' | 'non-binary' | 'other' | 'prefer-not-to-say' | null;
+  ethnicity: 'white' | 'black' | 'asian' | 'hispanic' | 'other' | 'prefer-not-to-say' | null;
+  language: string | null;
   role: UserRole;
   hasUsedFreeTest: boolean;
   createdAt: Date;
   updatedAt: Date;
-  subscriptions: Subscription[];
-  tests: Test[];
-  supportRequests: SupportRequest[];
-  flaggedQuestions: FlaggedQuestion[];
+  subscriptions?: Subscription[];
+  tests?: Test[];
+  supportRequests?: SupportRequest[];
+  flaggedQuestions?: FlaggedQuestion[];
 };
 
 export type Question = {
