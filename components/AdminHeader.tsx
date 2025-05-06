@@ -3,12 +3,9 @@
 import { Search, MessageSquare } from "lucide-react";
 import { AdminNotificationsButton } from "@/components/AdminNotificationsButton";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import { AdminChatSidebar } from "@/components/AdminChatSidebar";
 import { Button } from "./ui/button";
 
 export function AdminHeader() {
-	const [chatOpen, setChatOpen] = useState(false);
 	return (
 		<header className="sticky top-0 z-10 border-b bg-white dark:bg-gray-950 dark:border-gray-800">
 			<div className="flex h-16 items-center justify-between px-6">
@@ -28,14 +25,12 @@ export function AdminHeader() {
 						variant="outline"
 						size="icon"
 						aria-label="Open Chat Sidebar"
-						onClick={() => setChatOpen(true)}
 						type="button"
 					>
 						<MessageSquare className="h-[1.2rem] w-[1.2rem] text-muted-foreground" />
 					</Button>
 				</div>
 			</div>
-			{/* <AdminChatSidebar open={chatOpen} onOpenChange={setChatOpen} /> */}
 		</header>
 	);
 }

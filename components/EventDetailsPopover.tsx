@@ -31,7 +31,6 @@ function formatTimeRange(start: number, end: number) {
 	const toStr = (min: number) => {
 		const h = Math.floor(min / 60) % 24;
 		const m = min % 60;
-		const ampm = h >= 12 ? "am" : "am";
 		const displayHour = h % 12 === 0 ? 12 : h % 12;
 		return `${displayHour}:${m.toString().padStart(2, "0")}${h >= 12 ? "pm" : "am"}`;
 	};
