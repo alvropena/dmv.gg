@@ -191,3 +191,27 @@ model Creator {
   createdAt  DateTime @default(now()) @db.Timestamptz
   updatedAt  DateTime @updatedAt @db.Timestamptz
 }
+
+model Reminder {
+  id          String    @id @default(uuid())
+  text        String    @db.Text
+  completed   Boolean   @default(false)
+  archived    Boolean   @default(false)
+  dueDate     DateTime? @db.Timestamptz
+  createdAt   DateTime  @default(now()) @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @db.Timestamptz
+
+  @@index([completed])
+  @@index([dueDate])
+  @@index([archived])
+}
+
+model Note {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
+
+  @@index([createdAt])
+}

@@ -145,4 +145,22 @@ export type Creator = {
   platforms: string[];
   createdAt: Date;
   updatedAt: Date;
+};
+
+export type Reminder = {
+  id: string;
+  text: string;
+  completed: boolean;
+  archived: boolean;
+  dueDate: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type Note = {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
 }; 
