@@ -6,6 +6,7 @@ import { useCallback } from "react";
 import WeeklyCalendar from "@/components/WeeklyCalendar";
 import CreatorsTabContent from "@/components/CreatorsTabContent";
 import FacelessContentTab from "@/components/FacelessContentTab";
+import EmailTabContent from "@/components/EmailTabContent";
 
 export default function MarketingPage() {
 	const searchParams = useSearchParams();
@@ -28,6 +29,7 @@ export default function MarketingPage() {
 					<TabsTrigger value="calendar">Calendar</TabsTrigger>
 					<TabsTrigger value="creators">Creators</TabsTrigger>
 					<TabsTrigger value="faceless">Faceless</TabsTrigger>
+					<TabsTrigger value="email">Email</TabsTrigger>
 				</TabsList>
 				<TabsContent value="calendar">
 					<WeeklyCalendar />
@@ -37,6 +39,9 @@ export default function MarketingPage() {
 				</TabsContent>
 				<TabsContent value="faceless">
 					<FacelessContentTab />
+				</TabsContent>
+				<TabsContent value="email">
+					<EmailTabContent />
 				</TabsContent>
 			</Tabs>
 		</div>
