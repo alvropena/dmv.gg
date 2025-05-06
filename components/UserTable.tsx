@@ -1,34 +1,20 @@
 "use client";
-import { MoreHorizontal, Star, User as UserIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { RoleBadge } from "@/components/RoleBadge";
 import { useEffect, useState } from "react";
 import { getUsers } from "@/app/actions/users";
 import { useToast } from "@/hooks/use-toast";
-import {
-	Pagination,
-	PaginationContent,
-	PaginationItem,
-	PaginationLink,
-	PaginationNext,
-	PaginationPrevious,
-} from "@/components/ui/pagination";
 import type { User, UserRole } from "@/types";
-import { Badge } from "@/components/ui/badge";
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { RoleBadge } from "@/components/RoleBadge";
 import { EditUserDialog } from "@/components/EditUserDialog";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { UserInteractionsDialog } from "@/components/UserInteractionsDialog";
+import { UserNameCell } from "@/components/UserNameCell";
+import { UserAgeCell } from "@/components/UserAgeCell";
+import { UserPlanCell } from "@/components/UserPlanCell";
+import { UserTestStatusCell } from "@/components/UserTestStatusCell";
+import { UserDateCell } from "@/components/UserDateCell";
+import { UserTestStatsCell } from "@/components/UserTestStatsCell";
+import { UserActionsCell } from "@/components/UserActionsCell";
+import { TablePagination } from "@/components/TablePagination";
+import { TableSkeleton } from "@/components/TableSkeleton";
 
 export function UserTable({
 	searchQuery,
@@ -111,46 +97,10 @@ export function UserTable({
 				</thead>
 				<tbody>
 					{loading ? (
-						Array.from({ length: 21 }).map((_, idx) => (
-							<tr key={`loading-skel-${idx}`}>
-								<td className="px-4 py-3">
-									<div className="h-4 w-full bg-muted animate-pulse rounded" />
-								</td>
-								<td className="px-4 py-3 text-center">
-									<div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
-								</td>
-								<td className="px-4 py-3 text-center">
-									<div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
-								</td>
-								<td className="px-4 py-3 text-center">
-									<div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
-								</td>
-								<td className="px-4 py-3 text-center">
-									<div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
-								</td>
-								<td className="px-4 py-3 text-center">
-									<div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
-								</td>
-								<td className="px-4 py-3 text-center">
-									<div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
-								</td>
-								<td className="px-4 py-3 text-center">
-									<div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
-								</td>
-								<td className="px-4 py-3 text-center">
-									<div className="h-4 w-full bg-muted animate-pulse rounded mx-auto" />
-								</td>
-								<td className="px-4 py-3 text-center">
-									<div className="h-4 w-16 bg-muted animate-pulse rounded mx-auto" />
-								</td>
-								<td className="px-4 py-3 text-center">
-									<div className="h-4 w-8 bg-muted animate-pulse rounded mx-auto" />
-								</td>
-							</tr>
-						))
+						<TableSkeleton />
 					) : users.length === 0 ? (
 						<tr>
-							<td colSpan={7} className="px-4 py-3 text-center">
+							<td colSpan={11} className="px-4 py-3 text-center">
 								No users found.
 							</td>
 						</tr>
@@ -160,244 +110,47 @@ export function UserTable({
 								key={user.id}
 								className="border-b transition-colors hover:bg-muted/50"
 							>
-								<td className="px-4 py-3">
-									<div>
-										<p className="font-medium">
-											{user.firstName} {user.lastName}
-										</p>
-										<p className="text-muted-foreground">{user.email}</p>
-									</div>
-								</td>
-								<td className="px-4 py-3 text-center">
-									{user.birthday ? (
-										<TooltipProvider>
-											<Tooltip>
-												<TooltipTrigger asChild>
-													<span>
-														{Math.floor(
-															(new Date().getTime() -
-																new Date(user.birthday).getTime()) /
-																(365.25 * 24 * 60 * 60 * 1000),
-														)}
-													</span>
-												</TooltipTrigger>
-												<TooltipContent>
-													{new Date(user.birthday).toLocaleDateString("en-US", {
-														month: "long",
-														day: "numeric",
-														year: "numeric",
-													})}
-												</TooltipContent>
-											</Tooltip>
-										</TooltipProvider>
-									) : (
-										"-"
-									)}
-								</td>
+								<UserNameCell
+									firstName={user.firstName ?? ""}
+									lastName={user.lastName ?? ""}
+									email={user.email ?? ""}
+								/>
+								<UserAgeCell birthday={user.birthday?.toISOString() ?? undefined} />
 								<td className="px-4 py-3 text-center">
 									<div className="flex justify-center">
 										<RoleBadge role={user.role} />
 									</div>
 								</td>
-								<td className="px-4 py-3 text-center">
-									{user.subscriptions.some((sub) => sub.status === "active") ? (
-										<Badge
-											variant="default"
-											className="bg-yellow-200 text-yellow-600 border-yellow-400"
-										>
-											<Star className="w-3 h-3 mr-1" />
-											Premium
-										</Badge>
-									) : (
-										<Badge
-											variant="secondary"
-											className="bg-gray-200 text-gray-700 border-gray-300"
-										>
-											<UserIcon className="w-3 h-3 mr-1" />
-											Free
-										</Badge>
-									)}
-								</td>
-								<td className="px-4 py-3 text-center">
-									<Badge
-										variant="outline"
-										className={
-											user.hasUsedFreeTest
-												? "bg-green-50 text-green-600 border-green-200 dark:bg-green-950/20 dark:text-green-400 dark:border-green-900/30"
-												: "bg-red-50 text-red-600 border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900/30"
-										}
-									>
-										{user.hasUsedFreeTest ? "True" : "False"}
-									</Badge>
-								</td>
-								<td className="px-4 py-3 text-center">
-									{new Date(user.createdAt).toLocaleString("en-US", {
-										month: "short",
-										day: "numeric",
-										year: "numeric",
-										hour: "2-digit",
-										minute: "2-digit",
-									})}
-								</td>
-								<td className="px-4 py-3 text-center">
-									{new Date(user.updatedAt).toLocaleString("en-US", {
-										month: "short",
-										day: "numeric",
-										year: "numeric",
-										hour: "2-digit",
-										minute: "2-digit",
-									})}
-								</td>
-								<td className="px-4 py-3 text-center">
-									{(() => {
-										const completedTests = user.tests.filter(
-											(test) => test.status === "completed",
-										);
-										return completedTests.length;
-									})()}
-								</td>
-								<td className="px-4 py-3 text-center">
-									{(() => {
-										const initiatedTests = user.tests.filter(
-											(test) => test.status !== "completed",
-										);
-										return initiatedTests.length;
-									})()}
-								</td>
-								<td className="px-4 py-3 text-center">
-									{(() => {
-										const completedTests = user.tests.filter(
-											(test) => test.status === "completed",
-										);
-										if (completedTests.length === 0) return "-";
-										const totalCorrectAnswers = completedTests.reduce(
-											(sum, test) =>
-												sum + test.answers.filter((a) => a.isCorrect).length,
-											0,
-										);
-										const totalQuestions = completedTests.reduce(
-											(sum, test) => sum + test.totalQuestions,
-											0,
-										);
-										const avgScore =
-											totalQuestions > 0
-												? Math.round(
-														(totalCorrectAnswers / totalQuestions) * 100,
-													)
-												: 0;
-										const isPassing = avgScore >= 89.13;
-										return (
-											<Badge
-												variant="outline"
-												className={`${
-													isPassing
-														? "bg-green-50 text-green-600 border-green-200 dark:bg-green-950/20 dark:text-green-400 dark:border-green-900/30"
-														: "bg-red-50 text-red-600 border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900/30"
-												} w-16 flex items-center justify-center`}
-											>
-												{avgScore}%
-											</Badge>
-										);
-									})()}
-								</td>
-								<td className="px-4 py-3 text-center">
-									<div className="flex justify-center">
-										<DropdownMenu>
-											<DropdownMenuTrigger asChild>
-												<Button variant="ghost" size="icon">
-													<MoreHorizontal className="h-4 w-4" />
-													<span className="sr-only">Open menu</span>
-												</Button>
-											</DropdownMenuTrigger>
-											<DropdownMenuContent align="end">
-												<DropdownMenuItem
-													className="cursor-pointer"
-													onClick={() => {
-														setSelectedUser(user);
-														setEditDialogOpen(true);
-													}}
-												>
-													Edit User
-												</DropdownMenuItem>
-												<DropdownMenuItem
-													className="cursor-pointer"
-													onClick={() => {
-														setSelectedUser(user);
-														setShowInteractionsDialog(true);
-													}}
-												>
-													View Interactions
-												</DropdownMenuItem>
-											</DropdownMenuContent>
-										</DropdownMenu>
-									</div>
-								</td>
+								<UserPlanCell subscriptions={user.subscriptions ?? []} />
+								<UserTestStatusCell hasUsedFreeTest={user.hasUsedFreeTest ?? false} />
+								<UserDateCell date={user.createdAt?.toISOString() ?? ""} />
+								<UserDateCell date={user.updatedAt?.toISOString() ?? ""} />
+								<UserTestStatsCell tests={user.tests} type="completed" />
+								<UserTestStatsCell tests={user.tests} type="initiated" />
+								<UserTestStatsCell tests={user.tests} type="average" />
+								<UserActionsCell
+									user={user}
+									onEdit={(user) => {
+										setSelectedUser(user);
+										setEditDialogOpen(true);
+									}}
+									onViewInteractions={(user) => {
+										setSelectedUser(user);
+										setShowInteractionsDialog(true);
+									}}
+								/>
 							</tr>
 						))
 					)}
 				</tbody>
 			</table>
 
-			{/* Pagination */}
 			{!loading && users.length > 0 && (
-				<div className="my-4">
-					<Pagination>
-						<PaginationContent>
-							<PaginationItem>
-								<PaginationPrevious
-									onClick={() => handlePageChange(page - 1)}
-									className={`cursor-pointer ${page === 1 ? "pointer-events-none opacity-50" : ""}`}
-								/>
-							</PaginationItem>
-
-							{(() => {
-								const pageNumbers = [];
-								const totalPagesToShow = 7;
-								let startPage: number;
-								let endPage: number;
-
-								if (totalPages <= totalPagesToShow) {
-									startPage = 1;
-									endPage = totalPages;
-								} else {
-									if (page <= 4) {
-										startPage = 1;
-										endPage = 7;
-									} else if (page >= totalPages - 3) {
-										startPage = totalPages - 6;
-										endPage = totalPages;
-									} else {
-										startPage = page - 3;
-										endPage = page + 3;
-									}
-								}
-
-								for (let i = startPage; i <= endPage; i++) {
-									pageNumbers.push(
-										<PaginationItem key={i}>
-											<PaginationLink
-												onClick={() => handlePageChange(i)}
-												isActive={i === page}
-												className="cursor-pointer"
-											>
-												{i}
-											</PaginationLink>
-										</PaginationItem>,
-									);
-								}
-
-								return pageNumbers;
-							})()}
-
-							<PaginationItem>
-								<PaginationNext
-									onClick={() => handlePageChange(page + 1)}
-									className={`cursor-pointer ${page === totalPages ? "pointer-events-none opacity-50" : ""}`}
-								/>
-							</PaginationItem>
-						</PaginationContent>
-					</Pagination>
-				</div>
+				<TablePagination
+					currentPage={page}
+					totalPages={totalPages}
+					onPageChange={handlePageChange}
+				/>
 			)}
 
 			<EditUserDialog
