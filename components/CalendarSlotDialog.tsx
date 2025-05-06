@@ -43,6 +43,14 @@ interface CalendarSlotDialogProps {
 	}) => void;
 }
 
+// Mock creators data
+const MOCK_CREATORS = [
+	{ id: "1", name: "Alex Johnson", email: "alex@email.com" },
+	{ id: "2", name: "Sam Lee", email: "sam@email.com" },
+	{ id: "3", name: "Priya Sharma", email: "priya@email.com" },
+	{ id: "4", name: "Jordan Taylor", email: "jordan@email.com" },
+];
+
 export function CalendarSlotDialog({
 	dateObj,
 	startTime,
@@ -59,6 +67,8 @@ export function CalendarSlotDialog({
 	const [selectedEnd, setSelectedEnd] = useState(endTime);
 	const [datePopoverOpen, setDatePopoverOpen] = useState(false);
 	const [title, setTitle] = useState("");
+	const [creatorFilter, setCreatorFilter] = useState("");
+	const [selectedCreators, setSelectedCreators] = useState<string[]>([]);
 
 	const formatTime = (total: number) => {
 		const h = Math.floor(total / 60) % 24;
@@ -76,6 +86,22 @@ export function CalendarSlotDialog({
 			label: formatTime(total),
 		};
 	});
+
+	const filteredCreators = MOCK_CREATORS.filter(
+		(c) =>
+			c.name.toLowerCase().includes(creatorFilter.toLowerCase()) ||
+			c.email.toLowerCase().includes(creatorFilter.toLowerCase()),
+	);
+
+	function toggleCreator(id: string) {
+		setSelectedCreators((prev) =>
+			prev.includes(id) ? prev.filter((cid) => cid !== id) : [...prev, id],
+		);
+	}
+
+	function removeCreator(id: string) {
+		setSelectedCreators((prev) => prev.filter((cid) => cid !== id));
+	}
 
 	const handleSave = () => {
 		if (!title.trim()) {
@@ -127,6 +153,58 @@ export function CalendarSlotDialog({
 						placeholder="Add title"
 						className="mt-1"
 					/>
+				</div>
+				<div className="mb-2">
+					<Label htmlFor="creator-select">Creator</Label>
+					<div className="flex flex-wrap gap-2 mb-2">
+						{selectedCreators.map((cid) => {
+							const creator = MOCK_CREATORS.find((c) => c.id === cid);
+							if (!creator) return null;
+							return (
+								<span
+									key={cid}
+									className="inline-flex items-center px-2 py-1 rounded bg-accent text-xs"
+								>
+									{creator.name}{" "}
+									<span className="ml-1 text-muted-foreground">
+										({creator.email})
+									</span>
+									<button
+										type="button"
+										className="ml-1 text-red-500"
+										onClick={() => removeCreator(cid)}
+									>
+										&times;
+									</button>
+								</span>
+							);
+						})}
+					</div>
+					<Input
+						id="creator-select"
+						placeholder="Type to search creators..."
+						value={creatorFilter}
+						onChange={(e) => setCreatorFilter(e.target.value)}
+						className="mb-2"
+					/>
+					<div className="max-h-32 overflow-y-auto border rounded bg-background">
+						{filteredCreators.length === 0 && (
+							<div className="p-2 text-xs text-muted-foreground">
+								No creators found
+							</div>
+						)}
+						{filteredCreators.map((creator) => (
+							<button
+								type="button"
+								key={creator.id}
+								onClick={() => toggleCreator(creator.id)}
+								className={`w-full text-left px-3 py-2 text-sm hover:bg-accent ${selectedCreators.includes(creator.id) ? "bg-accent/70" : ""}`}
+							>
+								{creator.name}{" "}
+								<span className="text-muted-foreground">({creator.email})</span>
+							</button>
+						))}
+					</div>
 				</div>
 				<div className="flex items-center gap-2 mb-2">
 					<Popover open={datePopoverOpen} onOpenChange={setDatePopoverOpen}>
