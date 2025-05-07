@@ -2,13 +2,13 @@
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, Suspense } from "react";
 import WeeklyCalendar from "@/components/WeeklyCalendar";
 import CreatorsTabContent from "@/components/CreatorsTabContent";
 import FacelessContentTab from "@/components/FacelessContentTab";
 import { EmailTabContent } from "@/components/EmailTabContent";
 
-export default function MarketingPage() {
+function MarketingContent() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const tab = searchParams.get("tab") || "calendar";
@@ -45,5 +45,13 @@ export default function MarketingPage() {
 				</TabsContent>
 			</Tabs>
 		</div>
+	);
+}
+
+export default function MarketingPage() {
+	return (
+		<Suspense fallback={<div className="p-8">Loading...</div>}>
+			<MarketingContent />
+		</Suspense>
 	);
 }
