@@ -46,6 +46,7 @@ export function UserTable({
 					sortDirection,
 				);
 				setUsers(
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					result.users.map((u: any) => ({
 						...u,
 						role: u.role as UserRole,

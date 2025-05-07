@@ -14,10 +14,10 @@ import {
 import CodeMirror from '@uiw/react-codemirror';
 import { html } from '@codemirror/lang-html';
 import { useRouter } from "next/navigation";
-import { Mail, Plus, Search, Settings } from "lucide-react";
 import prettier from "prettier/standalone";
 import parserHtml from "prettier/parser-html";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Paintbrush, X } from "lucide-react";
 
 const CAMPAIGN_TYPES = [
   { value: "one-time", label: "One-time" },
@@ -104,7 +104,7 @@ export default function EmailPage() {
         plugins: [parserHtml],
       });
       setFormData((prev) => ({ ...prev, content: formatted }));
-    } catch (e) {
+    } catch {
       // Optionally handle formatting errors
     }
   };

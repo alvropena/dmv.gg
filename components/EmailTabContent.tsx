@@ -39,12 +39,6 @@ interface Campaign {
 export function EmailTabContent() {
 	const router = useRouter();
 	const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-	const [activeTab, setActiveTab] = useState("campaigns");
-	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
-	const handleAddCampaign = (campaign: Campaign) => {
-		setCampaigns((prev) => [campaign, ...prev]);
-	};
 
 	return (
 		<div className="space-y-4">
