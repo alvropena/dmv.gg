@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
@@ -55,10 +57,10 @@ export async function GET() {
 
     // Group by question and count occurrences
     const questionCounts = new Map();
-    
+
     for (const answer of incorrectAnswers) {
       if (!answer.question) continue;
-      
+
       const questionId = answer.questionId;
       if (!questionCounts.has(questionId)) {
         questionCounts.set(questionId, {
@@ -66,7 +68,7 @@ export async function GET() {
           question: answer.question
         });
       }
-      
+
       questionCounts.get(questionId).count++;
     }
 

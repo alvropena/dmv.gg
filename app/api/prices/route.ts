@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 import { getPriceVariation } from '@/lib/growthbook';
 import { auth } from '@clerk/nextjs/server';
 
+export const dynamic = "force-dynamic";
+
 // Default price IDs from environment variables
 const DEFAULT_PRICE_IDS = [
   process.env.STRIPE_PRICE_ID_WEEKLY,
@@ -13,7 +15,7 @@ const DEFAULT_PRICE_IDS = [
 export async function GET() {
   try {
     const { userId } = await auth();
-    
+
     const [products, prices] = await Promise.all([
       stripe.products.list({ active: true }),
       stripe.prices.list({ active: true }),

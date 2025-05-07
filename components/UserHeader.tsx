@@ -1,15 +1,15 @@
 "use client";
 
 import { useClerk, useUser } from "@clerk/nextjs";
-import { Gift, LogOut, Zap, Star, Crown } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useState, useEffect } from "react";
 import { PricingDialog } from "@/components/PricingDialog";
 import { SubscriptionDetailsDialog } from "@/components/SubscriptionDetailsDialog";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
+import Logo from "@/components/Logo";
+import UpgradeButton from "@/components/UpgradeButton";
+import AvatarDropdown from "@/components/AvatarDropdown";
+import SettingsDialog from "@/components/SettingsDialog";
 
 export function UserHeader() {
 	const { signOut } = useClerk();
@@ -18,129 +18,94 @@ export function UserHeader() {
 	const [isPricingOpen, setIsPricingOpen] = useState(false);
 	const [isSubscriptionDetailsOpen, setIsSubscriptionDetailsOpen] =
 		useState(false);
-	const [userBirthday, setUserBirthday] = useState<string | null>(null);
-	const router = useRouter();
+	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 	const posthog = usePostHog();
-	const displayName =
-		dbUser?.firstName && dbUser?.lastName
-			? `${dbUser.firstName} ${dbUser.lastName}`
-			: dbUser?.firstName || "User";
 
+	const months = [
+		{ value: "1", label: "January" },
+		{ value: "2", label: "February" },
+		{ value: "3", label: "March" },
+		{ value: "4", label: "April" },
+		{ value: "5", label: "May" },
+		{ value: "6", label: "June" },
+		{ value: "7", label: "July" },
+		{ value: "8", label: "August" },
+		{ value: "9", label: "September" },
+		{ value: "10", label: "October" },
+		{ value: "11", label: "November" },
+		{ value: "12", label: "December" },
+	];
+	const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
+	const currentYear = new Date().getFullYear();
+	const years = Array.from({ length: currentYear - 1950 + 1 }, (_, i) =>
+		(currentYear - i).toString(),
+	);
+	const [settingsDay, setSettingsDay] = useState<string | undefined>(undefined);
+	const [settingsMonth, setSettingsMonth] = useState<string | undefined>(
+		undefined,
+	);
+	const [settingsYear, setSettingsYear] = useState<string | undefined>(
+		undefined,
+	);
+	const [gender, setGender] = useState<string | undefined>(undefined);
+	const [ethnicity, setEthnicity] = useState<string | undefined>(undefined);
+	const [language, setLanguage] = useState<string | undefined>(undefined);
+
+	// Prefill settings birthday fields from dbUser.birthday
 	useEffect(() => {
 		if (dbUser?.birthday) {
-			const birthdayDate = new Date(dbUser.birthday);
-			birthdayDate.setMinutes(
-				birthdayDate.getMinutes() + birthdayDate.getTimezoneOffset(),
-			);
-
-			const formattedBirthday = birthdayDate.toLocaleDateString("en-US", {
-				month: "long",
-				day: "numeric",
-				year: "numeric",
-				timeZone: "UTC",
-			});
-			setUserBirthday(formattedBirthday);
-		} else {
-			setUserBirthday(null);
+			if (typeof dbUser.birthday === "string") {
+				const match = (dbUser.birthday as string).match(
+					/^([0-9]{4})-([0-9]{2})-([0-9]{2})/,
+				);
+				if (match) {
+					setSettingsYear(match[1]);
+					setSettingsMonth(String(Number(match[2])));
+					setSettingsDay(String(Number(match[3])));
+					return;
+				}
+			}
+			if (
+				dbUser.birthday instanceof Date &&
+				!Number.isNaN(dbUser.birthday.getTime())
+			) {
+				setSettingsDay(dbUser.birthday.getDate().toString());
+				setSettingsMonth((dbUser.birthday.getMonth() + 1).toString());
+				setSettingsYear(dbUser.birthday.getFullYear().toString());
+				return;
+			}
+			// fallback: try to parse as string if not string or Date
+			const str = String(dbUser.birthday);
+			const match = str.match(
+				/^([0-9]{4})-([0-9]{2})-([0-9]{2})/,
+			) as RegExpMatchArray | null;
+			if (match) {
+				setSettingsYear(match[1]);
+				setSettingsMonth(String(Number(match[2])));
+				setSettingsDay(String(Number(match[3])));
+			}
 		}
 	}, [dbUser]);
 
-	const handlePlanSelect = async (plan: "weekly" | "monthly" | "lifetime") => {
-		try {
-			const response = await fetch("/api/create-checkout-session", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					plan,
-				}),
-			});
-
-			const data = await response.json();
-
-			if (data.url) {
-				window.location.href = data.url;
-			}
-		} catch (error) {
-			console.error("Error:", error);
-		}
-	};
-
 	return (
 		<>
-			<header className="w-full z-50 pt-6 md:pt-12 px-2">
-				<div className="container mx-auto px-2 md:px-6">
-					<div className="flex flex-row justify-between items-center sm:items-center bg-white rounded-xl border shadow-sm px-4 md:px-8 py-3 md:py-4">
-						<div className="flex flex-row sm:flex-row items-center gap-4">
-							<div>
-								<Avatar className="w-12 h-12">
-									<AvatarImage src={user?.imageUrl} alt={displayName} />
-									<AvatarFallback>
-										{displayName?.[0]?.toUpperCase()}
-									</AvatarFallback>
-								</Avatar>
-							</div>
-							<div className="flex flex-col items-start">
-								<span className="text-base font-medium">{displayName}</span>
-								{userBirthday && (
-									<span className="text-sm text-muted-foreground flex items-center gap-1">
-										<Gift className="h-4 w-4" />
-										{userBirthday}
-									</span>
-								)}
-							</div>
-						</div>
-
+			<header className="w-full z-50 pt-6 md:pt-12">
+				<div className="container mx-auto px-4 sm:px-6">
+					<div className="flex flex-row justify-between items-center sm:items-center bg-white rounded-xl border shadow-sm px-4 py-3 md:py-4">
+						<Logo />
 						<div className="flex flex-row items-center justify-end sm:gap-2">
-							{dbUser?.role === "ADMIN" ? (
-								<Button
-									onClick={() => router.push("/admin")}
-									className="flex items-center justify-center gap-2 w-[100px] sm:w-auto bg-zinc-800 hover:bg-zinc-900 text-white h-9"
-								>
-									<Crown className="h-4 w-4" />
-									<span className="inline-flex items-center">Admin</span>
-								</Button>
-							) : hasActiveSubscription ? (
-								<Button
-									onClick={() => setIsSubscriptionDetailsOpen(true)}
-									className="flex items-center justify-center gap-2 w-[100px] sm:w-auto bg-fuchsia-500 hover:bg-fuchsia-600 text-white h-9"
-								>
-									<Star className="h-4 w-4" />
-									<span className="inline-flex items-center">Premium</span>
-								</Button>
-							) : (
-								<Button
-									onClick={() => {
-										posthog?.capture("upgrade_button_clicked");
-										setIsPricingOpen(true);
-									}}
-									className="flex items-center justify-center gap-2 w-[100px] sm:w-auto"
-								>
-									<Zap className="h-4 w-4" />
-									Upgrade
-								</Button>
-							)}
-							<Button
-								onClick={() => {
-									signOut();
-								}}
-								className="sm:hidden items-center justify-center"
-								variant="ghost"
-								size="icon"
-							>
-								<LogOut className="h-5 w-5 text-red-500" />
-							</Button>
-							<Button
-								onClick={() => {
-									signOut();
-								}}
-								className="hidden sm:flex items-center justify-center gap-2 w-[100px] sm:w-auto"
-								variant="secondary"
-							>
-								<LogOut className="h-4 w-4" />
-								Logout
-							</Button>
+							<UpgradeButton
+								dbUser={dbUser}
+								hasActiveSubscription={hasActiveSubscription}
+								posthog={posthog}
+								setIsPricingOpen={setIsPricingOpen}
+								setIsSubscriptionDetailsOpen={setIsSubscriptionDetailsOpen}
+							/>
+							<AvatarDropdown
+								user={user}
+								onSettings={() => setIsSettingsOpen(true)}
+								onLogout={signOut}
+							/>
 						</div>
 					</div>
 				</div>
@@ -149,11 +114,31 @@ export function UserHeader() {
 			<PricingDialog
 				isOpen={isPricingOpen}
 				onClose={() => setIsPricingOpen(false)}
-				onPlanSelect={handlePlanSelect}
+				onPlanSelect={() => {}}
 			/>
 			<SubscriptionDetailsDialog
 				isOpen={isSubscriptionDetailsOpen}
 				onClose={() => setIsSubscriptionDetailsOpen(false)}
+			/>
+
+			<SettingsDialog
+				open={isSettingsOpen}
+				onOpenChange={setIsSettingsOpen}
+				months={months}
+				days={days}
+				years={years}
+				settingsDay={settingsDay}
+				setSettingsDay={setSettingsDay}
+				settingsMonth={settingsMonth}
+				setSettingsMonth={setSettingsMonth}
+				settingsYear={settingsYear}
+				setSettingsYear={setSettingsYear}
+				gender={gender}
+				setGender={setGender}
+				ethnicity={ethnicity}
+				setEthnicity={setEthnicity}
+				language={language}
+				setLanguage={setLanguage}
 			/>
 		</>
 	);

@@ -10,6 +10,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { AddQuestionDialog } from "@/components/AddQuestionDialog"
 
 export function QuickActions() {
   return (
@@ -23,10 +24,14 @@ export function QuickActions() {
             Create new questions, study materials, or practice tests.
           </p>
           <div className="flex flex-col gap-2">
-            <Button size="sm" className="justify-start">
-              <FileQuestion className="mr-2 h-4 w-4" />
-              Add Question
-            </Button>
+            <AddQuestionDialog
+              trigger={
+                <Button size="sm" className="justify-start">
+                  <FileQuestion className="mr-2 h-4 w-4" />
+                  Add Question
+                </Button>
+              }
+            />
             <Button size="sm" variant="outline" className="justify-start">
               <FileText className="mr-2 h-4 w-4" />
               Add Study Material

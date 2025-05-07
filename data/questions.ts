@@ -1,5 +1,20 @@
 import type { Question } from "@/types";
 
+// Define a type for sample questions that matches the database schema
+type SampleQuestion = {
+    id: string;
+    title: string;
+    optionA: string;
+    optionB: string;
+    optionC: string;
+    optionD: string | null;
+    image: string | null;
+    correctAnswer: string;
+    explanation: string;
+    createdAt: Date;
+    updatedAt: Date;
+};
+
 // Define a type that matches how questions are used in page.tsx
 export interface DemoQuestion {
     question: string;
@@ -7,8 +22,8 @@ export interface DemoQuestion {
     correctAnswer: number; // Index of the correct answer in the options array
 }
 
-// Convert the Question interface to the DemoQuestion format
-const convertQuestion = (q: Question): DemoQuestion => {
+// Convert the SampleQuestion to the DemoQuestion format
+const convertQuestion = (q: SampleQuestion): DemoQuestion => {
     const options = [q.optionA, q.optionB, q.optionC];
     if (q.optionD) {
         options.push(q.optionD);
@@ -25,7 +40,7 @@ const convertQuestion = (q: Question): DemoQuestion => {
 };
 
 // Sample questions data
-const sampleQuestions: Question[] = [
+const sampleQuestions: SampleQuestion[] = [
     {
         id: "1",
         title: "What does a red traffic light mean?",
@@ -33,6 +48,7 @@ const sampleQuestions: Question[] = [
         optionB: "Stop and wait until the light turns green",
         optionC: "Speed up to get through the intersection",
         optionD: "Turn right only",
+        image: null,
         correctAnswer: "Stop and wait until the light turns green",
         explanation: "A red traffic light means you must come to a complete stop and wait until the light turns green before proceeding.",
         createdAt: new Date("2023-01-01T00:00:00Z"),
@@ -45,6 +61,7 @@ const sampleQuestions: Question[] = [
         optionB: "35 mph",
         optionC: "45 mph",
         optionD: "55 mph",
+        image: null,
         correctAnswer: "25 mph",
         explanation: "The speed limit in residential areas is typically 25 mph to ensure the safety of pedestrians and children.",
         createdAt: new Date("2023-01-01T00:00:00Z"),
@@ -57,6 +74,7 @@ const sampleQuestions: Question[] = [
         optionB: "Only when turning left",
         optionC: "When changing lanes or turning in any direction",
         optionD: "Only when there are other vehicles nearby",
+        image: null,
         correctAnswer: "When changing lanes or turning in any direction",
         explanation: "You should always use your turn signals when changing lanes or turning in any direction to communicate your intentions to other drivers.",
         createdAt: new Date("2023-01-01T00:00:00Z"),
@@ -69,6 +87,7 @@ const sampleQuestions: Question[] = [
         optionB: "Stop if it's safe to do so, otherwise proceed with caution",
         optionC: "Come to a complete stop",
         optionD: "Turn right only",
+        image: null,
         correctAnswer: "Stop if it's safe to do so, otherwise proceed with caution",
         explanation: "A yellow traffic light means the light is about to turn red. You should stop if it's safe to do so, otherwise proceed with caution.",
         createdAt: new Date("2023-01-01T00:00:00Z"),
@@ -81,6 +100,7 @@ const sampleQuestions: Question[] = [
         optionB: "Stop and wait until the bus turns off its lights and continues moving",
         optionC: "Honk your horn to alert the bus driver",
         optionD: "Drive around the bus on the left side",
+        image: null,
         correctAnswer: "Stop and wait until the bus turns off its lights and continues moving",
         explanation: "When approaching a school bus with flashing red lights, you must stop and wait until the bus turns off its lights and continues moving, regardless of which direction you're traveling.",
         createdAt: new Date("2023-01-01T00:00:00Z"),

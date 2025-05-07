@@ -37,7 +37,10 @@ export async function GET() {
             role: true,
             createdAt: true,
             updatedAt: true,
-            subscriptions: true
+            subscriptions: true,
+            gender: true,
+            ethnicity: true,
+            language: true,
         }
     });
 
@@ -70,7 +73,10 @@ export async function GET() {
                     role: true,
                     createdAt: true,
                     updatedAt: true,
-                    subscriptions: true
+                    subscriptions: true,
+                    gender: true,
+                    ethnicity: true,
+                    language: true,
                 }
             });
         } else {
@@ -94,7 +100,10 @@ export async function GET() {
                         role: true,
                         createdAt: true,
                         updatedAt: true,
-                        subscriptions: true
+                        subscriptions: true,
+                        gender: true,
+                        ethnicity: true,
+                        language: true,
                     }
                 });
 

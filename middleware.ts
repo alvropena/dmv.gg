@@ -1,6 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 
 const isPublicRoute = createRouteMatcher([
   "/", // Allow root path
@@ -17,6 +16,13 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
+  // Subdomain logic
+  const host = req.headers.get('host');
+  if (host?.startsWith('admin.')) {
+    return NextResponse.rewrite(new URL('/(admin)', req.url));
+  }
+
+  // Clerk protection
   if (!isPublicRoute(req)) {
     await auth.protect();
   }
@@ -30,13 +36,3 @@ export const config = {
     "/(api(?!/webhooks)|trpc)(.*)",
   ],
 };
-
-export function middleware(request: NextRequest) {
-  const host = request.headers.get('host');
-  if (host?.startsWith('admin.')) {
-    // Rewrite all requests to the admin subdomain to the (admin) route group
-    return NextResponse.rewrite(new URL('/(admin)', request.url));
-  }
-  // Default: continue as normal
-  return NextResponse.next();
-}

@@ -1,8 +1,45 @@
 import { AlertCircle, Flag, XCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useEffect, useState } from "react"
+
+type QuestionStats = {
+  id: string
+  title: string
+  totalAnswers: number
+  incorrectAnswers: number
+  unresolvedFlags: number
+}
 
 export function IssuesCard() {
+  const [questions, setQuestions] = useState<QuestionStats[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      setLoading(true)
+      try {
+        const res = await fetch("/api/questions/admin")
+        const data = await res.json()
+        setQuestions(data.questions)
+      } catch {
+        setQuestions([])
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchQuestions()
+  }, [])
+
+  // Calculate high failure rate questions
+  const highFailureQuestions = questions.filter(q => {
+    if (q.totalAnswers === 0) return false
+    return (q.incorrectAnswers / q.totalAnswers) > 0.8
+  })
+
+  // Calculate flagged questions (pending or reviewed)
+  const flaggedQuestions = questions.filter(q => q.unresolvedFlags > 0)
+
   return (
     <Card>
       <CardHeader>
@@ -17,7 +54,11 @@ export function IssuesCard() {
             <XCircle className="h-5 w-5 text-destructive mt-0.5" />
             <div>
               <p className="font-medium">Failed Questions Review</p>
-              <p className="text-sm text-muted-foreground">5 questions have a failure rate above 80%</p>
+              <p className="text-sm text-muted-foreground">
+                {loading
+                  ? "Loading..."
+                  : `${highFailureQuestions.length} questions have a failure rate above 80%`}
+              </p>
               <Button variant="link" size="sm" className="px-0 h-auto">
                 Review Questions
               </Button>
@@ -28,22 +69,12 @@ export function IssuesCard() {
             <div>
               <p className="font-medium">Flagged Content</p>
               <p className="text-sm text-muted-foreground">
-                3 questions have been flagged by users for review
+                {loading
+                  ? "Loading..."
+                  : `${flaggedQuestions.length} questions have been flagged by users for review`}
               </p>
               <Button variant="link" size="sm" className="px-0 h-auto">
                 Review Flags
-              </Button>
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-blue-500 mt-0.5" />
-            <div>
-              <p className="font-medium">Content Update Required</p>
-              <p className="text-sm text-muted-foreground">
-                California DMV regulations updated on 4/1/2025
-              </p>
-              <Button variant="link" size="sm" className="px-0 h-auto">
-                Update Content
               </Button>
             </div>
           </div>
@@ -51,4 +82,4 @@ export function IssuesCard() {
       </CardContent>
     </Card>
   )
-} 
+}
