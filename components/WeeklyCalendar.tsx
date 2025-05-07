@@ -189,9 +189,8 @@ export default function WeeklyCalendar() {
 											return (
 												<span
 													key={event.id}
-													ref={(el) => {
-														if (popoverOpen && selectedEvent?.id === event.id)
-															setPopoverAnchor(el);
+													ref={(node) => {
+														if (node) setPopoverAnchor(node);
 													}}
 													className="absolute left-0 right-0 mx-0.5 p-1 rounded-2xl text-xs overflow-hidden bg-[#000099] text-white flex flex-col items-center justify-center cursor-pointer"
 													style={{
@@ -232,9 +231,9 @@ export default function WeeklyCalendar() {
 																onOpenChange={setPopoverOpen}
 																anchorEl={
 																	<span
-																		ref={(node) =>
-																			node && setPopoverAnchor(node)
-																		}
+																		ref={(node) => {
+																			if (node) setPopoverAnchor(node);
+																		}}
 																	/>
 																}
 																// Add onEdit/onDelete handlers as needed

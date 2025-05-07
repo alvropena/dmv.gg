@@ -19,13 +19,7 @@ import Link from "next/link";
 import { AdminAvatar } from "@/components/AdminAvatar";
 import { Button } from "@/components/ui/button";
 import { useClerk } from "@clerk/nextjs";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogDescription,
-} from "@/components/ui/dialog";
+import { AdminSettingsDialog } from "@/components/AdminSettingsDialog";
 
 export function AdminSidebarMenu() {
 	const pathname = usePathname();
@@ -104,22 +98,7 @@ export function AdminSidebarMenu() {
 						Logout
 					</Button>
 				</div>
-				<Dialog open={open} onOpenChange={setOpen}>
-					<DialogContent>
-						<DialogHeader>
-							<DialogTitle>Settings</DialogTitle>
-							<DialogDescription>
-								Update your admin settings below.
-							</DialogDescription>
-						</DialogHeader>
-						{/* Settings options placeholder */}
-						<div className="space-y-4 mt-4">
-							<div className="text-sm text-muted-foreground">
-								Settings options go here.
-							</div>
-						</div>
-					</DialogContent>
-				</Dialog>
+				<AdminSettingsDialog open={open} onOpenChange={setOpen} />
 			</div>
 		</div>
 	);
