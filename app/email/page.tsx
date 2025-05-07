@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Paintbrush, X } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import DOMPurify from "dompurify";
 
 const CAMPAIGN_TYPES = [
 	{ value: "one-time", label: "One-time" },
@@ -44,7 +45,12 @@ export interface Campaign {
 	content: string;
 	schedule: string;
 	scheduleType: string;
-	dripSequence: { subject: string; content: string; delay: string }[];
+	dripSequence: {
+		id: string;
+		subject: string;
+		content: string;
+		delay: string;
+	}[];
 	triggerEvent: string;
 	active: boolean;
 	sentCount: number;
@@ -72,6 +78,17 @@ export default function EmailPage() {
 		succeededCount: 0,
 		failedCount: 0,
 	});
+
+	const previewRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (previewRef.current) {
+			previewRef.current.innerHTML = DOMPurify.sanitize(
+				formData.content ||
+					'<div class="text-muted-foreground">Preview will appear here...</div>',
+			);
+		}
+	}, [formData.content]);
 
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -324,12 +341,8 @@ export default function EmailPage() {
 									<div className="border rounded-lg bg-white p-4 h-[600px] overflow-auto">
 										<div className="text-sm font-medium mb-2">Preview</div>
 										<div
+											ref={previewRef}
 											className="prose prose-sm max-w-none h-full"
-											dangerouslySetInnerHTML={{
-												__html:
-													formData.content ||
-													'<div class="text-muted-foreground">Preview will appear here...</div>',
-											}}
 										/>
 									</div>
 								</div>
