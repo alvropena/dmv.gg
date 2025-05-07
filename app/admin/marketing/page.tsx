@@ -6,7 +6,7 @@ import { useCallback } from "react";
 import WeeklyCalendar from "@/components/WeeklyCalendar";
 import CreatorsTabContent from "@/components/CreatorsTabContent";
 import FacelessContentTab from "@/components/FacelessContentTab";
-import EmailTabContent from "@/components/EmailTabContent";
+import { EmailTabContent } from "@/components/EmailTabContent";
 
 export default function MarketingPage() {
 	const searchParams = useSearchParams();
