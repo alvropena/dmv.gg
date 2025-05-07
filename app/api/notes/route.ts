@@ -7,8 +7,8 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json(notes);
-  } catch (error) {
-    return NextResponse.json({ error: "Error fetching notes" }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: "Failed to fetch notes" }, { status: 500 });
   }
 }
 
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       data: { title, content },
     });
     return NextResponse.json(note);
-  } catch (error) {
-    return NextResponse.json({ error: "Error creating note" }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: "Failed to create note" }, { status: 500 });
   }
 } 

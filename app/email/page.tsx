@@ -14,7 +14,7 @@ import {
 import CodeMirror from '@uiw/react-codemirror';
 import { html } from '@codemirror/lang-html';
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Paintbrush, X } from "lucide-react";
+import { Mail, Plus, Search, Settings } from "lucide-react";
 import prettier from "prettier/standalone";
 import parserHtml from "prettier/parser-html";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -93,10 +93,8 @@ export default function EmailPage() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle campaign creation logic here
-    console.log('Campaign created:', formData);
+  const handleSubmit = () => {
+    // Handle form submission
   };
 
   const handleFormat = async () => {
