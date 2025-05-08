@@ -19,7 +19,7 @@ const TIME_HORIZONS = [
 
 export function TimeHorizonDropdown() {
 	const searchParams = useSearchParams();
-	const timeHorizon = searchParams.get("timeHorizon") || "7d";
+	const timeHorizon = searchParams.get("timeHorizon") || "all";
 
 	return (
 		<DropdownMenu>

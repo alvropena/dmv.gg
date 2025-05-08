@@ -21,7 +21,7 @@ export default function AdminLayout({
 	children,
 }: { children: React.ReactNode }) {
 	return (
-		<SidebarProvider>
+		<SidebarProvider defaultOpen={false}>
 			<Sidebar collapsible="icon">
 				<SidebarContent>
 					<div className="flex items-center justify-center px-2 py-2">
@@ -40,13 +40,15 @@ export default function AdminLayout({
 				</SidebarContent>
 			</Sidebar>
 			<SidebarInset>
-				<header className="sticky top-0 z-10 border-b bg-white dark:bg-gray-950 dark:border-gray-800 flex h-16 items-center px-6">
-					<SidebarTrigger className="mr-4" />
-					<div className="flex-1">
-						<AdminHeader />
-					</div>
-				</header>
-				<main className="flex-1 p-6">{children}</main>
+				<div className="flex flex-col h-screen min-h-0">
+					<header className="sticky top-0 z-10 border-b bg-white dark:bg-gray-950 dark:border-gray-800 flex h-16 items-center px-6 shrink-0">
+						<SidebarTrigger className="mr-4" />
+						<div className="flex-1">
+							<AdminHeader />
+						</div>
+					</header>
+					<main className="flex-1 min-h-0 overflow-y-auto p-6">{children}</main>
+				</div>
 			</SidebarInset>
 		</SidebarProvider>
 	);
