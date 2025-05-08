@@ -24,16 +24,38 @@ export type Subscription = {
   updatedAt: Date;
 };
 
-export type User = {
+export enum Gender {
+  MALE = "male",
+  FEMALE = "female",
+  NON_BINARY = "non-binary",
+  OTHER = "other",
+  PREFER_NOT_TO_SAY = "prefer-not-to-say"
+}
+
+export enum Ethnicity {
+  WHITE = "white",
+  BLACK = "black",
+  ASIAN = "asian",
+  HISPANIC = "hispanic",
+  OTHER = "other",
+  PREFER_NOT_TO_SAY = "prefer-not-to-say"
+}
+
+export enum Language {
+  EN = "en",
+  ES = "es"
+}
+
+export interface User {
   id: string;
   clerkId: string;
   email: string;
   firstName: string | null;
   lastName: string | null;
   birthday: Date | null;
-  gender: 'male' | 'female' | 'non-binary' | 'other' | 'prefer-not-to-say' | null;
-  ethnicity: 'white' | 'black' | 'asian' | 'hispanic' | 'other' | 'prefer-not-to-say' | null;
-  language: string | null;
+  gender: Gender | null;
+  ethnicity: Ethnicity | null;
+  language: Language | null;
   role: UserRole;
   hasUsedFreeTest: boolean;
   createdAt: Date;
@@ -42,7 +64,7 @@ export type User = {
   tests?: Test[];
   supportRequests?: SupportRequest[];
   flaggedQuestions?: FlaggedQuestion[];
-};
+}
 
 export type Question = {
   id: string;
@@ -161,6 +183,35 @@ export type Note = {
   id: string;
   title: string;
   content: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type EmailCampaign = {
+  id: string;
+  name: string;
+  description: string | null;
+  subject: string;
+  content: string;
+  status: 'draft' | 'scheduled' | 'sending' | 'completed' | 'failed';
+  scheduledFor: Date | null;
+  sentAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  sentEmails: SentEmail[];
+};
+
+export type SentEmail = {
+  id: string;
+  campaignId: string;
+  campaign: EmailCampaign;
+  recipientEmail: string;
+  status: 'pending' | 'sent' | 'failed' | 'delivered' | 'opened' | 'clicked';
+  sentAt: Date | null;
+  deliveredAt: Date | null;
+  openedAt: Date | null;
+  clickedAt: Date | null;
+  error: string | null;
   createdAt: Date;
   updatedAt: Date;
 }; 

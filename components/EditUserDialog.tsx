@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import type { User } from "@/types";
+import { Gender, Ethnicity, Language } from "@/types";
 import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -28,6 +29,28 @@ interface EditUserDialogProps {
 	user: User | null;
 	onOpenChange: (open: boolean) => void;
 }
+
+const GENDER_OPTIONS = [
+	{ value: Gender.MALE, label: "Male" },
+	{ value: Gender.FEMALE, label: "Female" },
+	{ value: Gender.NON_BINARY, label: "Non-binary" },
+	{ value: Gender.OTHER, label: "Other" },
+	{ value: Gender.PREFER_NOT_TO_SAY, label: "Prefer not to say" },
+];
+
+const ETHNICITY_OPTIONS = [
+	{ value: Ethnicity.WHITE, label: "White" },
+	{ value: Ethnicity.BLACK, label: "Black" },
+	{ value: Ethnicity.ASIAN, label: "Asian" },
+	{ value: Ethnicity.HISPANIC, label: "Hispanic" },
+	{ value: Ethnicity.OTHER, label: "Other" },
+	{ value: Ethnicity.PREFER_NOT_TO_SAY, label: "Prefer not to say" },
+];
+
+const LANGUAGE_OPTIONS = [
+	{ value: Language.EN, label: "English" },
+	{ value: Language.ES, label: "Spanish" },
+];
 
 export function EditUserDialog({
 	open,
@@ -108,70 +131,145 @@ export function EditUserDialog({
 							/>
 						</div>
 					</div>
-					<div className="flex flex-col gap-1">
-						<Label>Birthday</Label>
-						<div>
-							<Input
-								readOnly
-								className="cursor-pointer"
-								value={
-									form.birthday
-										? format(new Date(form.birthday), "MMMM d, yyyy")
-										: ""
+
+					<div className="flex flex-row gap-4">
+						<div className="flex flex-col gap-1 w-1/2">
+							<Label>Birthday</Label>
+							<div>
+								<Input
+									readOnly
+									className="cursor-pointer"
+									value={
+										form.birthday
+											? format(new Date(form.birthday), "MMMM d, yyyy")
+											: ""
+									}
+									onClick={() => setShowCalendar((v) => !v)}
+									placeholder="Select date"
+								/>
+								{showCalendar && (
+									<div className="absolute z-50 mt-2 bg-white rounded-md shadow-md">
+										<Calendar
+											mode="single"
+											selected={
+												form.birthday ? new Date(form.birthday) : undefined
+											}
+											onSelect={(date) => {
+												setForm((f) => f && { ...f, birthday: date ?? null });
+												setShowCalendar(false);
+											}}
+										/>
+									</div>
+								)}
+							</div>
+						</div>
+
+						<div className="flex flex-col gap-1 w-1/2">
+							<Label>Gender</Label>
+							<Select
+								value={form.gender ?? ""}
+								onValueChange={(value: Gender) =>
+									setForm((f) => f && { ...f, gender: value })
 								}
-								onClick={() => setShowCalendar((v) => !v)}
-								placeholder="Select date"
-							/>
-							{showCalendar && (
-								<div className="absolute z-50 mt-2 bg-white rounded-md shadow-md">
-									<Calendar
-										mode="single"
-										selected={
-											form.birthday ? new Date(form.birthday) : undefined
-										}
-										onSelect={(date) => {
-											setForm((f) => f && { ...f, birthday: date ?? null });
-											setShowCalendar(false);
-										}}
-									/>
-								</div>
-							)}
+							>
+								<SelectTrigger>
+									<SelectValue placeholder="Select gender" />
+								</SelectTrigger>
+								<SelectContent>
+									{GENDER_OPTIONS.map((option) => (
+										<SelectItem key={option.value} value={option.value}>
+											{option.label}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
 						</div>
 					</div>
-					<div className="flex flex-col gap-1">
-						<Label>Role</Label>
-						<Select
-							value={form.role}
-							onValueChange={(value) =>
-								setForm((f) => f && { ...f, role: value as User["role"] })
-							}
-						>
-							<SelectTrigger>
-								<SelectValue placeholder="Select role" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="ADMIN">ADMIN</SelectItem>
-								<SelectItem value="STUDENT">STUDENT</SelectItem>
-							</SelectContent>
-						</Select>
+
+					<div className="flex flex-row gap-4">
+						<div className="flex flex-col gap-1 w-1/2">
+							<Label>Ethnicity</Label>
+							<Select
+								value={form.ethnicity ?? ""}
+								onValueChange={(value: Ethnicity) =>
+									setForm((f) => f && { ...f, ethnicity: value })
+								}
+							>
+								<SelectTrigger>
+									<SelectValue placeholder="Select ethnicity" />
+								</SelectTrigger>
+								<SelectContent>
+									{ETHNICITY_OPTIONS.map((option) => (
+										<SelectItem key={option.value} value={option.value}>
+											{option.label}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
+
+						<div className="flex flex-col gap-1 w-1/2">
+							<Label>Language</Label>
+							<Select
+								value={form.language ?? ""}
+								onValueChange={(value: Language) =>
+									setForm((f) => f && { ...f, language: value })
+								}
+							>
+								<SelectTrigger>
+									<SelectValue placeholder="Select language" />
+								</SelectTrigger>
+								<SelectContent>
+									{LANGUAGE_OPTIONS.map((option) => (
+										<SelectItem key={option.value} value={option.value}>
+											{option.label}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
 					</div>
-					<div className="flex flex-col gap-1">
-						<Label>Has Used Free Test</Label>
-						<Select
-							value={form.hasUsedFreeTest ? "true" : "false"}
-							onValueChange={(value) =>
-								setForm((f) => f && { ...f, hasUsedFreeTest: value === "true" })
-							}
-						>
-							<SelectTrigger>
-								<SelectValue placeholder="Select option" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="true">True</SelectItem>
-								<SelectItem value="false">False</SelectItem>
-							</SelectContent>
-						</Select>
+
+					<div className="flex flex-row gap-4">
+						<div className="flex flex-col gap-1 w-1/2">
+							<Label>Role</Label>
+							<Select
+								value={form.role}
+								onValueChange={(value) =>
+									setForm((f) => f && { ...f, role: value as User["role"] })
+								}
+							>
+								<SelectTrigger>
+									<SelectValue placeholder="Select role" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="ADMIN">Admin</SelectItem>
+									<SelectItem value="STUDENT">Student</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
+
+						<div className="flex flex-col gap-1 w-1/2">
+							<Label>Has Used Free Test</Label>
+							<Select
+								value={form.hasUsedFreeTest ? "true" : "false"}
+								onValueChange={(value) =>
+									setForm(
+										(f) => f && { ...f, hasUsedFreeTest: value === "true" },
+									)
+								}
+							>
+								<SelectTrigger>
+									<SelectValue placeholder="Select option" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="true">True</SelectItem>
+									<SelectItem value="false">False</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
 					</div>
+
 					<div className="flex flex-row gap-4">
 						<div className="flex flex-col gap-1 w-1/2">
 							<Label>Created At</Label>

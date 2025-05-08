@@ -123,8 +123,33 @@ export default function EmailPage() {
 		}));
 	};
 
-	const handleSubmit = () => {
-		// Handle form submission
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		try {
+			const response = await fetch("/api/email/campaigns", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					name: formData.name,
+					description: "Automated reminder for incomplete tests",
+					subject: formData.subject,
+					content: formData.content,
+					triggerType: "TEST_INCOMPLETE",
+					status: "active",
+				}),
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to create campaign");
+			}
+
+			router.push("/email");
+		} catch (error) {
+			console.error("Error creating campaign:", error);
+			// Handle error (show toast, etc.)
+		}
 	};
 
 	const handleFormat = async () => {

@@ -24,6 +24,14 @@ enum TestType {
   WEAK_AREAS  // For practicing questions from weak areas
 }
 
+enum EmailTriggerType {
+  USER_SIGNUP
+  TEST_INCOMPLETE
+  CART_ABANDONED
+  PROFILE_UPDATED
+  PURCHASE_COMPLETED
+}
+
 model User {
   id        String        @id @default(uuid())
   clerkId   String        @unique
@@ -214,4 +222,44 @@ model Note {
   updatedAt DateTime @updatedAt @db.Timestamptz
 
   @@index([createdAt])
+}
+
+model EmailCampaign {
+  id          String      @id @default(uuid())
+  name        String
+  description String?     @db.Text
+  subject     String
+  content     String      @db.Text
+  status      String      @default("draft") // 'draft', 'scheduled', 'sending', 'completed', 'failed'
+  triggerType EmailTriggerType? // For triggered campaigns
+  scheduledFor DateTime?  @db.Timestamptz
+  sentAt      DateTime?   @db.Timestamptz
+  createdAt   DateTime    @default(now()) @db.Timestamptz
+  updatedAt   DateTime    @updatedAt @db.Timestamptz
+  sentEmails  SentEmail[]
+
+  @@index([status])
+  @@index([scheduledFor])
+  @@index([sentAt])
+  @@index([triggerType])
+}
+
+model SentEmail {
+  id             String        @id @default(uuid())
+  campaignId     String
+  campaign       EmailCampaign @relation(fields: [campaignId], references: [id])
+  recipientEmail String
+  status         String        @default("pending") // 'pending', 'sent', 'failed', 'delivered', 'opened', 'clicked'
+  sentAt         DateTime?     @db.Timestamptz
+  deliveredAt    DateTime?     @db.Timestamptz
+  openedAt       DateTime?     @db.Timestamptz
+  clickedAt      DateTime?     @db.Timestamptz
+  error          String?       @db.Text
+  createdAt      DateTime      @default(now()) @db.Timestamptz
+  updatedAt      DateTime      @updatedAt @db.Timestamptz
+
+  @@index([campaignId])
+  @@index([status])
+  @@index([recipientEmail])
+  @@index([sentAt])
 }
