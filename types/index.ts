@@ -193,9 +193,14 @@ export type EmailCampaign = {
   description: string | null;
   subject: string;
   content: string;
-  status: 'draft' | 'scheduled' | 'sending' | 'completed' | 'failed';
+  from: string;
+  status: string; // 'draft', 'scheduled', 'sending', 'completed', 'failed'
+  active: boolean;
+  type: CampaignType;
+  scheduleType: ScheduleType;
+  triggerType: EmailTriggerType | null;
   scheduledFor: Date | null;
-  sentAt: Date | null;
+  recipientSegment: RecipientSegment;
   createdAt: Date;
   updatedAt: Date;
   sentEmails: SentEmail[];
@@ -206,7 +211,7 @@ export type SentEmail = {
   campaignId: string;
   campaign: EmailCampaign;
   recipientEmail: string;
-  status: 'pending' | 'sent' | 'failed' | 'delivered' | 'opened' | 'clicked';
+  status: string; // 'pending', 'sent', 'failed', 'delivered', 'opened', 'clicked'
   sentAt: Date | null;
   deliveredAt: Date | null;
   openedAt: Date | null;
@@ -214,4 +219,34 @@ export type SentEmail = {
   error: string | null;
   createdAt: Date;
   updatedAt: Date;
-}; 
+};
+
+export enum CampaignType {
+  ONE_TIME = 'ONE_TIME',
+  DRIP = 'DRIP',
+  REMINDER = 'REMINDER',
+  TRIGGERED = 'TRIGGERED',
+  RECURRING = 'RECURRING',
+  AB_TEST = 'AB_TEST',
+}
+
+export enum ScheduleType {
+  TRIGGER = 'TRIGGER',
+  SCHEDULE = 'SCHEDULE',
+}
+
+export enum EmailTriggerType {
+  USER_SIGNUP = 'USER_SIGNUP',
+  TEST_INCOMPLETE = 'TEST_INCOMPLETE',
+  CART_ABANDONED = 'CART_ABANDONED',
+  PROFILE_UPDATED = 'PROFILE_UPDATED',
+  PURCHASE_COMPLETED = 'PURCHASE_COMPLETED',
+}
+
+export enum RecipientSegment {
+  ALL_USERS = 'ALL_USERS',
+  NEW_SIGNUPS = 'NEW_SIGNUPS',
+  VIP_USERS = 'VIP_USERS',
+  INACTIVE_USERS = 'INACTIVE_USERS',
+  TEST_INCOMPLETE = 'TEST_INCOMPLETE',
+} 
