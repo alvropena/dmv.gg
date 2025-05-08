@@ -56,6 +56,7 @@ export interface Campaign {
 	sentCount: number;
 	succeededCount: number;
 	failedCount: number;
+	description: string;
 }
 
 export default function EmailPage() {
@@ -77,6 +78,7 @@ export default function EmailPage() {
 		sentCount: 0,
 		succeededCount: 0,
 		failedCount: 0,
+		description: "",
 	});
 
 	const previewRef = useRef<HTMLDivElement>(null);
@@ -133,7 +135,7 @@ export default function EmailPage() {
 				},
 				body: JSON.stringify({
 					name: formData.name,
-					description: "Automated reminder for incomplete tests",
+					description: formData.description,
 					subject: formData.subject,
 					content: formData.content,
 					triggerType: "TEST_INCOMPLETE",
@@ -212,6 +214,17 @@ export default function EmailPage() {
 								</SelectContent>
 							</Select>
 						</div>
+					</div>
+
+					<div className="space-y-2">
+						<Label htmlFor="description">Description</Label>
+						<Textarea
+							name="description"
+							value={formData.description}
+							onChange={handleChange}
+							placeholder="Enter a description for this campaign"
+							className="min-h-[100px] bg-white"
+						/>
 					</div>
 
 					<div className="grid grid-cols-2 gap-6">

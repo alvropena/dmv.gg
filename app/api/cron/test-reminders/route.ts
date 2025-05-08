@@ -64,7 +64,7 @@ export async function GET(req: Request) {
                 try {
                     // Send email
                     await resend.emails.send({
-                        from: 'DMV.gg <noreply@dmv.gg>',
+                        from: campaign.from,
                         to: user.email,
                         subject: campaign.subject,
                         html: campaign.content.replace(
