@@ -155,8 +155,13 @@ export default function EmailPage() {
 
 	useEffect(() => {
 		if (previewRef.current) {
+			const sampleFirstName = "Alex";
+			const previewHtml = (formData.content || "").replace(
+				/\{\{firstName\}\}/g,
+				sampleFirstName,
+			);
 			previewRef.current.innerHTML = DOMPurify.sanitize(
-				formData.content ||
+				previewHtml ||
 					'<div class="text-muted-foreground">Preview will appear here...</div>',
 			);
 		}

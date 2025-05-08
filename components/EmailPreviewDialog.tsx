@@ -11,16 +11,20 @@ import type { EmailCampaign } from "@/types";
 
 interface EmailPreviewDialogProps {
 	campaign: EmailCampaign;
-	children: React.ReactNode;
+	children?: React.ReactNode;
+	open?: boolean;
+	onOpenChange?: (open: boolean) => void;
 }
 
 export function EmailPreviewDialog({
 	campaign,
 	children,
+	open,
+	onOpenChange,
 }: EmailPreviewDialogProps) {
 	return (
-		<Dialog>
-			<DialogTrigger asChild>{children}</DialogTrigger>
+		<Dialog open={open} onOpenChange={onOpenChange}>
+			{children && <DialogTrigger asChild>{children}</DialogTrigger>}
 			<DialogContent className="max-w-2xl">
 				<DialogHeader>
 					<DialogTitle>Email Preview</DialogTitle>
