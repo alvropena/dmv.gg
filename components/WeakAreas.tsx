@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { AlertCircle, Loader2, Lock } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { PricingDialog } from "@/components/PricingDialog";
+import { PricingDialog } from "@/components/dialogs/PricingDialog";
 import { usePostHog } from 'posthog-js/react';
 
 type WeakArea = {

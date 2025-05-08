@@ -3,13 +3,13 @@
 import { useClerk, useUser } from "@clerk/nextjs";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useState, useEffect } from "react";
-import { PricingDialog } from "@/components/PricingDialog";
+import { PricingDialog } from "@/components/dialogs/PricingDialog";
 import { SubscriptionDetailsDialog } from "@/components/dialogs/SubscriptionDetailsDialog";
 import { usePostHog } from "posthog-js/react";
 import Logo from "@/components/Logo";
 import UpgradeButton from "@/components/UpgradeButton";
 import AvatarDropdown from "@/components/AvatarDropdown";
-import SettingsDialog from "@/components/SettingsDialog";
+import SettingsDialog from "@/components/dialogs/SettingsDialog";
 
 export function UserHeader() {
 	const { signOut } = useClerk();

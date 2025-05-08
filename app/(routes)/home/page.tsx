@@ -9,7 +9,7 @@ import { UserStats } from "@/components/UserStats";
 import { StudyTips } from "@/components/StudyTips";
 import { UserActivitySection } from "@/components/UserActivitySection";
 import { SupportButton } from "@/components/SupportButton";
-import { PricingDialog } from "@/components/PricingDialog";
+import { PricingDialog } from "@/components/dialogs/PricingDialog";
 import { UserProfileDialog } from "@/components/dialogs/UserProfileDialog";
 import { UserWelcomeCard } from "@/components/UserWelcomeCard";
 

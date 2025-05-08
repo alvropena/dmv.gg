@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import type { Test, TestAnswer } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { PricingDialog } from "@/components/PricingDialog";
+import { PricingDialog } from "@/components/dialogs/PricingDialog";
 import {
 	Tooltip,
 	TooltipContent,

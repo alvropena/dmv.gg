@@ -1,7 +1,7 @@
 'use client';
 
 import { Question } from "@prisma/client";
-import { AddQuestionDialog } from "@/components/AddQuestionDialog";
+import { AddQuestionDialog } from "@/components/dialogs/AddQuestionDialog";
 import { useEffect, useState } from "react";
 
 interface EditQuestionDialogProps {
