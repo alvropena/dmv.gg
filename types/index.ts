@@ -1,6 +1,7 @@
 export enum UserRole {
   STUDENT = 'STUDENT',
   ADMIN = 'ADMIN',
+  TEST = 'TEST',
 }
 
 export enum TestType {
@@ -58,6 +59,18 @@ export interface User {
   language: Language | null;
   role: UserRole;
   hasUsedFreeTest: boolean;
+  // Email Notifications
+  emailMarketing: boolean;
+  emailUpdates: boolean;
+  emailSecurity: boolean;
+  // Product Notifications
+  testReminders: boolean;
+  studyTips: boolean;
+  progressUpdates: boolean;
+  weakAreasAlerts: boolean;
+  // Marketing Preferences
+  promotionalEmails: boolean;
+  newsletter: boolean;
   createdAt: Date;
   updatedAt: Date;
   subscriptions?: Subscription[];

@@ -245,6 +245,7 @@ export function EditUserDialog({
 								<SelectContent>
 									<SelectItem value="ADMIN">Admin</SelectItem>
 									<SelectItem value="STUDENT">Student</SelectItem>
+									<SelectItem value="TEST">Test</SelectItem>
 								</SelectContent>
 							</Select>
 						</div>

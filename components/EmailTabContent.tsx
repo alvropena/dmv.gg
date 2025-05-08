@@ -70,12 +70,12 @@ export function EmailTabContent() {
 									campaign={c}
 								/>
 							));
+							cards.push(<CreateCampaignCard key="create-campaign-card" />);
 							const remainder = cards.length % 3;
 							if (remainder !== 0) {
-								cards.push(<CreateCampaignCard key="create-campaign-card" />);
-							}
-							while (cards.length % 3 !== 0) {
-								cards.push(<div key={`empty-${cards.length}`} />);
+								for (let i = 0; i < 3 - remainder; i++) {
+									cards.push(<div key={`empty-${cards.length + i}`} />);
+								}
 							}
 							return cards;
 						})()}

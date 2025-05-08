@@ -89,6 +89,18 @@ export async function GET() {
                         firstName: user.firstName || null,
                         lastName: user.lastName || null,
                         role: "STUDENT", // Set default role
+                        // Email Notifications
+                        emailMarketing: true,
+                        emailUpdates: true,
+                        emailSecurity: true,
+                        // Product Notifications
+                        testReminders: true,
+                        studyTips: true,
+                        progressUpdates: true,
+                        weakAreasAlerts: true,
+                        // Marketing Preferences
+                        promotionalEmails: true,
+                        newsletter: true,
                     },
                     select: {
                         id: true,

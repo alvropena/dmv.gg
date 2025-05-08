@@ -21,6 +21,18 @@ model User {
   ethnicity        String?
   gender           String?
   language         String?
+  // Email Notifications
+  emailMarketing     Boolean         @default(true)
+  emailUpdates       Boolean         @default(true)
+  emailSecurity      Boolean         @default(true)
+  // Product Notifications
+  testReminders      Boolean         @default(true)
+  studyTips          Boolean         @default(true)
+  progressUpdates    Boolean         @default(true)
+  weakAreasAlerts    Boolean         @default(true)
+  // Marketing Preferences
+  promotionalEmails  Boolean         @default(true)
+  newsletter         Boolean         @default(true)
   flaggedQuestions FlaggedQuestion[]
   subscriptions    Subscription[]
   supportRequests  SupportRequest[]
@@ -233,6 +245,7 @@ model SentEmail {
 enum UserRole {
   STUDENT
   ADMIN
+  TEST
 }
 
 enum TestType {

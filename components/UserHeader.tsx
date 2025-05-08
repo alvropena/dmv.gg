@@ -10,6 +10,7 @@ import Logo from "@/components/Logo";
 import UpgradeButton from "@/components/UpgradeButton";
 import AvatarDropdown from "@/components/AvatarDropdown";
 import SettingsDialog from "@/components/dialogs/SettingsDialog";
+import NotificationsDialog from "@/components/dialogs/NotificationsDialog";
 
 export function UserHeader() {
 	const { signOut } = useClerk();
@@ -19,6 +20,7 @@ export function UserHeader() {
 	const [isSubscriptionDetailsOpen, setIsSubscriptionDetailsOpen] =
 		useState(false);
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+	const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 	const posthog = usePostHog();
 
 	const months = [
@@ -104,6 +106,7 @@ export function UserHeader() {
 							<AvatarDropdown
 								user={user}
 								onSettings={() => setIsSettingsOpen(true)}
+								onNotifications={() => setIsNotificationsOpen(true)}
 								onLogout={signOut}
 							/>
 						</div>
@@ -139,6 +142,11 @@ export function UserHeader() {
 				setEthnicity={setEthnicity}
 				language={language}
 				setLanguage={setLanguage}
+			/>
+
+			<NotificationsDialog
+				open={isNotificationsOpen}
+				onOpenChange={setIsNotificationsOpen}
 			/>
 		</>
 	);
