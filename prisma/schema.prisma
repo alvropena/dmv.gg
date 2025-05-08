@@ -34,9 +34,6 @@ enum EmailTriggerType {
 
 enum CampaignType {
   ONE_TIME
-  DRIP
-  REMINDER
-  TRIGGERED
   RECURRING
   AB_TEST
 }
@@ -48,10 +45,8 @@ enum ScheduleType {
 
 enum RecipientSegment {
   ALL_USERS
-  NEW_SIGNUPS
-  VIP_USERS
-  INACTIVE_USERS
-  TEST_INCOMPLETE
+  TEST_USERS
+  INDIVIDUAL_USER
 }
 
 model User {

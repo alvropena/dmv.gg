@@ -4,7 +4,7 @@ import React from "react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { CalendarSlotDialog } from "./CalendarSlotDialog";
+import { CalendarSlotDialog } from "./dialogs/CalendarSlotDialog";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { EventDetailsPopover } from "@/components/EventDetailsPopover";

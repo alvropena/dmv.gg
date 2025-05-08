@@ -223,9 +223,6 @@ export type SentEmail = {
 
 export enum CampaignType {
   ONE_TIME = 'ONE_TIME',
-  DRIP = 'DRIP',
-  REMINDER = 'REMINDER',
-  TRIGGERED = 'TRIGGERED',
   RECURRING = 'RECURRING',
   AB_TEST = 'AB_TEST',
 }
@@ -245,8 +242,6 @@ export enum EmailTriggerType {
 
 export enum RecipientSegment {
   ALL_USERS = 'ALL_USERS',
-  NEW_SIGNUPS = 'NEW_SIGNUPS',
-  VIP_USERS = 'VIP_USERS',
-  INACTIVE_USERS = 'INACTIVE_USERS',
-  TEST_INCOMPLETE = 'TEST_INCOMPLETE',
+  TEST_USERS = 'TEST_USERS',
+  INDIVIDUAL_USER = 'INDIVIDUAL_USER',
 } 

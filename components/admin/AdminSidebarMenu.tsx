@@ -16,10 +16,10 @@ import {
 	SidebarMenuButton,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { AdminAvatar } from "@/components/AdminAvatar";
+import { AdminAvatar } from "@/components/admin/AdminAvatar";
 import { Button } from "@/components/ui/button";
 import { useClerk } from "@clerk/nextjs";
-import { AdminSettingsDialog } from "@/components/AdminSettingsDialog";
+import { AdminSettingsDialog } from "@/components/admin/AdminSettingsDialog";
 
 export function AdminSidebarMenu() {
 	const pathname = usePathname();

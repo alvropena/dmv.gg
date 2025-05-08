@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import {
 	Sidebar,
 	SidebarHeader,
@@ -14,7 +14,7 @@ import {
 	SelectItem,
 	SelectValue,
 } from "@/components/ui/select";
-import { ArrowUp, SquarePen } from "lucide-react";
+import { ArrowUp, SquarePen, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const AGENTS = [
@@ -25,28 +25,71 @@ const AGENTS = [
 	{ id: "researcher", name: "Researcher" },
 ];
 
+interface Message {
+	id: number;
+	from: "me" | "agent";
+	text: string;
+}
+
 export function AdminChatSidebar() {
 	const [selectedAgent, setSelectedAgent] = useState("content_planner");
-	const [messages, setMessages] = useState([
-		{ id: 1, from: "agent", text: "Hello! How can I help you today?" },
-		{ id: 2, from: "me", text: "I have a question about my test." },
-	]);
+	const [messages, setMessages] = useState<Message[]>([]);
 	const [input, setInput] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
 	const messagesEndRef = useRef<HTMLDivElement>(null);
+
+	const scrollToBottom = useCallback(() => {
+		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	}, []);
 
 	// Scroll to bottom when messages change
 	useEffect(() => {
-		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-	}, [messages]);
+		scrollToBottom();
+	}, [scrollToBottom]);
 
-	function handleSend(e?: React.FormEvent) {
+	async function handleSend(e?: React.FormEvent) {
 		if (e) e.preventDefault();
-		if (!input.trim()) return;
-		setMessages((msgs) => [
-			...msgs,
-			{ id: Date.now(), from: "me", text: input },
-		]);
+		if (!input.trim() || isLoading) return;
+
+		const userMessage = { id: Date.now(), from: "me" as const, text: input };
+		setMessages((msgs) => [...msgs, userMessage]);
 		setInput("");
+		setIsLoading(true);
+
+		try {
+			const response = await fetch("/api/chat", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					messages: [...messages, userMessage],
+					agent: selectedAgent,
+				}),
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to send message");
+			}
+
+			const data = await response.json();
+			setMessages((msgs) => [
+				...msgs,
+				{ id: Date.now(), from: "agent", text: data.message },
+			]);
+		} catch (error) {
+			console.error("Error sending message:", error);
+			setMessages((msgs) => [
+				...msgs,
+				{
+					id: Date.now(),
+					from: "agent",
+					text: "Sorry, I encountered an error. Please try again.",
+				},
+			]);
+		} finally {
+			setIsLoading(false);
+		}
 	}
 
 	function handleNewChat() {
@@ -98,12 +141,23 @@ export function AdminChatSidebar() {
 							className={`flex ${msg.from === "me" ? "justify-end" : "justify-start"}`}
 						>
 							<div
-								className={`rounded-lg px-3 py-2 max-w-[70%] text-sm ${msg.from === "me" ? "bg-[#000099] text-white" : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"}`}
+								className={`rounded-lg px-3 py-2 max-w-[70%] text-sm ${
+									msg.from === "me"
+										? "bg-[#000099] text-white"
+										: "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+								}`}
 							>
 								{msg.text}
 							</div>
 						</div>
 					))}
+					{isLoading && (
+						<div className="flex justify-start">
+							<div className="rounded-lg px-3 py-2 max-w-[70%] text-sm bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+								<Loader2 className="h-4 w-4 animate-spin" />
+							</div>
+						</div>
+					)}
 					<div ref={messagesEndRef} />
 				</div>
 				<form
@@ -118,14 +172,20 @@ export function AdminChatSidebar() {
 						onKeyDown={(e) => {
 							if (e.key === "Enter" && !e.shiftKey) handleSend(e);
 						}}
+						disabled={isLoading}
 					/>
 					<Button
 						type="submit"
 						aria-label="Send message"
 						className="bg-[#000099] hover:bg-blue-900 text-white"
 						size="icon"
+						disabled={isLoading}
 					>
-						<ArrowUp className="h-5 w-5" />
+						{isLoading ? (
+							<Loader2 className="h-5 w-5 animate-spin" />
+						) : (
+							<ArrowUp className="h-5 w-5" />
+						)}
 					</Button>
 				</form>
 			</SidebarContent>

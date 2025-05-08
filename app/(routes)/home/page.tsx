@@ -10,7 +10,7 @@ import { StudyTips } from "@/components/StudyTips";
 import { UserActivitySection } from "@/components/UserActivitySection";
 import { SupportButton } from "@/components/SupportButton";
 import { PricingDialog } from "@/components/PricingDialog";
-import { UserProfileDialog } from "@/components/UserProfileDialog";
+import { UserProfileDialog } from "@/components/dialogs/UserProfileDialog";
 import { UserWelcomeCard } from "@/components/UserWelcomeCard";
 
 export default function HomePage() {

@@ -6,8 +6,8 @@ import {
 	SidebarInset,
 	SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { AdminSidebarMenu } from "@/components/AdminSidebarMenu";
-import { AdminHeader } from "@/components/AdminHeader";
+import { AdminSidebarMenu } from "@/components/admin/AdminSidebarMenu";
+import { AdminHeader } from "@/components/admin/AdminHeader";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";

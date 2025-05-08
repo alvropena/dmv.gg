@@ -34,18 +34,14 @@ import { EditorView } from "@codemirror/view";
 
 const CAMPAIGN_TYPES = [
 	{ value: CampaignType.ONE_TIME, label: "One-time" },
-	{ value: CampaignType.DRIP, label: "Drip" },
-	{ value: CampaignType.REMINDER, label: "Reminder" },
-	{ value: CampaignType.TRIGGERED, label: "Triggered" },
 	{ value: CampaignType.RECURRING, label: "Recurring" },
 	{ value: CampaignType.AB_TEST, label: "A/B Test" },
 ];
 
 const RECIPIENT_SEGMENTS = [
 	{ value: RecipientSegment.ALL_USERS, label: "All Users" },
-	{ value: RecipientSegment.NEW_SIGNUPS, label: "New Signups" },
-	{ value: RecipientSegment.VIP_USERS, label: "VIPs" },
-	{ value: RecipientSegment.INACTIVE_USERS, label: "Inactive Users" },
+	{ value: RecipientSegment.TEST_USERS, label: "Test Users" },
+	{ value: RecipientSegment.INDIVIDUAL_USER, label: "Individual User" },
 ];
 
 const TRIGGER_EVENTS = [

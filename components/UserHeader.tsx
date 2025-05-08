@@ -4,7 +4,7 @@ import { useClerk, useUser } from "@clerk/nextjs";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useState, useEffect } from "react";
 import { PricingDialog } from "@/components/PricingDialog";
-import { SubscriptionDetailsDialog } from "@/components/SubscriptionDetailsDialog";
+import { SubscriptionDetailsDialog } from "@/components/dialogs/SubscriptionDetailsDialog";
 import { usePostHog } from "posthog-js/react";
 import Logo from "@/components/Logo";
 import UpgradeButton from "@/components/UpgradeButton";

@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Mail, Clock, Users, MoreHorizontal, Edit, Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { EmailPreviewDialog } from "@/components/EmailPreviewDialog";
+import { EmailPreviewDialog } from "@/components/dialogs/EmailPreviewDialog";
 import type { EmailCampaign } from "@/types";
 import { useState } from "react";
 

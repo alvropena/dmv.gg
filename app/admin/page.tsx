@@ -11,9 +11,9 @@ import {
 	CreditCard,
 } from "lucide-react";
 import { StatCard } from "@/components/StatCard";
-import { AdminTabs } from "@/components/AdminTabs";
+import { AdminTabs } from "@/components/admin/AdminTabs";
 import { getDashboardStats } from "@/app/actions/stats";
-import { AdminTimeHorizonBar } from "@/components/AdminTimeHorizonBar";
+import { AdminTimeHorizonBar } from "@/components/admin/AdminTimeHorizonBar";
 
 export default async function AdminPage({
 	searchParams,
