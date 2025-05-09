@@ -1,18 +1,18 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
-import { EmailTriggerType } from "@prisma/client";
+import type { EmailTriggerType } from "@prisma/client";
 
 interface TriggerPayload {
     userId: string;
     email: string;
     triggerType: EmailTriggerType;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
 }
 
 export async function POST(req: Request) {
     try {
-        const { userId, email, triggerType, metadata } = await req.json() as TriggerPayload;
+        const { userId, email, triggerType } = await req.json() as TriggerPayload;
 
         // Find the campaign for this trigger type
         const campaign = await db.emailCampaign.findFirst({
