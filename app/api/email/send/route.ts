@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
-import type { SentEmail, UserRole } from '@/types';
+import { UserRole } from '@/types';
+import type { SentEmail } from '@prisma/client';
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -85,7 +86,6 @@ export async function POST(req: Request) {
                 where: { id: campaignId },
                 data: {
                     status: 'completed',
-                    sentAt: new Date(),
                 },
             });
         }
