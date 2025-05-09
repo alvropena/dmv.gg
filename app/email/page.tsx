@@ -31,6 +31,7 @@ import {
 } from "@/types";
 import type { SentEmail } from "@/types";
 import { EditorView } from "@codemirror/view";
+import { EmailFormSkeleton } from "@/components/EmailFormSkeleton";
 
 const CAMPAIGN_TYPES = [
 	{ value: CampaignType.ONE_TIME, label: "One-time" },
@@ -266,9 +267,7 @@ export default function EmailPage() {
 				</p>
 
 				{loading ? (
-					<div className="flex items-center justify-center h-64">
-						<p>Loading campaign data...</p>
-					</div>
+					<EmailFormSkeleton />
 				) : (
 					<form onSubmit={handleSubmit} className="space-y-6">
 						<div className="grid grid-cols-2 gap-6">

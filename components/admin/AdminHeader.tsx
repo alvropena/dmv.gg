@@ -4,7 +4,8 @@ import { Search } from "lucide-react";
 import { AdminNotificationsButton } from "@/components/admin/AdminNotificationsButton";
 import { Input } from "@/components/ui/input";
 import { AdminRemindersDropdown } from "@/components/admin/AdminRemindersDropdown";
-import { AdminChatButton } from "@/components/admin/AdminChatButton";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { MessageSquare } from "lucide-react";
 import { AdminNotesButton } from "@/components/admin/AdminNotesButton";
 
 export function AdminHeader() {
@@ -23,7 +24,9 @@ export function AdminHeader() {
 				</div>
 				<div className="flex items-center gap-4">
 					<AdminNotificationsButton />
-					<AdminChatButton />
+					<SidebarTrigger className="ml-2">
+						<MessageSquare className="h-[1.2rem] w-[1.2rem]" />
+					</SidebarTrigger>
 					<AdminRemindersDropdown />
 					<AdminNotesButton />
 				</div>

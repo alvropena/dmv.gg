@@ -6,7 +6,6 @@ import type { User, UserRole } from "@/types";
 import { RoleBadge } from "@/components/RoleBadge";
 import { EditUserDialog } from "@/components/dialogs/EditUserDialog";
 import { UserInteractionsDialog } from "@/components/dialogs/UserInteractionsDialog";
-import NotificationsDialog from "@/components/dialogs/NotificationsDialog";
 import { UserNameCell } from "@/components/UserNameCell";
 import { UserAgeCell } from "@/components/UserAgeCell";
 import { UserPlanCell } from "@/components/UserPlanCell";
@@ -34,7 +33,6 @@ export function UserTable({
 	const [selectedUser, setSelectedUser] = useState<User | null>(null);
 	const [editDialogOpen, setEditDialogOpen] = useState(false);
 	const [showInteractionsDialog, setShowInteractionsDialog] = useState(false);
-	const [showNotificationsDialog, setShowNotificationsDialog] = useState(false);
 
 	useEffect(() => {
 		const fetchUsers = async () => {
@@ -145,10 +143,6 @@ export function UserTable({
 										setSelectedUser(user);
 										setShowInteractionsDialog(true);
 									}}
-									onViewNotifications={(user) => {
-										setSelectedUser(user);
-										setShowNotificationsDialog(true);
-									}}
 								/>
 							</tr>
 						))
@@ -173,10 +167,6 @@ export function UserTable({
 				open={showInteractionsDialog}
 				user={selectedUser}
 				onOpenChange={setShowInteractionsDialog}
-			/>
-			<NotificationsDialog
-				open={showNotificationsDialog}
-				onOpenChange={setShowNotificationsDialog}
 			/>
 		</div>
 	);

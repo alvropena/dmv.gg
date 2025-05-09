@@ -12,14 +12,12 @@ interface UserActionsCellProps {
 	user: User;
 	onEdit: (user: User) => void;
 	onViewInteractions: (user: User) => void;
-	onViewNotifications: (user: User) => void;
 }
 
 export function UserActionsCell({
 	user,
 	onEdit,
 	onViewInteractions,
-	onViewNotifications,
 }: UserActionsCellProps) {
 	return (
 		<td className="px-4 py-3 text-center">
@@ -43,12 +41,6 @@ export function UserActionsCell({
 							onClick={() => onViewInteractions(user)}
 						>
 							View Interactions
-						</DropdownMenuItem>
-						<DropdownMenuItem
-							className="cursor-pointer"
-							onClick={() => onViewNotifications(user)}
-						>
-							Notification Preferences
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>

@@ -42,11 +42,14 @@ export async function POST(req: Request) {
 
 function getAgentSystemPrompt(agent: string): string {
     const prompts: Record<string, string> = {
-        content_planner: "You are a content planning expert. Help users plan and structure their content effectively.",
-        seo_specialist: "You are an SEO specialist. Help users optimize their content for search engines.",
-        copywriter: "You are a professional copywriter. Help users write compelling and engaging content.",
-        editor: "You are an experienced editor. Help users refine and improve their content.",
-        researcher: "You are a thorough researcher. Help users gather and analyze information effectively.",
+        data_analyst: `You are a data analyst specializing in social media and content performance analytics. Your role is to help users:
+- Analyze content performance metrics
+- Interpret engagement data
+- Identify trends and patterns
+- Make data-driven recommendations
+- Track KPIs and ROI
+- Create performance reports
+Always provide clear insights backed by data and suggest actionable improvements.`
     };
 
     return prompts[agent] || "You are a helpful assistant.";

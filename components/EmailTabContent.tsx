@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import type { EmailCampaign } from "@/types";
 import CampaignCard from "@/components/CampaignCard";
 import CreateCampaignCard from "@/components/CreateCampaignCard";
+import { EmailCampaignsSkeleton } from "@/components/EmailCampaignsSkeleton";
 
 export function EmailTabContent() {
 	const router = useRouter();
@@ -45,7 +46,7 @@ export function EmailTabContent() {
 			</div>
 
 			{loading ? (
-				<p>Loading campaigns...</p>
+				<EmailCampaignsSkeleton />
 			) : error ? (
 				<p className="text-red-600">{error}</p>
 			) : campaigns.length === 0 ? (
