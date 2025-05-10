@@ -1,25 +1,14 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
-import { UserRole } from '@/types';
+import { validateAdmin } from '@/lib/auth';
 
 export async function GET(
     req: Request,
     { params }: { params: { id: string } }
 ) {
     try {
-        const { userId } = await auth();
-        if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        const user = await db.user.findUnique({
-            where: { clerkId: userId },
-        });
-
-        if (!user || user.role !== UserRole.ADMIN) {
-            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-        }
+        const validation = await validateAdmin();
+        if (validation.error) return validation.error;
 
         const campaign = await db.emailCampaign.findUnique({
             where: { id: params.id },
@@ -51,18 +40,8 @@ export async function PATCH(
     { params }: { params: { id: string } }
 ) {
     try {
-        const { userId } = await auth();
-        if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        const user = await db.user.findUnique({
-            where: { clerkId: userId },
-        });
-
-        if (!user || user.role !== UserRole.ADMIN) {
-            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-        }
+        const validation = await validateAdmin();
+        if (validation.error) return validation.error;
 
         const body = await req.json();
         const { name, description, subject, content, status, scheduledFor } = body;
@@ -94,18 +73,8 @@ export async function DELETE(
     { params }: { params: { id: string } }
 ) {
     try {
-        const { userId } = await auth();
-        if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        const user = await db.user.findUnique({
-            where: { clerkId: userId },
-        });
-
-        if (!user || user.role !== UserRole.ADMIN) {
-            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-        }
+        const validation = await validateAdmin();
+        if (validation.error) return validation.error;
 
         await db.emailCampaign.delete({
             where: { id: params.id },

@@ -17,7 +17,7 @@ export default function CreateCampaignCard() {
 			<Button
 				variant="outline"
 				className="mt-4"
-				onClick={() => router.push("/email")}
+				onClick={() => router.push("/create-email-campaign")}
 			>
 				Get Started
 			</Button>

@@ -76,7 +76,9 @@ function CampaignCard({
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
 							<DropdownMenuItem
-								onClick={() => router.push(`/email?id=${campaign.id}`)}
+								onClick={() =>
+									router.push(`/create-email-campaign?id=${campaign.id}`)
+								}
 							>
 								<Edit className="mr-2 h-4 w-4" />
 								Edit

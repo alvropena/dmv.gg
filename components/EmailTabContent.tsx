@@ -41,7 +41,9 @@ export function EmailTabContent() {
 					</p>
 				</div>
 				<div className="flex gap-2">
-					<Button onClick={() => router.push("/email")}>Add Campaign</Button>
+					<Button onClick={() => router.push("/create-email-campaign")}>
+						Add Campaign
+					</Button>
 				</div>
 			</div>
 

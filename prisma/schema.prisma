@@ -8,35 +8,32 @@ datasource db {
 }
 
 model User {
-  id               String            @id @default(uuid())
-  clerkId          String            @unique
-  email            String            @unique
-  firstName        String?
-  lastName         String?
-  birthday         DateTime?         @db.Date
-  role             UserRole          @default(STUDENT)
-  hasUsedFreeTest  Boolean           @default(false)
-  createdAt        DateTime          @default(now()) @db.Timestamptz(6)
-  updatedAt        DateTime          @default(now()) @db.Timestamptz(6)
-  ethnicity        String?
-  gender           String?
-  language         String?
-  // Email Notifications
-  emailMarketing     Boolean         @default(true)
-  emailUpdates       Boolean         @default(true)
-  emailSecurity      Boolean         @default(true)
-  // Product Notifications
-  testReminders      Boolean         @default(true)
-  studyTips          Boolean         @default(true)
-  progressUpdates    Boolean         @default(true)
-  weakAreasAlerts    Boolean         @default(true)
-  // Marketing Preferences
-  promotionalEmails  Boolean         @default(true)
-  newsletter         Boolean         @default(true)
-  flaggedQuestions FlaggedQuestion[]
-  subscriptions    Subscription[]
-  supportRequests  SupportRequest[]
-  tests            Test[]
+  id                String            @id @default(uuid())
+  clerkId           String            @unique
+  email             String            @unique
+  firstName         String?
+  lastName          String?
+  birthday          DateTime?         @db.Date
+  role              UserRole          @default(STUDENT)
+  hasUsedFreeTest   Boolean           @default(false)
+  createdAt         DateTime          @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime          @default(now()) @db.Timestamptz(6)
+  ethnicity         String?
+  gender            String?
+  language          String?
+  emailMarketing    Boolean           @default(true)
+  emailSecurity     Boolean           @default(true)
+  emailUpdates      Boolean           @default(true)
+  newsletter        Boolean           @default(true)
+  progressUpdates   Boolean           @default(true)
+  promotionalEmails Boolean           @default(true)
+  studyTips         Boolean           @default(true)
+  testReminders     Boolean           @default(true)
+  weakAreasAlerts   Boolean           @default(true)
+  flaggedQuestions  FlaggedQuestion[]
+  subscriptions     Subscription[]
+  supportRequests   SupportRequest[]
+  tests             Test[]
 }
 
 model Subscription {
@@ -197,6 +194,30 @@ model Note {
   @@index([createdAt])
 }
 
+model SentEmail {
+  id             String        @id @default(uuid())
+  campaignId     String
+  recipientEmail String
+  status         String        @default("pending")
+  sentAt         DateTime?     @db.Timestamptz(6)
+  deliveredAt    DateTime?     @db.Timestamptz(6)
+  openedAt       DateTime?     @db.Timestamptz(6)
+  clickedAt      DateTime?     @db.Timestamptz(6)
+  error          String?
+  errorCode      String?
+  errorMessage   String?
+  messageId      String?
+  metadata       Json?
+  createdAt      DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime      @updatedAt @db.Timestamptz(6)
+  campaign       EmailCampaign @relation(fields: [campaignId], references: [id])
+
+  @@index([campaignId])
+  @@index([status])
+  @@index([recipientEmail])
+  @@index([sentAt])
+}
+
 model EmailCampaign {
   id               String            @id @default(uuid())
   name             String
@@ -222,26 +243,6 @@ model EmailCampaign {
   @@index([recipientSegment])
 }
 
-model SentEmail {
-  id             String        @id @default(uuid())
-  campaignId     String
-  recipientEmail String
-  status         String        @default("pending")
-  sentAt         DateTime?     @db.Timestamptz(6)
-  deliveredAt    DateTime?     @db.Timestamptz(6)
-  openedAt       DateTime?     @db.Timestamptz(6)
-  clickedAt      DateTime?     @db.Timestamptz(6)
-  error          String?
-  createdAt      DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt      DateTime      @updatedAt @db.Timestamptz(6)
-  campaign       EmailCampaign @relation(fields: [campaignId], references: [id])
-
-  @@index([campaignId])
-  @@index([status])
-  @@index([recipientEmail])
-  @@index([sentAt])
-}
-
 enum UserRole {
   STUDENT
   ADMIN
@@ -257,9 +258,9 @@ enum TestType {
 enum EmailTriggerType {
   USER_SIGNUP
   TEST_INCOMPLETE
-  CART_ABANDONED
-  PROFILE_UPDATED
   PURCHASE_COMPLETED
+  PROFILE_UPDATED
+  CART_ABANDONED
 }
 
 enum CampaignType {
@@ -275,6 +276,27 @@ enum ScheduleType {
 
 enum RecipientSegment {
   ALL_USERS
-  TEST_USERS  
-  INDIVIDUAL_USER
+  TEST_USERS
+  INDIVIDUAL_USERS
+}
+
+enum CampaignStatus {
+  DRAFT
+  SCHEDULED
+  SENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum EmailStatus {
+  PENDING
+  SENT
+  DELIVERED
+  OPENED
+  CLICKED
+  FAILED
+  BOUNCED
+  COMPLAINED
+  UNSUBSCRIBED
 }

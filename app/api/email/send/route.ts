@@ -1,33 +1,57 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
-import { UserRole } from '@/types';
-import type { SentEmail } from '@prisma/client';
-import { Resend } from 'resend';
+import type { SentEmail, EmailCampaign } from '@prisma/client';
+import { validateAdmin } from '@/lib/auth';
+import { sendEmail, getRecipients } from '@/lib/email';
+import { CampaignStatus, ScheduleType, EmailStatus } from '@prisma/client';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
+/** Sends emails for a specific campaign to a list of recipients.
+ * Can be triggered manually by admin users or automatically via CRON job.
+ * Creates sent email records for each recipient and updates campaign status upon completion.
+ * Handles both successful and failed email deliveries with appropriate status tracking.
+ */
 export async function POST(req: Request) {
     try {
-        const { userId } = await auth();
-        if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
+        // Check if this is a CRON job request
+        const isCronJob = req.headers.get('x-vercel-cron') === '1';
 
-        const user = await db.user.findUnique({
-            where: { clerkId: userId },
-        });
-
-        if (!user || user.role !== UserRole.ADMIN) {
-            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        if (!isCronJob) {
+            // For manual requests, validate admin access
+            const { error } = await validateAdmin();
+            if (error) return error;
         }
 
         const body = await req.json();
-        const { campaignId, recipientEmails } = body;
+        const { campaignId, individualEmail } = body;
 
-        if (!campaignId || !recipientEmails || !Array.isArray(recipientEmails)) {
+        // For CRON jobs, find scheduled campaigns
+        if (isCronJob) {
+            const scheduledCampaigns = await db.emailCampaign.findMany({
+                where: {
+                    status: CampaignStatus.SCHEDULED,
+                    scheduleType: ScheduleType.SCHEDULE,
+                    scheduledFor: {
+                        lte: new Date(), // Campaigns scheduled for now or in the past
+                    },
+                    active: true,
+                },
+            });
+
+            // Process each scheduled campaign
+            const results = await Promise.all(
+                scheduledCampaigns.map(campaign => processCampaign(campaign))
+            );
+
+            return NextResponse.json({
+                success: true,
+                processedCampaigns: results
+            });
+        }
+
+        // For manual requests, process single campaign
+        if (!campaignId) {
             return NextResponse.json(
-                { error: 'Missing required fields' },
+                { error: 'Missing campaign ID' },
                 { status: 400 }
             );
         }
@@ -43,13 +67,52 @@ export async function POST(req: Request) {
             );
         }
 
+        const result = await processCampaign(campaign, individualEmail);
+        return NextResponse.json(result);
+    } catch (error) {
+        console.error('Error sending emails:', error);
+        return NextResponse.json(
+            { error: 'Internal server error' },
+            { status: 500 }
+        );
+    }
+}
+
+/** Helper function to process a single campaign */
+async function processCampaign(campaign: EmailCampaign, individualEmail?: string) {
+    try {
+        // Update campaign status to SENDING
+        await db.emailCampaign.update({
+            where: { id: campaign.id },
+            data: { status: CampaignStatus.SENDING },
+        });
+
+        // Get recipients based on campaign segment
+        const recipientEmails = await getRecipients({
+            segment: campaign.recipientSegment,
+            ...(individualEmail && { recipientEmails: [individualEmail] })
+        });
+
+        if (recipientEmails.length === 0) {
+            await db.emailCampaign.update({
+                where: { id: campaign.id },
+                data: {
+                    status: CampaignStatus.FAILED,
+                    active: false,
+                },
+            });
+            return {
+                campaignId: campaign.id,
+                error: 'No recipients found for the specified segment',
+            };
+        }
+
         // Create sent email records
         const sentEmails = await Promise.all(
             recipientEmails.map(async (email: string) => {
                 try {
-                    // Send email using Resend
-                    await resend.emails.send({
-                        from: 'DMV.gg <noreply@dmv.gg>',
+                    // Send email using the utility function
+                    const result = await sendEmail({
                         to: email,
                         subject: campaign.subject,
                         html: campaign.content,
@@ -58,10 +121,15 @@ export async function POST(req: Request) {
                     // Create sent email record
                     return db.sentEmail.create({
                         data: {
-                            campaignId,
+                            campaignId: campaign.id,
                             recipientEmail: email,
-                            status: 'sent',
-                            sentAt: new Date(),
+                            status: EmailStatus.SENT,
+                            sentAt: result.sentAt,
+                            messageId: result.id,
+                            metadata: {
+                                from: result.from,
+                                to: result.to,
+                            },
                         },
                     });
                 } catch (error) {
@@ -69,33 +137,42 @@ export async function POST(req: Request) {
                     // Create failed email record
                     return db.sentEmail.create({
                         data: {
-                            campaignId,
+                            campaignId: campaign.id,
                             recipientEmail: email,
-                            status: 'failed',
+                            status: EmailStatus.FAILED,
                             error: error instanceof Error ? error.message : 'Unknown error',
+                            errorCode: error instanceof Error ? error.name : 'UNKNOWN',
+                            errorMessage: error instanceof Error ? error.message : 'Unknown error',
                         },
                     });
                 }
             })
         );
 
-        // Update campaign status if all emails were sent
-        const allSent = sentEmails.every((email: SentEmail) => email.status === 'sent');
-        if (allSent) {
-            await db.emailCampaign.update({
-                where: { id: campaignId },
-                data: {
-                    status: 'completed',
-                },
-            });
-        }
+        // Update campaign status based on results
+        const allSent = sentEmails.every((email: SentEmail) => email.status === EmailStatus.SENT);
+        await db.emailCampaign.update({
+            where: { id: campaign.id },
+            data: {
+                status: allSent ? CampaignStatus.COMPLETED : CampaignStatus.FAILED,
+                active: !allSent, // Deactivate only if all emails were sent successfully
+            },
+        });
 
-        return NextResponse.json({ success: true, sentEmails });
+        return {
+            campaignId: campaign.id,
+            success: true,
+            sentEmails,
+        };
     } catch (error) {
-        console.error('Error sending emails:', error);
-        return NextResponse.json(
-            { error: 'Internal server error' },
-            { status: 500 }
-        );
+        // Update campaign status to FAILED if there's an error
+        await db.emailCampaign.update({
+            where: { id: campaign.id },
+            data: {
+                status: CampaignStatus.FAILED,
+                active: false,
+            },
+        });
+        throw error;
     }
 } 

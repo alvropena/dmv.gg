@@ -1,23 +1,14 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
-import { UserRole } from '@/types';
 import type { CampaignType, EmailTriggerType, RecipientSegment } from '@prisma/client';
+import { CampaignStatus } from '@prisma/client';
+import { validateAdmin } from '@/lib/auth';
 
+/** Retrieves all email campaigns with sent email counts, accessible only to admin users. */
 export async function GET() {
     try {
-        const { userId } = await auth();
-        if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        const user = await db.user.findUnique({
-            where: { clerkId: userId },
-        });
-
-        if (!user || user.role !== UserRole.ADMIN) {
-            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-        }
+        const validation = await validateAdmin();
+        if (validation.error) return validation.error;
 
         const campaigns = await db.emailCampaign.findMany({
             include: {
@@ -42,20 +33,11 @@ export async function GET() {
     }
 }
 
+/** Creates a new email campaign with validation for required fields and schedule-specific requirements, accessible only to admin users. */
 export async function POST(req: Request) {
     try {
-        const { userId } = await auth();
-        if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        const user = await db.user.findUnique({
-            where: { clerkId: userId },
-        });
-
-        if (!user || user.role !== UserRole.ADMIN) {
-            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-        }
+        const validation = await validateAdmin();
+        if (validation.error) return validation.error;
 
         const body = await req.json();
         const {
@@ -103,8 +85,8 @@ export async function POST(req: Request) {
                 scheduledFor: scheduledFor ? new Date(scheduledFor) : null,
                 type: (type || 'ONE_TIME') as CampaignType,
                 recipientSegment: (recipientSegment || 'ALL_USERS') as RecipientSegment,
-                status: scheduledFor ? 'scheduled' : 'draft',
-                // active defaults to true in schema
+                status: scheduledFor ? CampaignStatus.SCHEDULED : CampaignStatus.DRAFT,
+                active: false,
                 // from defaults to "noreply@dmv.gg" in schema
             },
         });
