@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { X } from "lucide-react";
@@ -69,7 +69,7 @@ export interface Campaign {
 	description: string;
 }
 
-export default function EmailPage() {
+function EmailPageContent() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const campaignId = searchParams.get("id");
@@ -376,5 +376,13 @@ export default function EmailPage() {
 				)}
 			</div>
 		</div>
+	);
+}
+
+export default function EmailPage() {
+	return (
+		<Suspense fallback={<EmailFormSkeleton />}>
+			<EmailPageContent />
+		</Suspense>
 	);
 }
