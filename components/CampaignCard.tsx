@@ -21,6 +21,34 @@ import { EmailPreviewDialog } from "@/components/dialogs/EmailPreviewDialog";
 import type { EmailCampaign } from "@/types";
 import { useState } from "react";
 
+// Utility functions to format enum values into readable strings
+const formatCampaignType = (type: string): string => {
+	const types: Record<string, string> = {
+		ONE_TIME: "One Time",
+		RECURRING: "Recurring",
+		AB_TEST: "A/B Test",
+	};
+	return types[type] || type;
+};
+
+const formatTriggerType = (trigger: string): string => {
+	const triggers: Record<string, string> = {
+		USER_SIGNUP: "User Signed Up",
+		PURCHASE_COMPLETED: "Purchase Completed",
+		TEST_INCOMPLETE: "Test Incomplete",
+	};
+	return triggers[trigger] || trigger;
+};
+
+const formatRecipientSegment = (segment: string): string => {
+	const segments: Record<string, string> = {
+		ALL_USERS: "All Users",
+		TEST_USERS: "Test Users",
+		INDIVIDUAL_USERS: "Individual Users",
+	};
+	return segments[segment] || segment;
+};
+
 interface CampaignCardProps {
 	title: string;
 	description?: string;
@@ -100,19 +128,21 @@ function CampaignCard({
 						<Mail className="h-3.5 w-3.5" />
 						Type
 					</div>
-					<div className="font-medium">{type}</div>
+					<div className="font-medium">{formatCampaignType(type)}</div>
 
 					<div className="flex items-center gap-2 text-muted-foreground">
 						<Clock className="h-3.5 w-3.5" />
 						Trigger
 					</div>
-					<div className="font-medium">{triggerType}</div>
+					<div className="font-medium">{formatTriggerType(triggerType)}</div>
 
 					<div className="flex items-center gap-2 text-muted-foreground">
 						<Users className="h-3.5 w-3.5" />
 						Recipients
 					</div>
-					<div className="font-medium">{recipientSegment}</div>
+					<div className="font-medium">
+						{formatRecipientSegment(recipientSegment)}
+					</div>
 				</div>
 
 				<div className="mt-4 pt-4 border-t">

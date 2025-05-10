@@ -258,9 +258,7 @@ enum TestType {
 enum EmailTriggerType {
   USER_SIGNUP
   TEST_INCOMPLETE
-  PURCHASE_COMPLETED
-  PROFILE_UPDATED
-  CART_ABANDONED
+  PURCHASE_COMPLETED  
 }
 
 enum CampaignType {
