@@ -1,11 +1,11 @@
 "use client";
 
 import { Search } from "lucide-react";
-import { AdminNotificationsButton } from "@/components/AdminNotificationsButton";
+import { AdminNotificationsButton } from "@/components/admin/AdminNotificationsButton";
 import { Input } from "@/components/ui/input";
-import { AdminRemindersDropdown } from "@/components/AdminRemindersDropdown";
+import { AdminRemindersDropdown } from "@/components/admin/AdminRemindersDropdown";
 import { AdminChatButton } from "@/components/admin/AdminChatButton";
-import { AdminNotesButton } from "@/components/AdminNotesButton";
+import { AdminNotesButton } from "@/components/admin/AdminNotesButton";
 
 export function AdminHeader() {
 	return (
