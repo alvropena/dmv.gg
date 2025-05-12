@@ -22,16 +22,53 @@ import {
 } from "@/components/ui/tooltip";
 import Image from "next/image";
 
+const menuItems = [
+	{
+		label: "Dashboard",
+		icon: <LayoutDashboard />,
+		path: "",
+		isActive: (pathname: string, isAdminSubdomain: boolean) =>
+			pathname === (isAdminSubdomain ? "/" : "/admin"),
+	},
+	{
+		label: "Marketing",
+		icon: <Megaphone />,
+		path: "marketing?tab=calendar",
+		isActive: (pathname: string, isAdminSubdomain: boolean) =>
+			pathname.startsWith(isAdminSubdomain ? "/marketing" : "/admin/marketing"),
+	},
+	{
+		label: "Agents",
+		icon: <Bot />,
+		path: "agents",
+		isActive: (pathname: string, isAdminSubdomain: boolean) =>
+			pathname === (isAdminSubdomain ? "/agents" : "/admin/agents"),
+	},
+	{
+		label: "Support",
+		icon: <MessageSquare />,
+		path: "support",
+		isActive: (pathname: string, isAdminSubdomain: boolean) =>
+			pathname === (isAdminSubdomain ? "/support" : "/admin/support"),
+	},
+];
+
 export function AdminSidebarMenu({
 	...props
 }: React.ComponentProps<typeof Sidebar>) {
 	const pathname = usePathname();
+	const isAdminSubdomain =
+		typeof window !== "undefined" &&
+		window.location.hostname.startsWith("admin.");
+
+	const getHref = (path: string) =>
+		isAdminSubdomain ? `/${path}` : `/admin${path ? `/${path}` : ""}`;
 
 	return (
 		<Sidebar collapsible="icon" {...props}>
 			<SidebarHeader>
 				<div className="flex items-center justify-center px-2 py-2">
-					<Link href="/admin">
+					<Link href={getHref("")}>
 						<Image
 							src="/logo1024.png"
 							alt="DMV Logo"
@@ -46,74 +83,25 @@ export function AdminSidebarMenu({
 			<SidebarContent>
 				<TooltipProvider>
 					<SidebarMenu className="px-2">
-						<SidebarMenuItem>
-							<Tooltip>
-								<TooltipTrigger asChild>
-									<SidebarMenuButton
-										asChild
-										isActive={pathname === "/admin"}
-										className="data-[active=true]:bg-gray-200 data-[active=true]:text-foreground"
-									>
-										<Link href="/admin">
-											<LayoutDashboard />
-											<span>Dashboard</span>
-										</Link>
-									</SidebarMenuButton>
-								</TooltipTrigger>
-								<TooltipContent side="right">Dashboard</TooltipContent>
-							</Tooltip>
-						</SidebarMenuItem>
-						<SidebarMenuItem>
-							<Tooltip>
-								<TooltipTrigger asChild>
-									<SidebarMenuButton
-										asChild
-										isActive={pathname.startsWith("/admin/marketing")}
-										className="data-[active=true]:bg-gray-200 data-[active=true]:text-foreground"
-									>
-										<Link href="/admin/marketing?tab=calendar">
-											<Megaphone />
-											<span>Marketing</span>
-										</Link>
-									</SidebarMenuButton>
-								</TooltipTrigger>
-								<TooltipContent side="right">Marketing</TooltipContent>
-							</Tooltip>
-						</SidebarMenuItem>
-						<SidebarMenuItem>
-							<Tooltip>
-								<TooltipTrigger asChild>
-									<SidebarMenuButton
-										asChild
-										isActive={pathname === "/admin/agents"}
-										className="data-[active=true]:bg-gray-200 data-[active=true]:text-foreground"
-									>
-										<Link href="/admin/agents">
-											<Bot />
-											<span>Agents</span>
-										</Link>
-									</SidebarMenuButton>
-								</TooltipTrigger>
-								<TooltipContent side="right">Agents</TooltipContent>
-							</Tooltip>
-						</SidebarMenuItem>
-						<SidebarMenuItem>
-							<Tooltip>
-								<TooltipTrigger asChild>
-									<SidebarMenuButton
-										asChild
-										isActive={pathname === "/admin/support"}
-										className="data-[active=true]:bg-gray-200 data-[active=true]:text-foreground"
-									>
-										<Link href="/admin/support">
-											<MessageSquare />
-											<span>Support</span>
-										</Link>
-									</SidebarMenuButton>
-								</TooltipTrigger>
-								<TooltipContent side="right">Support</TooltipContent>
-							</Tooltip>
-						</SidebarMenuItem>
+						{menuItems.map((item) => (
+							<SidebarMenuItem key={item.label}>
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<SidebarMenuButton
+											asChild
+											isActive={item.isActive(pathname, isAdminSubdomain)}
+											className="data-[active=true]:bg-gray-200 data-[active=true]:text-foreground"
+										>
+											<Link href={getHref(item.path)}>
+												{item.icon}
+												<span>{item.label}</span>
+											</Link>
+										</SidebarMenuButton>
+									</TooltipTrigger>
+									<TooltipContent side="right">{item.label}</TooltipContent>
+								</Tooltip>
+							</SidebarMenuItem>
+						))}
 					</SidebarMenu>
 				</TooltipProvider>
 			</SidebarContent>

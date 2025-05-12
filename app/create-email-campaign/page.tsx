@@ -73,6 +73,9 @@ function EmailPageContent() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const campaignId = searchParams.get("id");
+	const isAdminSubdomain =
+		typeof window !== "undefined" &&
+		window.location.hostname.startsWith("admin.");
 	const [loading, setLoading] = useState(!!campaignId);
 	const [formData, setFormData] = useState<Campaign>({
 		name: "",
@@ -200,7 +203,11 @@ function EmailPageContent() {
 				throw new Error("Failed to save campaign");
 			}
 
-			router.push("/admin/marketing?tab=email");
+			router.push(
+				isAdminSubdomain
+					? "/marketing?tab=email"
+					: "/admin/marketing?tab=email",
+			);
 		} catch (error) {
 			console.error("Error saving campaign:", error);
 			// Handle error (show toast, etc.)
@@ -218,7 +225,13 @@ function EmailPageContent() {
 					<Button
 						variant="outline"
 						size="icon"
-						onClick={() => router.push("/admin/marketing?tab=email")}
+						onClick={() =>
+							router.push(
+								isAdminSubdomain
+									? "/marketing?tab=email"
+									: "/admin/marketing?tab=email",
+							)
+						}
 						className="hover:bg-transparent"
 					>
 						<X className="h-6 w-6" />
