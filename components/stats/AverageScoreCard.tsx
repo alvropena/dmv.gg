@@ -1,4 +1,4 @@
-import { Loader2 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type AverageScoreCardProps = {
 	averageScore: number;
@@ -15,13 +15,21 @@ export function AverageScoreCard({
 }: AverageScoreCardProps) {
 	return (
 		<div className="rounded-xl p-6 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
-			<h3 className="text-xl font-bold">Average Score</h3>
+			<div className="flex items-center gap-3 mb-2">
+				{isLoading ? (
+					<Skeleton className="h-7 w-40" />
+				) : (
+					<h3 className="text-xl font-bold">Average Score</h3>
+				)}
+			</div>
 			<div className="mt-2">
 				{isLoading ? (
-					<div className="flex items-center gap-2">
-						<Loader2 className="h-6 w-6 animate-spin text-primary" />
-						<span className="text-muted-foreground">Loading stats...</span>
-					</div>
+					<>
+						<Skeleton className="h-10 w-24" />
+						<div className="mt-1">
+							<Skeleton className="h-4 w-32" />
+						</div>
+					</>
 				) : error ? (
 					<div className="text-red-500 text-sm">{error}</div>
 				) : (

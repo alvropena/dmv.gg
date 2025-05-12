@@ -10,11 +10,11 @@ import {
 	PlayCircle,
 	PlusCircle,
 	FileText,
-	Loader2,
 	RotateCcw,
 } from "lucide-react";
 import { PricingDialog } from "@/components/dialogs/PricingDialog";
 import { usePostHog } from 'posthog-js/react';
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Test = {
 	id: string;
@@ -27,6 +27,35 @@ type Test = {
 		isCorrect: boolean | null;
 	}>;
 };
+
+function UserWelcomeCardSkeleton() {
+	return (
+		<div className="container mx-auto px-4 sm:px-6 mb-6">
+			<div className="rounded-xl p-6 border border-slate-200 bg-white">
+				<div className="flex flex-col gap-4">
+					<div className="flex flex-col gap-2">
+						<Skeleton className="h-8 w-64" />
+						<Skeleton className="h-5 w-96" />
+					</div>
+
+					<div className="flex flex-col gap-2">
+						<Skeleton className="h-2 w-full" />
+						<div className="flex justify-between text-sm">
+							<Skeleton className="h-4 w-24" />
+							<Skeleton className="h-4 w-24" />
+						</div>
+					</div>
+
+					<div className="flex flex-col sm:flex-row gap-3">
+						<Skeleton className="h-10 w-32 rounded-[40px]" />
+						<Skeleton className="h-10 w-32 rounded-[40px]" />
+						<Skeleton className="h-10 w-32 rounded-[40px]" />
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
 
 export function UserWelcomeCard() {
 	const router = useRouter();
@@ -195,6 +224,10 @@ export function UserWelcomeCard() {
 		}
 	}, [isPricingOpen, posthog]);
 
+	if (isLoading) {
+		return <UserWelcomeCardSkeleton />;
+	}
+
 	return (
 		<div className="container mx-auto px-4 sm:px-6 mb-6">
 			<div className="rounded-xl p-6 border border-slate-200 bg-white">
@@ -224,7 +257,7 @@ export function UserWelcomeCard() {
 						)}
 					</div>
 
-					{hasExistingTests && !isLoading && (
+					{hasExistingTests && (
 						<div className="flex flex-col gap-2">
 							<div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
 								<div
@@ -256,7 +289,7 @@ export function UserWelcomeCard() {
 											{hasUsedFreeTest && !hasAccess ? (
 												<Lock className="h-4 w-4" />
 											) : isCreatingTest ? (
-												<Loader2 className="h-4 w-4 animate-spin" />
+												<Skeleton className="h-4 w-4 rounded-full" />
 											) : (
 												<PlusCircle className="h-4 w-4" />
 											)}
@@ -304,7 +337,7 @@ export function UserWelcomeCard() {
 											{hasUsedFreeTest && !hasAccess ? (
 												<Lock className="h-4 w-4" />
 											) : isCreatingTest ? (
-												<Loader2 className="h-4 w-4 animate-spin" />
+												<Skeleton className="h-4 w-4 rounded-full" />
 											) : (
 												<PlusCircle className="h-4 w-4" />
 											)}
@@ -335,7 +368,7 @@ export function UserWelcomeCard() {
 								{hasUsedFreeTest && !hasAccess ? (
 									<Lock className="h-4 w-4" />
 								) : isCreatingTest ? (
-									<Loader2 className="h-4 w-4 animate-spin" />
+									<Skeleton className="h-4 w-4 rounded-full" />
 								) : (
 									<Play className="h-4 w-4" />
 								)}
