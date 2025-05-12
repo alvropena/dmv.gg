@@ -203,6 +203,10 @@ model SentEmail {
   openedAt       DateTime?     @db.Timestamptz(6)
   clickedAt      DateTime?     @db.Timestamptz(6)
   error          String?
+  errorCode      String?
+  errorMessage   String?
+  messageId      String?
+  metadata       Json?
   createdAt      DateTime      @default(now()) @db.Timestamptz(6)
   updatedAt      DateTime      @updatedAt @db.Timestamptz(6)
   status         EmailStatus   @default(PENDING)
