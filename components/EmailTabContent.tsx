@@ -51,37 +51,26 @@ export function EmailTabContent() {
 				<EmailCampaignsSkeleton />
 			) : error ? (
 				<p className="text-red-600">{error}</p>
-			) : campaigns.length === 0 ? (
-				<p>Your email campaigns will be displayed here.</p>
 			) : (
 				<div className="space-y-2">
 					<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-						{(() => {
-							const cards = campaigns.map((c) => (
-								<CampaignCard
-									key={c.id}
-									title={c.name}
-									description={c.description ?? undefined}
-									isDraft={c.status === "draft"}
-									type={c.type}
-									triggerType={c.triggerType || "None"}
-									subject={c.subject}
-									recipientSegment={c.recipientSegment}
-									createdAt={new Date(c.createdAt).toLocaleString()}
-									isActive={c.active}
-									sentCount={c.sentEmails?.length ?? 0}
-									campaign={c}
-								/>
-							));
-							cards.push(<CreateCampaignCard key="create-campaign-card" />);
-							const remainder = cards.length % 3;
-							if (remainder !== 0) {
-								for (let i = 0; i < 3 - remainder; i++) {
-									cards.push(<div key={`empty-${cards.length + i}`} />);
-								}
-							}
-							return cards;
-						})()}
+						{campaigns.map((c) => (
+							<CampaignCard
+								key={c.id}
+								title={c.name}
+								description={c.description ?? undefined}
+								isDraft={c.status === "draft"}
+								type={c.type}
+								triggerType={c.triggerType || "None"}
+								subject={c.subject}
+								recipientSegment={c.recipientSegment}
+								createdAt={new Date(c.createdAt).toLocaleString()}
+								isActive={c.active}
+								sentCount={c.sentEmails?.length ?? 0}
+								campaign={c}
+							/>
+						))}
+						<CreateCampaignCard />
 					</div>
 				</div>
 			)}
