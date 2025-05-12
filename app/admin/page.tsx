@@ -1,6 +1,5 @@
 export const dynamic = "force-dynamic";
 
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import {
@@ -14,31 +13,17 @@ import { StatCard } from "@/components/StatCard";
 import { AdminTabs } from "@/components/admin/AdminTabs";
 import { getDashboardStats } from "@/app/actions/stats";
 import { AdminTimeHorizonBar } from "@/components/admin/AdminTimeHorizonBar";
+import { validateAdmin } from "@/lib/auth";
 
 export default async function AdminPage({
 	searchParams,
 }: {
 	searchParams: { timeHorizon?: string; tab?: string };
 }) {
-	const { userId } = await auth();
+	const validation = await validateAdmin();
 
-	if (!userId) {
+	if (validation.error) {
 		redirect("/sign-in");
-	}
-
-	// Get the user from the database
-	const user = await db.user.findUnique({
-		where: {
-			clerkId: userId,
-		},
-		select: {
-			role: true,
-		},
-	});
-
-	// Only allow ADMIN role to access this page
-	if (!user || user.role !== "ADMIN") {
-		redirect("/");
 	}
 
 	const timeHorizon = searchParams.timeHorizon || "1d";

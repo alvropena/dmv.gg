@@ -10,6 +10,33 @@ import {
 import { getPerformanceMetrics } from "@/app/actions/metrics";
 import { useEffect, useState } from "react";
 
+function PerformanceMetricsSkeleton() {
+	return (
+		<Card>
+			<CardHeader>
+				<CardTitle>Platform Performance</CardTitle>
+				<CardDescription>Key metrics for the past 30 days</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<div className="grid gap-6 md:grid-cols-3">
+					{["user-engagement", "content-completion", "first-time-pass"].map(
+						(key) => (
+							<div key={key} className="space-y-2">
+								<div className="flex items-center justify-between">
+									<div className="h-4 w-24 bg-muted animate-pulse rounded" />
+									<div className="h-4 w-12 bg-muted animate-pulse rounded" />
+								</div>
+								<div className="h-2 w-full bg-muted animate-pulse rounded-full" />
+								<div className="h-3 w-48 bg-muted animate-pulse rounded" />
+							</div>
+						),
+					)}
+				</div>
+			</CardContent>
+		</Card>
+	);
+}
+
 export function PerformanceMetrics({
 	timeHorizon = "30d",
 }: { timeHorizon?: string }) {
@@ -28,27 +55,7 @@ export function PerformanceMetrics({
 	}, [timeHorizon]);
 
 	if (!metrics) {
-		return (
-			<Card>
-				<CardHeader>
-					<CardTitle>Platform Performance</CardTitle>
-					<CardDescription>Loading metrics...</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<div className="grid gap-6 md:grid-cols-3">
-						{["user-engagement", "content-completion", "first-time-pass"].map(
-							(key) => (
-								<div key={key} className="space-y-2">
-									<div className="h-4 w-24 bg-muted animate-pulse rounded" />
-									<div className="h-2 w-full bg-muted animate-pulse rounded" />
-									<div className="h-3 w-32 bg-muted animate-pulse rounded" />
-								</div>
-							),
-						)}
-					</div>
-				</CardContent>
-			</Card>
-		);
+		return <PerformanceMetricsSkeleton />;
 	}
 
 	return (
