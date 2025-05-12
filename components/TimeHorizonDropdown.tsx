@@ -31,7 +31,7 @@ export function TimeHorizonDropdown() {
 			<DropdownMenuTrigger asChild>
 				<Button variant="outline">
 					{TIME_HORIZONS.find((t) => t.value === timeHorizon)?.label ||
-						"Last 30 days"}
+						"All time"}
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end">
