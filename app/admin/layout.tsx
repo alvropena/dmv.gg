@@ -23,7 +23,7 @@ export default function AdminLayout({
 				<main className="flex-1 min-h-0 overflow-y-auto p-6">{children}</main>
 			</div>
 			<SidebarProvider defaultOpen={true}>
-				<AdminRightSidebar />
+				<AdminRightSidebar view="chat" />
 			</SidebarProvider>
 		</div>
 	);
