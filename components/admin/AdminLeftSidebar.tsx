@@ -53,7 +53,7 @@ const menuItems = [
 	},
 ];
 
-export function AdminSidebarMenu({
+export function AdminLeftSidebar({
 	...props
 }: React.ComponentProps<typeof Sidebar>) {
 	const pathname = usePathname();
@@ -65,7 +65,7 @@ export function AdminSidebarMenu({
 		isAdminSubdomain ? `/${path}` : `/admin${path ? `/${path}` : ""}`;
 
 	return (
-		<Sidebar collapsible="icon" {...props}>
+		<Sidebar collapsible="icon" {...props} side="left">
 			<SidebarHeader>
 				<div className="flex items-center justify-center px-2 py-2">
 					<Link href={getHref("")}>

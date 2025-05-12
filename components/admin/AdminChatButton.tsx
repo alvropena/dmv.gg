@@ -1,12 +1,22 @@
 "use client";
 
 import { MessageSquare } from "lucide-react";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 
-export function AdminChatButton() {
+interface AdminChatButtonProps {
+	onClick?: () => void;
+}
+
+export function AdminChatButton({ onClick }: AdminChatButtonProps) {
 	return (
-		<SidebarTrigger className="ml-2">
+		<Button
+			variant="ghost"
+			size="icon"
+			aria-label="Chat"
+			type="button"
+			onClick={onClick}
+		>
 			<MessageSquare className="h-[1.2rem] w-[1.2rem]" />
-		</SidebarTrigger>
+		</Button>
 	);
 }

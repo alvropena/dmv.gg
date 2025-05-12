@@ -26,7 +26,7 @@ export default async function AdminPage({
 		redirect("/sign-in");
 	}
 
-	const timeHorizon = searchParams.timeHorizon || "1d";
+	const timeHorizon = searchParams.timeHorizon || "all";
 	const defaultTab = searchParams.tab || "overview";
 	const stats = await getDashboardStats(timeHorizon);
 	const subscriptionsCount = await db.subscription.count();
