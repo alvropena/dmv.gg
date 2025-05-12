@@ -23,7 +23,9 @@ export default clerkMiddleware(async (auth, req) => {
     if (req.nextUrl.pathname.startsWith('/api')) {
       return NextResponse.next();
     }
-    return NextResponse.rewrite(new URL('/(admin)', req.url));
+    // Rewrite "/" to "/admin", and everything else to "/admin/:path*"
+    const path = req.nextUrl.pathname === '/' ? '' : req.nextUrl.pathname;
+    return NextResponse.rewrite(new URL(`/admin${path}`, req.url));
   }
 
   // Clerk protection
