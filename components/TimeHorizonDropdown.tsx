@@ -20,6 +20,11 @@ const TIME_HORIZONS = [
 export function TimeHorizonDropdown() {
 	const searchParams = useSearchParams();
 	const timeHorizon = searchParams.get("timeHorizon") || "all";
+	const isAdminSubdomain =
+		typeof window !== "undefined" &&
+		window.location.hostname.startsWith("admin.");
+
+	const getPathname = () => (isAdminSubdomain ? "/" : "/admin");
 
 	return (
 		<DropdownMenu>
@@ -34,7 +39,7 @@ export function TimeHorizonDropdown() {
 					<DropdownMenuItem key={option.value} asChild>
 						<Link
 							href={{
-								pathname: "/admin",
+								pathname: getPathname(),
 								query: {
 									...Object.fromEntries(searchParams.entries()),
 									timeHorizon: option.value,
