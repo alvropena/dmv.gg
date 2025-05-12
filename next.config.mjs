@@ -18,6 +18,16 @@ const nextConfig = {
   async rewrites() {
     return [
       {
+        source: '/api/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'admin.dmv.gg',
+          },
+        ],
+        destination: '/api/:path*',
+      },
+      {
         source: '/:path*',
         has: [
           {
