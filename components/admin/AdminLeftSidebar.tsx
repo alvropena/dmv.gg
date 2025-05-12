@@ -53,7 +53,7 @@ const menuItems = [
 	},
 ];
 
-export function AdminSidebarMenu({
+export function AdminLeftSidebar({
 	...props
 }: React.ComponentProps<typeof Sidebar>) {
 	const pathname = usePathname();

@@ -23,7 +23,7 @@ interface ChatHistory {
 	[agentId: string]: Message[];
 }
 
-export function AdminChatSidebar() {
+export function AdminRightSidebar() {
 	const [selectedAgent] = useState("data_analyst");
 	const [chatHistory, setChatHistory] = useState<ChatHistory>(() => {
 		const initialHistory: ChatHistory = {};

@@ -24,7 +24,6 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
-	useSidebar,
 } from "@/components/ui/sidebar";
 import { useState } from "react";
 import { AdminSettingsDialog } from "@/components/admin/AdminSettingsDialog";
@@ -32,7 +31,6 @@ import { AdminSettingsDialog } from "@/components/admin/AdminSettingsDialog";
 export function AdminAvatar() {
 	const { user } = useUser();
 	const { signOut } = useClerk();
-	const { isMobile } = useSidebar();
 	const [settingsOpen, setSettingsOpen] = useState(false);
 
 	if (!user) return null;
@@ -69,7 +67,7 @@ export function AdminAvatar() {
 						</DropdownMenuTrigger>
 						<DropdownMenuContent
 							className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-							side={isMobile ? "bottom" : "right"}
+							side="right"
 							align="end"
 							sideOffset={4}
 						>
