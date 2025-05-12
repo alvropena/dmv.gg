@@ -21,11 +21,17 @@ interface AdminTabsProps {
 export function AdminTabs({ defaultTab, timeHorizon }: AdminTabsProps) {
 	const router = useRouter();
 	const searchParams = useSearchParams();
+	const isAdminSubdomain =
+		typeof window !== "undefined" &&
+		window.location.hostname.startsWith("admin.");
 
 	const handleTabChange = (value: string) => {
 		const params = new URLSearchParams(searchParams.toString());
 		params.set("tab", value);
-		router.push(`/admin?${params.toString()}`);
+		const path = isAdminSubdomain
+			? `/?${params.toString()}`
+			: `/admin?${params.toString()}`;
+		router.push(path);
 	};
 
 	return (
