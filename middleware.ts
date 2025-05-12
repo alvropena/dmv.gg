@@ -19,6 +19,10 @@ export default clerkMiddleware(async (auth, req) => {
   // Subdomain logic
   const host = req.headers.get('host');
   if (host?.startsWith('admin.')) {
+    // Don't rewrite API routes
+    if (req.nextUrl.pathname.startsWith('/api')) {
+      return NextResponse.next();
+    }
     return NextResponse.rewrite(new URL('/(admin)', req.url));
   }
 
