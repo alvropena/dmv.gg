@@ -10,11 +10,12 @@ import {
 	PlayCircle,
 	PlusCircle,
 	FileText,
-	Loader2,
 	RotateCcw,
+	Loader2,
 } from "lucide-react";
 import { PricingDialog } from "@/components/dialogs/PricingDialog";
 import { usePostHog } from 'posthog-js/react';
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Test = {
 	id: string;
@@ -28,6 +29,35 @@ type Test = {
 	}>;
 };
 
+function UserWelcomeCardSkeleton() {
+	return (
+		<div className="container mx-auto px-4 sm:px-6 mb-6">
+			<div className="rounded-xl p-6 border border-slate-200 bg-white">
+				<div className="flex flex-col gap-4">
+					<div className="flex flex-col gap-2">
+						<Skeleton className="h-8 w-64" />
+						<Skeleton className="h-5 w-96" />
+					</div>
+
+					<div className="flex flex-col gap-2">
+						<Skeleton className="h-2 w-full" />
+						<div className="flex justify-between text-sm">
+							<Skeleton className="h-4 w-24" />
+							<Skeleton className="h-4 w-24" />
+						</div>
+					</div>
+
+					<div className="flex flex-col sm:flex-row gap-3">
+						<Skeleton className="h-10 w-32 rounded-[40px]" />
+						<Skeleton className="h-10 w-32 rounded-[40px]" />
+						<Skeleton className="h-10 w-32 rounded-[40px]" />
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
+
 export function UserWelcomeCard() {
 	const router = useRouter();
 	const { dbUser, hasActiveSubscription } = useAuthContext();
@@ -35,7 +65,8 @@ export function UserWelcomeCard() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [hasExistingTests, setHasExistingTests] = useState(false);
 	const [latestTestId, setLatestTestId] = useState<string | null>(null);
-	const [isCreatingTest, setIsCreatingTest] = useState(false);
+	const [isCreatingNewTest, setIsCreatingNewTest] = useState(false);
+	const [isContinuingTest, setIsContinuingTest] = useState(false);
 	const [completedQuestions, setCompletedQuestions] = useState(0);
 	const [remainingQuestions, setRemainingQuestions] = useState(0);
 	const [isPricingOpen, setIsPricingOpen] = useState(false);
@@ -139,7 +170,7 @@ export function UserWelcomeCard() {
 	const handleStartNewTest = async () => {
 		if (hasAccess || !hasUsedFreeTest) {
 			try {
-				setIsCreatingTest(true);
+				setIsCreatingNewTest(true);
 				setError(null);
 				const response = await fetch("/api/tests", {
 					method: "POST",
@@ -172,20 +203,27 @@ export function UserWelcomeCard() {
 					error instanceof Error ? error.message : "Failed to create test",
 				);
 			} finally {
-				setIsCreatingTest(false);
+				setIsCreatingNewTest(false);
 			}
 		} else {
 			setIsPricingOpen(true);
 		}
 	};
 
-	const handleContinueTest = () => {
+	const handleContinueTest = async () => {
 		if (!hasAccess && hasUsedFreeTest) {
 			setIsPricingOpen(true);
 			return;
 		}
 		if (latestTestId) {
-			router.push(`/test/${latestTestId}`);
+			try {
+				setIsContinuingTest(true);
+				router.push(`/test/${latestTestId}`);
+			} catch (error) {
+				console.error("Error continuing test:", error);
+			} finally {
+				setIsContinuingTest(false);
+			}
 		}
 	};
 
@@ -194,6 +232,10 @@ export function UserWelcomeCard() {
 			posthog?.capture('pricing_dialog_opened');
 		}
 	}, [isPricingOpen, posthog]);
+
+	if (isLoading) {
+		return <UserWelcomeCardSkeleton />;
+	}
 
 	return (
 		<div className="container mx-auto px-4 sm:px-6 mb-6">
@@ -224,7 +266,7 @@ export function UserWelcomeCard() {
 						)}
 					</div>
 
-					{hasExistingTests && !isLoading && (
+					{hasExistingTests && (
 						<div className="flex flex-col gap-2">
 							<div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
 								<div
@@ -250,17 +292,17 @@ export function UserWelcomeCard() {
 											onClick={handleStartNewTest}
 											className="flex items-center justify-center gap-2 rounded-[40px] min-w-[140px]"
 											disabled={
-												isCreatingTest || (!hasAccess && hasUsedFreeTest)
+												isCreatingNewTest || (!hasAccess && hasUsedFreeTest)
 											}
 										>
 											{hasUsedFreeTest && !hasAccess ? (
 												<Lock className="h-4 w-4" />
-											) : isCreatingTest ? (
+											) : isCreatingNewTest ? (
 												<Loader2 className="h-4 w-4 animate-spin" />
 											) : (
 												<PlusCircle className="h-4 w-4" />
 											)}
-											{!isCreatingTest && "Start New Test"}
+											{!isCreatingNewTest && "Start New Test"}
 										</Button>
 										<Button
 											variant="secondary"
@@ -288,6 +330,8 @@ export function UserWelcomeCard() {
 										>
 											{!hasAccess && hasUsedFreeTest ? (
 												<Lock className="h-4 w-4" />
+											) : isContinuingTest ? (
+												<Loader2 className="h-4 w-4 animate-spin" />
 											) : (
 												<PlayCircle className="h-4 w-4" />
 											)}
@@ -298,17 +342,17 @@ export function UserWelcomeCard() {
 											onClick={handleStartNewTest}
 											className="flex items-center justify-center gap-2 rounded-[40px] min-w-[140px]"
 											disabled={
-												isCreatingTest || (!hasAccess && hasUsedFreeTest)
+												isCreatingNewTest || (!hasAccess && hasUsedFreeTest)
 											}
 										>
 											{hasUsedFreeTest && !hasAccess ? (
 												<Lock className="h-4 w-4" />
-											) : isCreatingTest ? (
+											) : isCreatingNewTest ? (
 												<Loader2 className="h-4 w-4 animate-spin" />
 											) : (
 												<PlusCircle className="h-4 w-4" />
 											)}
-											{!isCreatingTest && "Start New Test"}
+											{!isCreatingNewTest && "Start New Test"}
 										</Button>
 									</>
 								)}
@@ -330,16 +374,16 @@ export function UserWelcomeCard() {
 							<Button
 								onClick={handleStartNewTest}
 								className="flex items-center justify-center gap-2 rounded-[40px] min-w-[120px]"
-								disabled={isCreatingTest || (!hasAccess && hasUsedFreeTest)}
+								disabled={isCreatingNewTest || (!hasAccess && hasUsedFreeTest)}
 							>
 								{hasUsedFreeTest && !hasAccess ? (
 									<Lock className="h-4 w-4" />
-								) : isCreatingTest ? (
+								) : isCreatingNewTest ? (
 									<Loader2 className="h-4 w-4 animate-spin" />
 								) : (
 									<Play className="h-4 w-4" />
 								)}
-								{!isCreatingTest && "Start Test"}
+								{!isCreatingNewTest && "Start Test"}
 							</Button>
 						)}
 					</div>

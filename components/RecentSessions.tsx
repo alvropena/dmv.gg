@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Loader2, Lock } from "lucide-react";
+import { Calendar, Lock } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import type { Test, TestAnswer } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { PricingDialog } from "@/components/dialogs/PricingDialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
 	Tooltip,
 	TooltipContent,
@@ -194,7 +195,11 @@ export function RecentSessions({
 		<div className="w-full px-2">
 			<div className="container mx-auto">
 				<div className="flex justify-between items-center mb-4">
-					<h2 className="text-xl font-semibold">Recent Sessions</h2>
+					{isLoading || isUserLoading ? (
+						<Skeleton className="h-7 w-40" />
+					) : (
+						<h2 className="text-xl font-semibold">Recent Sessions</h2>
+					)}
 					<Link
 						href="/tests"
 						className="text-primary flex items-center gap-1 text-sm font-medium"
@@ -202,8 +207,32 @@ export function RecentSessions({
 				</div>
 
 				{isLoading || isUserLoading ? (
-					<div className="flex justify-center items-center p-12">
-						<Loader2 className="h-8 w-8 animate-spin text-primary" />
+					<div className="space-y-4">
+						{[...Array(3)].map((_, index) => (
+							<div
+								key={index}
+								className="border border-slate-200 dark:border-slate-800 rounded-xl p-6 bg-white dark:bg-slate-950"
+							>
+								<div className="flex items-center justify-between mb-4">
+									<div className="flex items-center gap-3">
+										<Skeleton className="h-6 w-20 rounded-full" />
+										<Skeleton className="h-6 w-32" />
+									</div>
+									<Skeleton className="h-9 w-24" />
+								</div>
+								<div className="flex justify-between items-center mt-4 text-sm">
+									<Skeleton className="h-4 w-32" />
+									<Skeleton className="h-4 w-12" />
+								</div>
+								<div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2 mt-2">
+									<Skeleton className="h-2 w-1/2 rounded-full" />
+								</div>
+								<div className="flex justify-between text-sm text-muted-foreground mt-1">
+									<Skeleton className="h-4 w-24" />
+									<Skeleton className="h-4 w-24" />
+								</div>
+							</div>
+						))}
 					</div>
 				) : error ? (
 					<div className="text-red-500 p-4 border border-red-200 rounded-lg">

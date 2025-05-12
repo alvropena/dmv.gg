@@ -20,11 +20,13 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
-type Step = "birthday" | "gender" | "ethnicity" | "language";
+type Step = "name" | "birthday" | "gender" | "ethnicity" | "language";
 
 interface UserProfileDialogProps {
 	isOpen: boolean;
 	onSave: (data: {
+		firstName: string;
+		lastName: string;
 		birthday: Date;
 		gender: string;
 		ethnicity: string;
@@ -32,6 +34,8 @@ interface UserProfileDialogProps {
 	}) => Promise<void>;
 	onClose: () => void;
 	initialData?: {
+		firstName?: string;
+		lastName?: string;
 		birthday?: Date;
 		gender?: string;
 		ethnicity?: string;
@@ -76,8 +80,14 @@ export function UserProfileDialog({
 	} = parseBirthday(initialData?.birthday);
 
 	const [step, setStep] = useState<Step>(
-		initialData?.birthday ? "gender" : "birthday",
+		initialData?.firstName && initialData?.lastName
+			? initialData?.birthday
+				? "gender"
+				: "birthday"
+			: "name"
 	);
+	const [firstName, setFirstName] = useState<string>(initialData?.firstName || "");
+	const [lastName, setLastName] = useState<string>(initialData?.lastName || "");
 	const [day, setDay] = useState<string | undefined>(initialDay);
 	const [month, setMonth] = useState<string | undefined>(initialMonth);
 	const [year, setYear] = useState<string | undefined>(initialYear);
@@ -106,7 +116,10 @@ export function UserProfileDialog({
 	};
 
 	const handleNext = async () => {
-		if (step === "birthday") {
+		if (step === "name") {
+			if (!firstName.trim() || !lastName.trim()) return;
+			setStep("birthday");
+		} else if (step === "birthday") {
 			if (!day || !month || !year) return;
 			setStep("gender");
 		} else if (step === "gender") {
@@ -119,10 +132,12 @@ export function UserProfileDialog({
 			if (!language) return;
 			try {
 				setIsSubmitting(true);
-				if (!year || !month || !day || !gender || !ethnicity || !language) {
+				if (!firstName.trim() || !lastName.trim() || !year || !month || !day || !gender || !ethnicity || !language) {
 					throw new Error("Missing required fields");
 				}
 				await onSave({
+					firstName: firstName.trim(),
+					lastName: lastName.trim(),
 					birthday: new Date(
 						Number.parseInt(year),
 						Number.parseInt(month) - 1,
@@ -142,7 +157,8 @@ export function UserProfileDialog({
 	};
 
 	const handleBack = () => {
-		if (step === "gender") setStep("birthday");
+		if (step === "birthday") setStep("name");
+		else if (step === "gender") setStep("birthday");
 		else if (step === "ethnicity") setStep("gender");
 		else if (step === "language") setStep("ethnicity");
 	};
@@ -196,6 +212,8 @@ export function UserProfileDialog({
 
 	const isStepComplete = () => {
 		switch (step) {
+			case "name":
+				return firstName.trim() && lastName.trim();
 			case "birthday":
 				return day && month && year;
 			case "gender":
@@ -213,6 +231,8 @@ export function UserProfileDialog({
 
 	const getStepTitle = () => {
 		switch (step) {
+			case "name":
+				return "What's your name?";
 			case "birthday":
 				return "When were you born?";
 			case "gender":
@@ -228,6 +248,8 @@ export function UserProfileDialog({
 
 	const getStepDescription = () => {
 		switch (step) {
+			case "name":
+				return "Please enter your first and last name.";
 			case "birthday":
 				return "Please enter your date of birth to continue.";
 			case "gender":
@@ -255,6 +277,21 @@ export function UserProfileDialog({
 					<DialogDescription>{getStepDescription()}</DialogDescription>
 				</DialogHeader>
 				<div className="flex flex-col">
+					{step === "name" && (
+						<div className="flex flex-col gap-2">
+							<Input
+								placeholder="First name"
+								value={firstName}
+								onChange={(e) => setFirstName(e.target.value)}
+							/>
+							<Input
+								placeholder="Last name"
+								value={lastName}
+								onChange={(e) => setLastName(e.target.value)}
+							/>
+						</div>
+					)}
+
 					{step === "birthday" && (
 						<div className="grid grid-cols-3 w-full gap-2">
 							{/* Month Select */}

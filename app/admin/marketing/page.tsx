@@ -7,6 +7,50 @@ import WeeklyCalendar from "@/components/WeeklyCalendar";
 import CreatorsTabContent from "@/components/CreatorsTabContent";
 import FacelessContentTab from "@/components/FacelessContentTab";
 import { EmailTabContent } from "@/components/EmailTabContent";
+import { Skeleton } from "@/components/ui/skeleton";
+
+function MarketingPageSkeleton() {
+	return (
+		<div className="flex flex-col gap-8">
+			<Tabs defaultValue="calendar">
+				<TabsList>
+					<TabsTrigger value="calendar" disabled>
+						<Skeleton className="h-4 w-16" />
+					</TabsTrigger>
+					<TabsTrigger value="creators" disabled>
+						<Skeleton className="h-4 w-16" />
+					</TabsTrigger>
+					<TabsTrigger value="faceless" disabled>
+						<Skeleton className="h-4 w-16" />
+					</TabsTrigger>
+					<TabsTrigger value="email" disabled>
+						<Skeleton className="h-4 w-16" />
+					</TabsTrigger>
+				</TabsList>
+				<TabsContent value="calendar">
+					<div className="space-y-4">
+						<div className="flex justify-between items-center">
+							<Skeleton className="h-8 w-32" />
+							<Skeleton className="h-8 w-24" />
+						</div>
+						<div className="grid grid-cols-7 gap-4">
+							{Array.from({ length: 7 }).map((_, i) => (
+								<div key={i} className="space-y-2">
+									<Skeleton className="h-6 w-full" />
+									<div className="space-y-1">
+										<Skeleton className="h-16 w-full" />
+										<Skeleton className="h-16 w-full" />
+										<Skeleton className="h-16 w-full" />
+									</div>
+								</div>
+							))}
+						</div>
+					</div>
+				</TabsContent>
+			</Tabs>
+		</div>
+	);
+}
 
 function MarketingContent() {
 	const searchParams = useSearchParams();
@@ -50,7 +94,7 @@ function MarketingContent() {
 
 export default function MarketingPage() {
 	return (
-		<Suspense fallback={<div className="p-8">Loading...</div>}>
+		<Suspense fallback={<MarketingPageSkeleton />}>
 			<MarketingContent />
 		</Suspense>
 	);
