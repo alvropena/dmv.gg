@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Loader2, Lock } from "lucide-react";
+import { Calendar, Lock } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import type { Test, TestAnswer } from "@prisma/client";

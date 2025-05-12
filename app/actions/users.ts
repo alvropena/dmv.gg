@@ -1,6 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db'
+import { Prisma } from '@prisma/client';
 
 export async function getUsers(
   searchQuery?: string,
@@ -23,7 +24,7 @@ export async function getUsers(
             { email: { contains: word, mode: 'insensitive' } }
           ]
         }))
-      } as any;
+      } as unknown as Prisma.UserWhereInput;
     }
     const [users, total] = await Promise.all([
       db.user.findMany({
