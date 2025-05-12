@@ -116,13 +116,7 @@ export function AdminRightSidebar() {
 	}
 
 	return (
-		<Sidebar
-			side="right"
-			variant="sidebar"
-			collapsible="offcanvas"
-			className="h-full bg-white dark:bg-gray-950 border-l border-gray-200 dark:border-gray-800 shadow-lg"
-			style={{ width: "20rem", minWidth: "16rem", maxWidth: "100vw" }}
-		>
+		<Sidebar side="right" collapsible="offcanvas">
 			<SidebarHeader className="flex items-center justify-between p-4">
 				<div className="flex items-center gap-2">
 					<MessageSquare className="h-5 w-5" />
@@ -130,7 +124,7 @@ export function AdminRightSidebar() {
 				</div>
 				<SidebarTrigger />
 			</SidebarHeader>
-			<SidebarContent className="flex-1 flex flex-col p-0">
+			<SidebarContent>
 				<div
 					className="flex-1 overflow-y-auto px-4 py-2 space-y-2"
 					style={{ minHeight: 0 }}

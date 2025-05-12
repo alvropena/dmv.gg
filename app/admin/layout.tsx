@@ -1,5 +1,5 @@
 // app/admin/layout.tsx
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AdminLeftSidebar } from "@/components/admin/AdminLeftSidebar";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminRightSidebar } from "@/components/admin/AdminRightSidebar";
@@ -14,21 +14,15 @@ export default function AdminLayout({
 	children,
 }: { children: React.ReactNode }) {
 	return (
-		<div className="flex h-screen">
+		<div className="flex h-screen bg-white">
 			<SidebarProvider defaultOpen={false}>
 				<AdminLeftSidebar />
 			</SidebarProvider>
-			<div className="flex flex-col h-screen min-h-0">
-				<header className="sticky top-0 z-10 border-b bg-white dark:bg-gray-950 dark:border-gray-800 flex h-16 items-center px-6 shrink-0">
-					<SidebarTrigger className="mr-4" />
-					<div className="flex-1">
-						<AdminHeader />
-					</div>
-				</header>
+			<div className="flex flex-col h-screen min-h-0 w-full">
+				<AdminHeader />
 				<main className="flex-1 min-h-0 overflow-y-auto p-6">{children}</main>
 			</div>
-
-			<SidebarProvider defaultOpen={false}>
+			<SidebarProvider defaultOpen={true}>
 				<AdminRightSidebar />
 			</SidebarProvider>
 		</div>
