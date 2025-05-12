@@ -19,7 +19,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { EditTestDialog } from "@/components/EditTestDialog";
+import { EditTestDialog } from "@/components/dialogs/EditTestDialog";
 
 function CompletedBadge({ completed }: { completed: boolean }) {
 	if (completed) {
@@ -187,7 +187,7 @@ export function TestsTable({
 				<tbody>
 					{loading ? (
 						Array.from({ length: 21 }).map((_, idx) => (
-							<tr key={`loading-skel-${idx}`}> 
+							<tr key={`loading-skel-${idx}`}>
 								<td className="p-4 align-middle text-muted-foreground">
 									<div className="h-4 w-full bg-muted animate-pulse rounded" />
 								</td>
@@ -272,8 +272,9 @@ export function TestsTable({
 												className={
 													(test.score >= 89.13
 														? "bg-green-50 text-green-600 border-green-200 dark:bg-green-950/20 dark:text-green-400 dark:border-green-900/30"
-														: "bg-red-50 text-red-600 border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900/30"
-													) + " w-16 flex items-center justify-center"}
+														: "bg-red-50 text-red-600 border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900/30") +
+													" w-16 flex items-center justify-center"
+												}
 											>
 												{test.score}%
 											</Badge>

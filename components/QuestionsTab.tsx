@@ -9,7 +9,7 @@ import {
 	type SortDirection,
 	type SortField,
 } from "@/components/QuestionTable";
-import { AddQuestionDialog } from "@/components/AddQuestionDialog";
+import { AddQuestionDialog } from "@/components/dialogs/AddQuestionDialog";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import {

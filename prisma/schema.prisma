@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,112 +7,98 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  STUDENT
-  ADMIN
-}
-
-enum TestType {
-  NEW         // For first-time tests
-  REVIEW      // For reviewing previously seen questions
-  WEAK_AREAS  // For practicing questions from weak areas
-}
-
 model User {
-  id        String        @id @default(uuid())
-  clerkId   String        @unique
-  email     String        @unique
-  firstName String?
-  lastName  String?
-  birthday  DateTime?     @db.Date
-  gender    String?       // 'male', 'female', 'non-binary', 'other', 'prefer-not-to-say'
-  ethnicity String?       // 'white', 'black', 'asian', 'hispanic', 'other', 'prefer-not-to-say'
-  language  String?       // 'en', 'es', etc.
-  
-  role      UserRole      @default(STUDENT)
-  hasUsedFreeTest Boolean @default(false)
-  createdAt DateTime      @default(now()) @db.Timestamptz
-  updatedAt DateTime      @default(now()) @db.Timestamptz
-  subscriptions Subscription[]
-  tests Test[]
-  supportRequests SupportRequest[]
-  flaggedQuestions FlaggedQuestion[]
+  id                String            @id @default(uuid())
+  clerkId           String            @unique
+  email             String            @unique
+  firstName         String?
+  lastName          String?
+  birthday          DateTime?         @db.Date
+  hasUsedFreeTest   Boolean           @default(false)
+  createdAt         DateTime          @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime          @default(now()) @db.Timestamptz(6)
+  role              UserRole          @default(STUDENT)
+  ethnicity         String?
+  gender            String?
+  language          String?
+  emailMarketing    Boolean           @default(true)
+  emailSecurity     Boolean           @default(true)
+  emailUpdates      Boolean           @default(true)
+  newsletter        Boolean           @default(true)
+  progressUpdates   Boolean           @default(true)
+  promotionalEmails Boolean           @default(true)
+  studyTips         Boolean           @default(true)
+  testReminders     Boolean           @default(true)
+  weakAreasAlerts   Boolean           @default(true)
+  flaggedQuestions  FlaggedQuestion[]
+  subscriptions     Subscription[]
+  supportRequests   SupportRequest[]
+  tests             Test[]
 }
 
 model Subscription {
-  id              String    @id @default(uuid())
-  userId          String
-  user            User      @relation(fields: [userId], references: [id])
-  stripeCustomerId String?
-  stripePriceId   String?
+  id                   String   @id @default(uuid())
+  userId               String
+  stripeCustomerId     String?
+  stripePriceId        String?
   stripeSubscriptionId String?
-  status          String    // 'active', 'canceled', 'past_due', etc.
-  cancelAtPeriodEnd Boolean @default(false) // Track if subscription is set to cancel at period end
-  currentPeriodStart DateTime @db.Timestamptz
-  currentPeriodEnd   DateTime @db.Timestamptz
-  createdAt       DateTime  @default(now()) @db.Timestamptz
-  updatedAt       DateTime  @updatedAt @db.Timestamptz
+  status               String
+  cancelAtPeriodEnd    Boolean  @default(false)
+  currentPeriodStart   DateTime @db.Timestamptz(6)
+  currentPeriodEnd     DateTime @db.Timestamptz(6)
+  createdAt            DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt            DateTime @updatedAt @db.Timestamptz(6)
+  user                 User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
 
 model Question {
-  id          String    @id @default(uuid())
-  title       String    @db.Text
-  optionA     String    @db.Text
-  optionB     String    @db.Text
-  optionC     String    @db.Text
-  optionD     String?   @db.Text
-  image       String?   @db.Text  // URL to the image
-  correctAnswer String   @db.VarChar(1)  // 'A', 'B', 'C', or 'D'
-  explanation String     @db.Text
-  createdAt   DateTime   @default(now()) @db.Timestamptz
-  updatedAt   DateTime   @updatedAt @db.Timestamptz
-  
-  // Relation to test answers
-  answers     TestAnswer[]
-  
-  // Relation to tests that include this question
-  tests    TestQuestion[]
-  // Relation to flagged reports
-  flags    FlaggedQuestion[]
+  id            String            @id @default(uuid())
+  title         String
+  optionA       String
+  optionB       String
+  optionC       String
+  optionD       String?
+  image         String?
+  correctAnswer String            @db.VarChar(1)
+  explanation   String
+  createdAt     DateTime          @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime          @updatedAt @db.Timestamptz(6)
+  flags         FlaggedQuestion[]
+  answers       TestAnswer[]
+  tests         TestQuestion[]
 
   @@index([id])
 }
 
 model Test {
-  id          String    @id @default(uuid())
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
-  type        TestType  @default(NEW)  // Type of test
-  startedAt   DateTime  @default(now()) @db.Timestamptz
-  completedAt DateTime? @db.Timestamptz
-  score       Int       @default(0)
-  totalQuestions Int    @default(0)
-  status      String    @default("in_progress") // "in_progress", "completed", "abandoned"
-  
-  // Relation to test answers
-  answers     TestAnswer[]
-
-  // Relation to questions included in this test
-  questions   TestQuestion[]
-  
-  createdAt   DateTime  @default(now()) @db.Timestamptz
-  updatedAt   DateTime  @updatedAt @db.Timestamptz
+  id             String         @id @default(uuid())
+  userId         String
+  startedAt      DateTime       @default(now()) @db.Timestamptz(6)
+  completedAt    DateTime?      @db.Timestamptz(6)
+  score          Int            @default(0)
+  totalQuestions Int            @default(0)
+  status         String         @default("in_progress")
+  createdAt      DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime       @updatedAt @db.Timestamptz(6)
+  type           TestType       @default(NEW)
+  user           User           @relation(fields: [userId], references: [id])
+  answers        TestAnswer[]
+  questions      TestQuestion[]
 
   @@index([userId])
-  @@index([type])  // Add index on type for faster queries
+  @@index([type])
 }
 
 model TestQuestion {
-  testId      String
-  test        Test @relation(fields: [testId], references: [id], onDelete: Cascade)
-  questionId  String
-  question    Question  @relation(fields: [questionId], references: [id])
-  order       Int       // Position of the question in the test
-  
-  createdAt   DateTime  @default(now()) @db.Timestamptz
-  updatedAt   DateTime  @updatedAt @db.Timestamptz
+  testId     String
+  questionId String
+  order      Int
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @db.Timestamptz(6)
+  question   Question @relation(fields: [questionId], references: [id])
+  test       Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
 
   @@id([testId, questionId])
   @@index([testId])
@@ -126,16 +106,15 @@ model TestQuestion {
 }
 
 model TestAnswer {
-  testId      String
-  test        Test @relation(fields: [testId], references: [id], onDelete: Cascade)
-  questionId  String
-  question    Question  @relation(fields: [questionId], references: [id])
-  selectedAnswer String? @db.VarChar(1)  // 'A', 'B', or 'C' or null if not answered
-  isCorrect   Boolean?
-  answeredAt  DateTime? @db.Timestamptz
-  
-  createdAt   DateTime  @default(now()) @db.Timestamptz
-  updatedAt   DateTime  @updatedAt @db.Timestamptz
+  testId         String
+  questionId     String
+  selectedAnswer String?   @db.VarChar(1)
+  isCorrect      Boolean?
+  answeredAt     DateTime? @db.Timestamptz(6)
+  createdAt      DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime  @updatedAt @db.Timestamptz(6)
+  question       Question  @relation(fields: [questionId], references: [id])
+  test           Test      @relation(fields: [testId], references: [id], onDelete: Cascade)
 
   @@id([testId, questionId])
   @@index([testId])
@@ -143,18 +122,17 @@ model TestAnswer {
 }
 
 model SupportRequest {
-  id          String    @id @default(uuid())
-  userId      String?
-  user        User?     @relation(fields: [userId], references: [id])
-  email       String?   // For guests/non-logged in users
-  message     String    @db.Text
-  status      String    @default("open") // "open", "in_progress", "resolved", "closed"
-  resolution  String?   @db.Text
-  adminNotes  String?   @db.Text
-  
-  createdAt   DateTime  @default(now()) @db.Timestamptz
-  updatedAt   DateTime  @updatedAt @db.Timestamptz
-  resolvedAt  DateTime? @db.Timestamptz
+  id         String    @id @default(uuid())
+  userId     String?
+  email      String?
+  message    String
+  status     String    @default("open")
+  resolution String?
+  adminNotes String?
+  createdAt  DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime  @updatedAt @db.Timestamptz(6)
+  resolvedAt DateTime? @db.Timestamptz(6)
+  user       User?     @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([status])
@@ -162,17 +140,17 @@ model SupportRequest {
 }
 
 model FlaggedQuestion {
-  id          String    @id @default(uuid())
-  questionId  String
-  question    Question  @relation(fields: [questionId], references: [id])
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
-  reason      String    @db.Text
-  status      String    @default("pending") // "pending", "reviewed", "resolved", "dismissed"
-  adminNotes  String?   @db.Text
-  createdAt   DateTime  @default(now()) @db.Timestamptz
-  updatedAt   DateTime  @updatedAt @db.Timestamptz
-  resolvedAt  DateTime? @db.Timestamptz
+  id         String    @id @default(uuid())
+  questionId String
+  userId     String
+  reason     String
+  status     String    @default("pending")
+  adminNotes String?
+  createdAt  DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime  @updatedAt @db.Timestamptz(6)
+  resolvedAt DateTime? @db.Timestamptz(6)
+  question   Question  @relation(fields: [questionId], references: [id])
+  user       User      @relation(fields: [userId], references: [id])
 
   @@index([questionId])
   @@index([userId])
@@ -188,18 +166,18 @@ model Creator {
   engagement Float
   status     String
   platforms  String[]
-  createdAt  DateTime @default(now()) @db.Timestamptz
-  updatedAt  DateTime @updatedAt @db.Timestamptz
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @db.Timestamptz(6)
 }
 
 model Reminder {
-  id          String    @id @default(uuid())
-  text        String    @db.Text
-  completed   Boolean   @default(false)
-  archived    Boolean   @default(false)
-  dueDate     DateTime? @db.Timestamptz
-  createdAt   DateTime  @default(now()) @db.Timestamptz
-  updatedAt   DateTime  @updatedAt @db.Timestamptz
+  id        String    @id @default(uuid())
+  text      String
+  completed Boolean   @default(false)
+  dueDate   DateTime? @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(6)
+  archived  Boolean   @default(false)
 
   @@index([completed])
   @@index([dueDate])
@@ -210,8 +188,114 @@ model Note {
   id        String   @id @default(uuid())
   title     String
   content   String
-  createdAt DateTime @default(now()) @db.Timestamptz
-  updatedAt DateTime @updatedAt @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   @@index([createdAt])
+}
+
+model SentEmail {
+  id             String        @id @default(uuid())
+  campaignId     String
+  recipientEmail String
+  sentAt         DateTime?     @db.Timestamptz(6)
+  deliveredAt    DateTime?     @db.Timestamptz(6)
+  openedAt       DateTime?     @db.Timestamptz(6)
+  clickedAt      DateTime?     @db.Timestamptz(6)
+  error          String?
+  errorCode      String?
+  errorMessage   String?
+  messageId      String?
+  metadata       Json?
+  createdAt      DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime      @updatedAt @db.Timestamptz(6)
+  status         EmailStatus   @default(PENDING)
+  campaign       EmailCampaign @relation(fields: [campaignId], references: [id])
+
+  @@index([campaignId])
+  @@index([status])
+  @@index([recipientEmail])
+  @@index([sentAt])
+}
+
+model EmailCampaign {
+  id               String            @id @default(uuid())
+  name             String
+  description      String?
+  subject          String
+  content          String
+  from             String            @default("noreply@dmv.gg")
+  active           Boolean           @default(true)
+  type             CampaignType      @default(ONE_TIME)
+  scheduleType     ScheduleType
+  triggerType      EmailTriggerType?
+  scheduledFor     DateTime?
+  recipientSegment RecipientSegment  @default(ALL_USERS)
+  createdAt        DateTime          @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime          @updatedAt @db.Timestamptz(6)
+  recipientEmails  String[]
+  status           CampaignStatus    @default(DRAFT)
+  sentEmails       SentEmail[]
+
+  @@index([status])
+  @@index([scheduleType])
+  @@index([triggerType])
+  @@index([scheduledFor])
+  @@index([recipientSegment])
+}
+
+enum UserRole {
+  STUDENT
+  ADMIN
+  TEST
+}
+
+enum TestType {
+  NEW
+  REVIEW
+  WEAK_AREAS
+}
+
+enum EmailTriggerType {
+  USER_SIGNUP
+  TEST_INCOMPLETE
+  PURCHASE_COMPLETED
+}
+
+enum CampaignType {
+  ONE_TIME
+  RECURRING
+  AB_TEST
+}
+
+enum ScheduleType {
+  TRIGGER
+  SCHEDULE
+}
+
+enum RecipientSegment {
+  ALL_USERS
+  TEST_USERS
+  INDIVIDUAL_USERS
+}
+
+enum CampaignStatus {
+  DRAFT
+  SCHEDULED
+  SENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum EmailStatus {
+  PENDING
+  SENT
+  DELIVERED
+  OPENED
+  CLICKED
+  FAILED
+  BOUNCED
+  COMPLAINED
+  UNSUBSCRIBED
 }

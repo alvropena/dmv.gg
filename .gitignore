@@ -44,6 +44,7 @@ app/data/bank.csv
 # database backups
 *_backup_*.sql
 dmvgg_prod_backup_*.sql
+dmvgg_prod_backup_*.dump
 
 # task runner
 Taskfile.yml

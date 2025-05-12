@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Shield, Glasses } from "lucide-react";
+import { Shield, Glasses, Beaker } from "lucide-react";
 
 export function RoleBadge({ role }: { role: string }) {
 	switch (role?.toUpperCase()) {
@@ -21,6 +21,16 @@ export function RoleBadge({ role }: { role: string }) {
 				>
 					<Glasses className="mr-1 h-3 w-3" />
 					Student
+				</Badge>
+			);
+		case "TEST":
+			return (
+				<Badge
+					variant="outline"
+					className="bg-purple-50 text-purple-600 border-purple-200 dark:bg-purple-950/20 dark:text-purple-400 dark:border-purple-900/30 w-20"
+				>
+					<Beaker className="mr-1 h-3 w-3" />
+					Test
 				</Badge>
 			);
 		default:

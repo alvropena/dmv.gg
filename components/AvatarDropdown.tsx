@@ -10,12 +10,14 @@ import type { UserResource } from "@clerk/types";
 interface AvatarDropdownProps {
 	user: UserResource | null | undefined;
 	onSettings: () => void;
+	onNotifications: () => void;
 	onLogout: () => void;
 }
 
 export default function AvatarDropdown({
 	user,
 	onSettings,
+	onNotifications,
 	onLogout,
 }: AvatarDropdownProps) {
 	return (
@@ -33,6 +35,9 @@ export default function AvatarDropdown({
 			<DropdownMenuContent align="start">
 				<DropdownMenuItem className="cursor-pointer" onClick={onSettings}>
 					Settings
+				</DropdownMenuItem>
+				<DropdownMenuItem className="cursor-pointer" onClick={onNotifications}>
+					Notifications
 				</DropdownMenuItem>
 				<DropdownMenuItem className="cursor-pointer" onClick={onLogout}>
 					Log out

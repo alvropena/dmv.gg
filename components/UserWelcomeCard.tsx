@@ -13,7 +13,7 @@ import {
 	Loader2,
 	RotateCcw,
 } from "lucide-react";
-import { PricingDialog } from "@/components/PricingDialog";
+import { PricingDialog } from "@/components/dialogs/PricingDialog";
 import { usePostHog } from 'posthog-js/react';
 
 type Test = {

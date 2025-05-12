@@ -31,7 +31,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { EditSupportDialog } from "./EditSupportDialog";
+import { EditSupportDialog } from "./dialogs/EditSupportDialog";
 
 export function SupportTable({
 	searchQuery,
@@ -156,7 +156,7 @@ export function SupportTable({
 				<tbody>
 					{loading ? (
 						Array.from({ length: 21 }).map((_, idx) => (
-							<tr key={`loading-skel-${idx}`}> 
+							<tr key={`loading-skel-${idx}`}>
 								<td className="px-4 py-3 w-[180px]">
 									<div className="h-8 w-full bg-muted animate-pulse rounded" />
 								</td>

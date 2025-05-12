@@ -89,6 +89,18 @@ export async function GET() {
                         firstName: user.firstName || null,
                         lastName: user.lastName || null,
                         role: "STUDENT", // Set default role
+                        // Email Notifications
+                        emailMarketing: true,
+                        emailUpdates: true,
+                        emailSecurity: true,
+                        // Product Notifications
+                        testReminders: true,
+                        studyTips: true,
+                        progressUpdates: true,
+                        weakAreasAlerts: true,
+                        // Marketing Preferences
+                        promotionalEmails: true,
+                        newsletter: true,
                     },
                     select: {
                         id: true,
@@ -106,25 +118,6 @@ export async function GET() {
                         language: true,
                     }
                 });
-
-                // Send welcome email ONLY if user creation succeeded
-                if (dbUser.email) {
-                    try {
-                        await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/email/welcome`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                email: dbUser.email,
-                                firstName: dbUser.firstName
-                            })
-                        });
-                    } catch (error) {
-                        console.error('Error sending welcome email:', error);
-                        // Continue without failing the request
-                    }
-                }
             } catch (error) {
                 console.error('Error creating user:', error);
                 return NextResponse.json({ error: "Failed to process sign up" }, { status: 500 });

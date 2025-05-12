@@ -4,8 +4,8 @@ import { getUsers } from "@/app/actions/users";
 import { useToast } from "@/hooks/use-toast";
 import type { User, UserRole } from "@/types";
 import { RoleBadge } from "@/components/RoleBadge";
-import { EditUserDialog } from "@/components/EditUserDialog";
-import { UserInteractionsDialog } from "@/components/UserInteractionsDialog";
+import { EditUserDialog } from "@/components/dialogs/EditUserDialog";
+import { UserInteractionsDialog } from "@/components/dialogs/UserInteractionsDialog";
 import { UserNameCell } from "@/components/UserNameCell";
 import { UserAgeCell } from "@/components/UserAgeCell";
 import { UserPlanCell } from "@/components/UserPlanCell";
@@ -116,14 +116,18 @@ export function UserTable({
 									lastName={user.lastName ?? ""}
 									email={user.email ?? ""}
 								/>
-								<UserAgeCell birthday={user.birthday?.toISOString() ?? undefined} />
+								<UserAgeCell
+									birthday={user.birthday?.toISOString() ?? undefined}
+								/>
 								<td className="px-4 py-3 text-center">
 									<div className="flex justify-center">
 										<RoleBadge role={user.role} />
 									</div>
 								</td>
 								<UserPlanCell subscriptions={user.subscriptions ?? []} />
-								<UserTestStatusCell hasUsedFreeTest={user.hasUsedFreeTest ?? false} />
+								<UserTestStatusCell
+									hasUsedFreeTest={user.hasUsedFreeTest ?? false}
+								/>
 								<UserDateCell date={user.createdAt?.toISOString() ?? ""} />
 								<UserDateCell date={user.updatedAt?.toISOString() ?? ""} />
 								<UserTestStatsCell tests={user.tests} type="completed" />
