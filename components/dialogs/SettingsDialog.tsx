@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface SettingsDialogProps {
 	open: boolean;
@@ -79,8 +79,13 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
 }) => {
 	const { dbUser } = useAuthContext();
 
+	const [firstName, setFirstName] = useState<string>("");
+	const [lastName, setLastName] = useState<string>("");
+
 	useEffect(() => {
 		if (open && dbUser) {
+			if (dbUser.firstName) setFirstName(dbUser.firstName);
+			if (dbUser.lastName) setLastName(dbUser.lastName);
 			if (dbUser.gender) setGender(dbUser.gender);
 			if (dbUser.ethnicity) setEthnicity(dbUser.ethnicity);
 			if (dbUser.language) setLanguage(dbUser.language);
@@ -94,6 +99,26 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
 					<DialogTitle>Settings</DialogTitle>
 				</DialogHeader>
 				<form className="flex flex-col gap-4">
+					<div className="grid grid-cols-2 gap-2">
+						<div>
+							<Label>First Name</Label>
+							<input
+								type="text"
+								className="w-full border rounded px-2 py-1"
+								value={firstName}
+								onChange={(e) => setFirstName(e.target.value)}
+							/>
+						</div>
+						<div>
+							<Label>Last Name</Label>
+							<input
+								type="text"
+								className="w-full border rounded px-2 py-1"
+								value={lastName}
+								onChange={(e) => setLastName(e.target.value)}
+							/>
+						</div>
+					</div>
 					<div>
 						<Label>Birthday</Label>
 						<div className="grid grid-cols-3 w-full gap-2">
@@ -193,6 +218,8 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
 						type="submit"
 						onClick={async () => {
 							if (
+								!firstName.trim() ||
+								!lastName.trim() ||
 								!settingsDay ||
 								!settingsMonth ||
 								!settingsYear ||
@@ -209,6 +236,8 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
 										"Content-Type": "application/json",
 									},
 									body: JSON.stringify({
+										firstName: firstName.trim(),
+										lastName: lastName.trim(),
 										birthday: new Date(
 											Number.parseInt(settingsYear),
 											Number.parseInt(settingsMonth) - 1,
