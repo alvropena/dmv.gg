@@ -3,7 +3,7 @@ import { auth } from '@clerk/nextjs/server';
 import { db } from '@/lib/db';
 
 // Maximum number of questions per test
-const MAX_QUESTIONS_PER_TEST = 46;
+const MAX_QUESTIONS_PER_TEST = 36;
 
 // Helper function to shuffle an array (Fisher-Yates algorithm)
 function shuffleArray<T>(array: T[]): T[] {
