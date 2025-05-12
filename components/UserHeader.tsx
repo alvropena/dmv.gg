@@ -23,6 +23,28 @@ export function UserHeader() {
 	const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 	const posthog = usePostHog();
 
+	const handlePlanSelect = async (plan: "weekly" | "monthly" | "lifetime") => {
+		try {
+			const response = await fetch("/api/create-checkout-session", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					plan,
+				}),
+			});
+
+			const data = await response.json();
+
+			if (data.url) {
+				window.location.href = data.url;
+			}
+		} catch (error) {
+			console.error("Error creating checkout session:", error);
+		}
+	};
+
 	const months = [
 		{ value: "1", label: "January" },
 		{ value: "2", label: "February" },
@@ -117,7 +139,7 @@ export function UserHeader() {
 			<PricingDialog
 				isOpen={isPricingOpen}
 				onClose={() => setIsPricingOpen(false)}
-				onPlanSelect={() => {}}
+				onPlanSelect={handlePlanSelect}
 			/>
 			<SubscriptionDetailsDialog
 				isOpen={isSubscriptionDetailsOpen}
