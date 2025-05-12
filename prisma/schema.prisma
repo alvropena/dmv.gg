@@ -14,10 +14,10 @@ model User {
   firstName         String?
   lastName          String?
   birthday          DateTime?         @db.Date
-  role              UserRole          @default(STUDENT)
   hasUsedFreeTest   Boolean           @default(false)
   createdAt         DateTime          @default(now()) @db.Timestamptz(6)
   updatedAt         DateTime          @default(now()) @db.Timestamptz(6)
+  role              UserRole          @default(STUDENT)
   ethnicity         String?
   gender            String?
   language          String?
@@ -198,18 +198,14 @@ model SentEmail {
   id             String        @id @default(uuid())
   campaignId     String
   recipientEmail String
-  status         String        @default("pending")
   sentAt         DateTime?     @db.Timestamptz(6)
   deliveredAt    DateTime?     @db.Timestamptz(6)
   openedAt       DateTime?     @db.Timestamptz(6)
   clickedAt      DateTime?     @db.Timestamptz(6)
   error          String?
-  errorCode      String?
-  errorMessage   String?
-  messageId      String?
-  metadata       Json?
   createdAt      DateTime      @default(now()) @db.Timestamptz(6)
   updatedAt      DateTime      @updatedAt @db.Timestamptz(6)
+  status         EmailStatus   @default(PENDING)
   campaign       EmailCampaign @relation(fields: [campaignId], references: [id])
 
   @@index([campaignId])
@@ -225,7 +221,6 @@ model EmailCampaign {
   subject          String
   content          String
   from             String            @default("noreply@dmv.gg")
-  status           String            @default("draft")
   active           Boolean           @default(true)
   type             CampaignType      @default(ONE_TIME)
   scheduleType     ScheduleType
@@ -234,6 +229,8 @@ model EmailCampaign {
   recipientSegment RecipientSegment  @default(ALL_USERS)
   createdAt        DateTime          @default(now()) @db.Timestamptz(6)
   updatedAt        DateTime          @updatedAt @db.Timestamptz(6)
+  recipientEmails  String[]
+  status           CampaignStatus    @default(DRAFT)
   sentEmails       SentEmail[]
 
   @@index([status])
@@ -258,7 +255,7 @@ enum TestType {
 enum EmailTriggerType {
   USER_SIGNUP
   TEST_INCOMPLETE
-  PURCHASE_COMPLETED  
+  PURCHASE_COMPLETED
 }
 
 enum CampaignType {

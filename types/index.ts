@@ -214,6 +214,7 @@ export type EmailCampaign = {
   triggerType: EmailTriggerType | null;
   scheduledFor: Date | null;
   recipientSegment: RecipientSegment;
+  recipientEmails: string[];
   createdAt: Date;
   updatedAt: Date;
   sentEmails: SentEmail[];
@@ -254,5 +255,5 @@ export enum EmailTriggerType {
 export enum RecipientSegment {
   ALL_USERS = 'ALL_USERS',
   TEST_USERS = 'TEST_USERS',
-  INDIVIDUAL_USER = 'INDIVIDUAL_USER',
+  INDIVIDUAL_USERS = 'INDIVIDUAL_USERS',
 } 

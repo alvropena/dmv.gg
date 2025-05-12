@@ -5,8 +5,7 @@ import { useEffect, useState } from "react";
 import { formatCurrency } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { Card } from "@/components/ui/card";
-import { usePostHog } from 'posthog-js/react';
-
+import { usePostHog } from "posthog-js/react";
 
 interface Price {
 	id: string;
@@ -79,9 +78,9 @@ export function PricingDialog({
 	useEffect(() => {
 		if (!posthog) return;
 		if (isOpen) {
-			posthog.capture('pricing_dialog_opened');
+			posthog.capture("pricing_dialog_opened");
 		} else {
-			posthog.capture('pricing_dialog_closed');
+			posthog.capture("pricing_dialog_closed");
 		}
 	}, [isOpen, posthog]);
 
@@ -104,12 +103,16 @@ export function PricingDialog({
 			<div
 				key={price.id}
 				className={`border rounded-lg p-6 flex flex-col relative ${
-					isSelected ? `${planType === "monthly" ? "border-blue-600" : "border-primary"} border-2` : ""
+					isSelected
+						? `${planType === "monthly" ? "border-blue-600" : "border-primary"} border-2`
+						: ""
 				}`}
 			>
 				{isPopular && (
 					<div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-						<Badge className="bg-blue-600 hover:bg-blue-700 rounded-full">Most Popular</Badge>
+						<Badge className="bg-blue-600 hover:bg-blue-700 rounded-full">
+							Most Popular
+						</Badge>
 					</div>
 				)}
 				<h3 className="font-semibold text-3xl text-center">
@@ -135,6 +138,7 @@ export function PricingDialog({
 										xmlns="http://www.w3.org/2000/svg"
 										className="text-green-600"
 									>
+										<title>Checkmark</title>
 										<path
 											d="M1.5 5.5L3.5 7.5L8.5 2.5"
 											stroke="currentColor"
@@ -161,9 +165,9 @@ export function PricingDialog({
 								? "default"
 								: "outline"
 					}
-					className='mt-6 rounded-full font-bold'
+					className="mt-6 rounded-full font-bold"
 					onClick={() => {
-						posthog?.capture('pricing_get_started_clicked', { planType });
+						posthog?.capture("pricing_get_started_clicked", { planType });
 						setSelectedPlan(planType);
 						onPlanSelect(planType);
 					}}
@@ -180,7 +184,9 @@ export function PricingDialog({
 				<div className="flex flex-col h-full">
 					{/* Content section */}
 					<div className="p-6 pb-2 flex flex-col">
-						<DialogTitle className="text-xl font-bold mb-1">Begin your DMV journey</DialogTitle>
+						<DialogTitle className="text-xl font-bold mb-1">
+							Begin your DMV journey
+						</DialogTitle>
 						<p className="text-gray-600 text-sm mb-4">
 							Unlock the test preparation you need
 						</p>
@@ -202,6 +208,7 @@ export function PricingDialog({
 													xmlns="http://www.w3.org/2000/svg"
 													className="text-green-600"
 												>
+													<title>Checkmark</title>
 													<path
 														d="M1.5 5.5L3.5 7.5L8.5 2.5"
 														stroke="currentColor"
@@ -242,7 +249,8 @@ export function PricingDialog({
 								</Card>
 							)}
 
-							{prices.filter((p) => getPlanType(p) === "monthly").length > 0 && (
+							{prices.filter((p) => getPlanType(p) === "monthly").length >
+								0 && (
 								<Card
 									className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-full ${
 										selectedPlan === "monthly" ? "border-blue-600 border-2" : ""
@@ -266,10 +274,13 @@ export function PricingDialog({
 								</Card>
 							)}
 
-							{prices.filter((p) => getPlanType(p) === "lifetime").length > 0 && (
+							{prices.filter((p) => getPlanType(p) === "lifetime").length >
+								0 && (
 								<Card
 									className={`flex flex-col items-center justify-center py-2 px-1 cursor-pointer shadow-sm hover:shadow-md transition-shadow rounded-full ${
-										selectedPlan === "lifetime" ? "border-blue-600 border-2" : ""
+										selectedPlan === "lifetime"
+											? "border-blue-600 border-2"
+											: ""
 									}`}
 									onClick={() => {
 										setSelectedPlan("lifetime");
@@ -311,7 +322,9 @@ export function PricingDialog({
 		return (
 			<DialogContent className="sm:max-w-[900px]">
 				<div className="flex flex-col items-center">
-					<DialogTitle className="text-3xl font-bold mb-1">Choose Your Plan</DialogTitle>
+					<DialogTitle className="text-3xl font-bold mb-1">
+						Choose Your Plan
+					</DialogTitle>
 					<p className="text-muted-foreground text-lg">
 						Select the plan that works best for you. Cancel anytime.
 					</p>
@@ -346,7 +359,10 @@ export function PricingDialog({
 				>
 					<div className="flex flex-col items-center h-64 justify-center">
 						<p className="text-red-500">Error: {error}</p>
-						<Button onClick={() => window.location.reload()} className="mt-4 rounded-full">
+						<Button
+							onClick={() => window.location.reload()}
+							className="mt-4 rounded-full"
+						>
 							Try Again
 						</Button>
 					</div>
