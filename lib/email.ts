@@ -7,7 +7,6 @@ import { processTemplateVariables } from "./email/template";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Rate limiting configuration
-const RATE_LIMIT = 10; // requests per second
 const BATCH_SIZE = 10; // emails per batch
 const BATCH_DELAY = 1000; // 1 second delay between batches
 
