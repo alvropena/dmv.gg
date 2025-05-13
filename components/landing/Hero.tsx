@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { ArrowDown, ArrowRight } from "lucide-react";
+import { ArrowDown, ArrowRight, CreditCard, AlarmClock, Users } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState, RefObject } from "react";
 
@@ -15,7 +15,6 @@ export default function Hero({ footerRef }: HeroProps) {
   const [atBottom, setAtBottom] = useState(false);
   const [footerVisible, setFooterVisible] = useState(false);
 
-  // Hide scroll cue if footer is visible
   useEffect(() => {
     if (!footerRef?.current) return;
     const observer = new window.IntersectionObserver(
@@ -26,10 +25,9 @@ export default function Hero({ footerRef }: HeroProps) {
     return () => observer.disconnect();
   }, [footerRef]);
 
-  // Optionally, also hide if at the very bottom (for extra safety)
   useEffect(() => {
     const handleScroll = () => {
-      if (window.innerWidth >= 768) return; // Only on mobile
+      if (window.innerWidth >= 768) return;
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
       const bodyHeight = document.body.offsetHeight;
@@ -59,7 +57,7 @@ export default function Hero({ footerRef }: HeroProps) {
                 Nervous about your Permit Test?
               </h1>
               <p className="text-[#B6DBFF] md:text-md/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              Find out if you'd pass with real DMV questions.
+                Find out if you&apos;d pass with real DMV questions.
               </p>
             </div>
 
@@ -68,15 +66,23 @@ export default function Hero({ footerRef }: HeroProps) {
                 className="rounded-full text-lg px-6 py-4 h-auto bg-[#FFF25F] text-[#3F3500] hover:bg-[#FFF25F]/90 hover:text-[#3F3500]"
                 onClick={handleStartPracticing}
               >
-                Start free test now
+                Start 36-question free test
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
-
-              <ul className="text-[#B6DBFF] text-base md:text-lg space-y-1 mt-1">
-                <li>✅ 36 real questions</li>
-                <li>✅ Instant results + weak areas</li>
-                <li>✅ Fast, free, no sign-up required</li>
-              </ul>
+              <div className="flex flex-col w-full gap-2">
+                <p className="flex items-center justify-center md:justify-start gap-2 text-[#B6DBFF] md:text-base leading-tight">
+                  <CreditCard className="w-5 h-5" />
+                  No credit card required.
+                </p>
+                <p className="flex items-center justify-center md:justify-start gap-2 text-[#B6DBFF] md:text-base leading-tight">
+                  <AlarmClock className="w-5 h-5" />
+                  1 in 4 students fail. Don&apos;t risk it.
+                </p>
+                <p className="flex items-center justify-center md:justify-start gap-2 text-[#B6DBFF] md:text-base leading-tight">
+                  <Users className="w-5 h-5" />
+                  As seen by 65,000+ on TikTok
+                </p>
+              </div>
             </div>
           </div>
 
@@ -94,7 +100,6 @@ export default function Hero({ footerRef }: HeroProps) {
           </div>
         </div>
       </div>
-      {/* Mobile scroll cue overlay */}
       {!atBottom && !footerVisible && (
         <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-16 h-16 flex justify-center items-center z-30 pointer-events-none rounded-full bg-white/90 animate-bounce">
           <ArrowDown className="w-7 h-7 text-neutral-700" />
