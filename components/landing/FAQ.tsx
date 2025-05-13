@@ -6,34 +6,34 @@ import { cn } from "@/lib/utils";
 
 const faqItems = [
 	{
-		question: "Is DMV.gg free to use?",
+		question: "Is DMV.gg really free?",
 		answer:
-			"Yes, DMV.gg offers one free practice test. After that, you can upgrade to a premium plan for full access to all questions and features.",
+			"Yes! You get one full DMV-style practice test for free — no credit card needed. Want unlimited tests and Weak Areas mode? Just upgrade anytime.",
 	},
 	{
-		question: "Are these the actual questions from the California DMV test?",
+		question: "Are the questions the same as the real DMV test?",
 		answer:
-			"Yes, all our questions are based on the official California DMV handbook and are similar to those you'll encounter on the actual test. Many users report seeing identical questions.",
+			"Almost. We base everything on the official California DMV handbook, and many users say they saw the same questions on their real test.",
 	},
 	{
-		question: "How often is the content updated?",
+		question: "What do I get if I upgrade?",
 		answer:
-			"We regularly update our question bank to reflect the latest DMV test content and rule changes for each state.",
+			"You’ll unlock unlimited practice tests, access to Weak Areas mode, and detailed progress tracking to help you pass faster.",
 	},
 	{
 		question: "Can I use DMV.gg on my phone?",
 		answer:
-			"Yes, DMV.gg is fully responsive and works on all devices including smartphones, tablets, and computers.",
+			"Yep — it works perfectly on iPhone, Android, tablets, and desktop. No downloads needed.",
 	},
 	{
-		question: "How many practice tests can I take?",
+		question: "How long does the free test take?",
 		answer:
-			"With our premium plan, you can take unlimited practice tests until you feel confident and ready for the real exam.",
+			"About 5–10 minutes. It’s 36 real-style questions and you get your score instantly. You can take it right after signing up.",
 	},
 	{
-		question: "Do you offer a pass guarantee?",
+		question: "What if I don’t pass my test?",
 		answer:
-			"While we can't guarantee everyone will pass, our statistics show that users who complete at least 5 practice tests have a 95% pass rate on their first attempt.",
+			"Don’t stress. Most users who take 3+ practice tests with DMV.gg pass on their first try. Keep practicing — we’ve got your back.",
 	},
 ];
 

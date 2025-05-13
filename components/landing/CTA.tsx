@@ -17,10 +17,10 @@ export default function CTA() {
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2 w-full">
               <h2 className="text-5xl font-extrabold tracking-tighter text-white sm:text-6xl md:text-7xl lg:text-8xl xl:text-8xl">
-                Ready to get your license?
+                Want to pass your permit test?
               </h2>
               <p className="w-full text-white md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Join 10,000+ California drivers who passed with DMV.gg
+                Take your free 36-question DMV-style test right now. No payment needed.
               </p>
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row">
@@ -28,7 +28,7 @@ export default function CTA() {
                 onClick={handleGetStarted}
                 className="rounded-full text-lg px-6 py-4 h-auto bg-[#000099] text-white hover:bg-[#000099]/90 hover:text-white"
               >
-                Get started for free
+                Start free test
               </Button>
             </div>
           </div>
