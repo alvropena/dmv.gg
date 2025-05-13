@@ -6,6 +6,11 @@ import { processTemplateVariables } from "./email/template";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Rate limiting configuration
+const RATE_LIMIT = 10; // requests per second
+const BATCH_SIZE = 10; // emails per batch
+const BATCH_DELAY = 1000; // 1 second delay between batches
+
 interface SendEmailParams {
     to: string;
     subject: string;
@@ -29,6 +34,26 @@ interface EmailResult {
     sentAt: Date;
     from: string;
     to: string;
+}
+
+/** Sends a batch of emails with rate limiting */
+async function sendEmailBatch(emails: { to: string; subject: string; html: string; from?: string }[]): Promise<EmailResult[]> {
+    const results: EmailResult[] = [];
+    
+    for (let i = 0; i < emails.length; i += BATCH_SIZE) {
+        const batch = emails.slice(i, i + BATCH_SIZE);
+        const batchResults = await Promise.all(
+            batch.map(email => sendEmail(email))
+        );
+        results.push(...batchResults);
+        
+        // If this isn't the last batch, wait before sending the next one
+        if (i + BATCH_SIZE < emails.length) {
+            await new Promise(resolve => setTimeout(resolve, BATCH_DELAY));
+        }
+    }
+    
+    return results;
 }
 
 /** Sends an email using the Resend API */
@@ -160,6 +185,7 @@ export async function handleEmailTrigger({ triggerType, userEmail }: TriggerHand
 
                     // Get recipient email(s)
                     let recipientEmails: string[];
+                    
                     if (campaign.recipientSegment === RecipientSegmentEnum.INDIVIDUAL_USERS) {
                         if (!userEmail) {
                             throw new Error("User email required for individual user segment");
@@ -176,26 +202,65 @@ export async function handleEmailTrigger({ triggerType, userEmail }: TriggerHand
                         throw new Error("No recipients found for the campaign");
                     }
 
-                    // Process each recipient
-                    const emailResults = await Promise.all(
-                        recipientEmails.map(async (email) => {
+                    // Prepare email data for all recipients
+                    const emailData = recipientEmails.map(email => ({
+                        to: email,
+                        subject: campaign.subject,
+                        html: campaign.content,
+                        from: campaign.from,
+                    }));
+
+                    // Send emails in batches with rate limiting
+                    const emailResults = await sendEmailBatch(emailData);
+
+                    // Create sent email records for successful sends
+                    const sentEmails = await Promise.all(
+                        emailResults.map(async (result) => {
                             try {
-                                return await sendEmail({
-                                    to: email,
-                                    subject: campaign.subject,
-                                    html: campaign.content,
+                                return await db.sentEmail.create({
+                                    data: {
+                                        campaignId: campaign.id,
+                                        recipientEmail: result.to,
+                                        status: result.status,
+                                        sentAt: result.sentAt,
+                                        messageId: result.id,
+                                        metadata: {
+                                            from: result.from,
+                                            to: result.to,
+                                        },
+                                    },
                                 });
                             } catch (error) {
-                                console.error(`Error sending email to ${email}:`, error);
-                                throw error;
+                                console.error(`Error creating sent email record for ${result.to}:`, error);
+                                // Create failed record if we can't create the sent record
+                                return await db.sentEmail.create({
+                                    data: {
+                                        campaignId: campaign.id,
+                                        recipientEmail: result.to,
+                                        status: EmailStatusEnum.FAILED,
+                                        error: error instanceof Error ? error.message : 'Unknown error',
+                                        errorCode: error instanceof Error ? error.name : 'UNKNOWN',
+                                        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+                                    },
+                                });
                             }
                         })
                     );
 
+                    // Update campaign status based on results
+                    const allSent = sentEmails.every(email => email.status === EmailStatusEnum.SENT);
+                    await db.emailCampaign.update({
+                        where: { id: campaign.id },
+                        data: {
+                            status: allSent ? CampaignStatusEnum.COMPLETED : CampaignStatusEnum.FAILED,
+                            active: allSent,
+                        },
+                    });
+
                     return {
                         campaignId: campaign.id,
                         success: true,
-                        emailResults,
+                        emailResults: sentEmails,
                     };
                 } catch (error) {
                     console.error(`Error processing campaign ${campaign.id}:`, error);
