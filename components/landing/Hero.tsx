@@ -2,11 +2,47 @@
 
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ArrowDown, ArrowRight } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useState, RefObject } from "react";
 
-export default function Hero() {
+interface HeroProps {
+  footerRef?: RefObject<HTMLDivElement>;
+}
+
+export default function Hero({ footerRef }: HeroProps) {
   const router = useRouter();
+  const [atBottom, setAtBottom] = useState(false);
+  const [footerVisible, setFooterVisible] = useState(false);
+
+  // Hide scroll cue if footer is visible
+  useEffect(() => {
+    if (!footerRef?.current) return;
+    const observer = new window.IntersectionObserver(
+      ([entry]) => setFooterVisible(entry.isIntersecting),
+      { threshold: 0.01 }
+    );
+    observer.observe(footerRef.current);
+    return () => observer.disconnect();
+  }, [footerRef]);
+
+  // Optionally, also hide if at the very bottom (for extra safety)
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerWidth >= 768) return; // Only on mobile
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const bodyHeight = document.body.offsetHeight;
+      setAtBottom(scrollY + windowHeight >= bodyHeight - 8);
+    };
+    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleScroll);
+    handleScroll();
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, []);
 
   const handleStartPracticing = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -59,9 +95,11 @@ export default function Hero() {
         </div>
       </div>
       {/* Mobile scroll cue overlay */}
-      <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-16 h-16 flex justify-center items-center z-30 pointer-events-none rounded-full bg-[#0A183D]/80">
-        <ChevronDown className="text-[#B6DBFF] animate-bounce w-7 h-7" />
-      </div>
+      {!atBottom && !footerVisible && (
+        <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-16 h-16 flex justify-center items-center z-30 pointer-events-none rounded-full bg-white/90 animate-bounce">
+          <ArrowDown className="w-7 h-7 text-neutral-700" />
+        </div>
+      )}
     </section>
   );
 }

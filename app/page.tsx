@@ -2,7 +2,7 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Loader2 } from "lucide-react";
 import { Header } from "@/components/Header";
 import Hero from "@/components/landing/Hero";
@@ -15,6 +15,8 @@ import Footer from "@/components/landing/Footer";
 export default function RootPage() {
 	const { user, isLoaded } = useUser();
 	const router = useRouter();
+
+	const footerRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		if (isLoaded && user) {
@@ -41,7 +43,9 @@ export default function RootPage() {
 				<FAQ />
 				<CTA />
 			</main>
-			<Footer />
+			<div ref={footerRef}>
+				<Footer />
+			</div>
 		</div>
 	);
 }
