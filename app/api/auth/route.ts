@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { currentUser, auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function GET() {
     const { userId } = await auth();
@@ -118,6 +121,25 @@ export async function GET() {
                         language: true,
                     }
                 });
+
+                // Add user to Resend contacts
+                try {
+                    const audienceId = process.env.RESEND_AUDIENCE_ID;
+                    if (!audienceId) {
+                        throw new Error('RESEND_AUDIENCE_ID is not configured');
+                    }
+                    
+                    await resend.contacts.create({
+                        email: userEmail,
+                        firstName: user.firstName || '',
+                        lastName: user.lastName || '',
+                        unsubscribed: false,
+                        audienceId,
+                    });
+                } catch (resendError) {
+                    console.error('Error adding user to Resend contacts:', resendError);
+                    // Continue execution even if Resend contact creation fails
+                }
             } catch (error) {
                 console.error('Error creating user:', error);
                 return NextResponse.json({ error: "Failed to process sign up" }, { status: 500 });
