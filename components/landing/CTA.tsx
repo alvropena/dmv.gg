@@ -20,17 +20,17 @@ export default function CTA() {
               <h2 className="text-5xl font-extrabold tracking-tighter text-white sm:text-6xl md:text-7xl lg:text-8xl xl:text-8xl">
                 Want to pass your permit test?
               </h2>
-              <p className="w-full text-white md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+              <p className="w-full text-white text-base md:text-2xl lg:text-3xl xl:text-4xl">
                 Take your free 36-question DMV-style test right now. No payment needed.
               </p>
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row">
               <Button
                 onClick={handleGetStarted}
-                className="rounded-full text-lg px-6 py-4 h-auto bg-[#000099] text-white hover:bg-[#000099]/90 hover:text-white"
+                className="rounded-full text-lg md:text-2xl px-6 py-4 md:px-10 md:py-6 h-auto bg-[#000099] text-white hover:bg-[#000099]/90 hover:text-white font-bold"
               >
                 Start 36-question free test
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-6 h-6 md:w-7 md:h-7 lg:w-8 lg:h-8" />
               </Button>
             </div>
           </div>

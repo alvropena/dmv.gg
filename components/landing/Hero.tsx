@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { ArrowDown, ArrowRight, CreditCard, AlarmClock, Users, Star } from "lucide-react";
+import { ArrowDown, CreditCard, AlarmClock, Users, Star } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState, RefObject } from "react";
 
@@ -54,7 +54,20 @@ const HeroContent = () => {
           onClick={handleStartPracticing}
         >
           Start 36-question free test
-          <ArrowRight className="w-4 h-4 ml-2" />
+          <svg
+            className="w-6 h-6 md:w-7 md:h-7 lg:w-8 lg:h-8"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12H19M19 12L12 5M19 12L12 19"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </Button>
         <FeatureList />
       </div>
@@ -87,9 +100,22 @@ const ScrollIndicator = ({ atBottom, footerVisible }: { atBottom: boolean; foote
   if (atBottom || footerVisible) return null;
   
   return (
-    <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-16 h-16 flex items-center justify-center z-30 pointer-events-none rounded-full bg-white/90 animate-bounce">
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-16 h-16 md:w-20 md:h-20 flex items-center justify-center z-30 pointer-events-none rounded-full bg-white/90 animate-bounce">
       <div className="flex items-center justify-center w-full h-full">
-        <ArrowDown className="w-7 h-7 text-neutral-700" />
+        <svg
+          className="w-7 h-7 md:w-8 md:h-8 text-neutral-700"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 3L12 21M12 21L5 14M12 21L19 14"
+            stroke="currentColor"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </div>
     </div>
   );
