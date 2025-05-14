@@ -66,6 +66,13 @@ export function Header() {
 				>
 					FAQ
 				</Button>
+				<Button
+					variant="ghost"
+					className="w-full px-6 py-4 h-auto rounded-full text-center text-lg"
+					onClick={() => handleNavigation("/blog")}
+				>
+					Blog
+				</Button>
 			</>
 		);
 	};

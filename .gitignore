@@ -48,3 +48,6 @@ dmvgg_prod_backup_*.dump
 
 # task runner
 Taskfile.yml
+
+# prompt data
+/prompt

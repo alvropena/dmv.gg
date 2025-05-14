@@ -9,77 +9,7 @@ import { useRouter } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
 import growthbook, { trackEvent } from "@/lib/growthbook";
 import { v4 as uuidv4 } from 'uuid';
-
-interface Price {
-	id: string;
-	name: string;
-	description: string;
-	unitAmount: number;
-	currency: string;
-	type: "recurring" | "one_time";
-	interval?: "day" | "week" | "month" | "year";
-	features: string[];
-	metadata: Record<string, string>;
-}
-
-const HARDCODED_PRICES: Price[] = [
-	{
-		id: "weekly",
-		name: "Weekly",
-		description: "Perfect for short-term test preparation",
-		unitAmount: 399, // $3.99
-		currency: "USD",
-		type: "recurring",
-		interval: "week",
-		features: [
-			"Access to all practice tests",
-			"Basic study materials",
-			"Progress tracking",
-			"Email support"
-		],
-		metadata: {
-			variation: "weekly"
-		}
-	},
-	{
-		id: "monthly",
-		name: "Monthly",
-		description: "Most popular choice for serious learners",
-		unitAmount: 999, // $9.99
-		currency: "USD",
-		type: "recurring",
-		interval: "month",
-		features: [
-			"Everything in Weekly",
-			"Priority support",
-			"Advanced analytics",
-			"Custom study plans",
-			"Mobile app access"
-		],
-		metadata: {
-			variation: "monthly"
-		}
-	},
-	{
-		id: "lifetime",
-		name: "Lifetime",
-		description: "One-time payment for unlimited access",
-		unitAmount: 3999, // $39.99
-		currency: "USD",
-		type: "one_time",
-		features: [
-			"Everything in Monthly",
-			"Lifetime access",
-			"Future updates included",
-			"Premium support",
-			"Offline access",
-			"Family sharing"
-		],
-		metadata: {
-			variation: "lifetime"
-		}
-	}
-];
+import { Price, prices } from "@/data/pricing";
 
 export default function PricingPage() {
 	const router = useRouter();
@@ -102,8 +32,8 @@ export default function PricingPage() {
 			createdAt: user?.createdAt,
 		});
 
-		// Set default selected plan to Pro (monthly)
-		setSelectedPlan(HARDCODED_PRICES[1].name);
+		// Set default selected plan to Monthly
+		setSelectedPlan(prices[1].name);
 	}, [user]);
 
 	const handlePlanSelect = (price: Price) => {
@@ -133,7 +63,7 @@ export default function PricingPage() {
 				</div>
 
 				<div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-					{HARDCODED_PRICES.map((price) => {
+					{prices.map((price) => {
 						const isMonthly = price.interval === "month";
 						const amount = formatCurrency(price.unitAmount || 0, price.currency);
 						const interval = price.interval

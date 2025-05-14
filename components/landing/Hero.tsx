@@ -15,11 +15,11 @@ const FeatureList = () => {
     <div className="flex flex-col w-full gap-4">
       <p className="flex items-center justify-center md:justify-start gap-2 text-[#B6DBFF] text-base md:text-xl lg:text-2xl leading-tight">
         <CreditCard className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" />
-        No credit card required.
+        No credit card required
       </p>
       <p className="flex items-center justify-center md:justify-start gap-2 text-[#B6DBFF] text-base md:text-xl lg:text-2xl leading-tight">
         <AlarmClock className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" />
-        1 in 4 students fail. Don&apos;t risk it.
+        1 in 4 students fail — Don&apos;t risk it!
       </p>
       <p className="flex items-center justify-center md:justify-start gap-2 text-[#B6DBFF] text-base md:text-xl lg:text-2xl leading-tight">
         <Users className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7" />
