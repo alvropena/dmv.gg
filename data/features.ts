@@ -1,34 +1,34 @@
 export const features = [
 	{
 		id: "practice",
-		title: "Practice Real DMV Questions",
+		title: "Up-to-Date California DMV Questions",
 		description:
-			"Practice with actual questions from your state's DMV test to ensure you're fully prepared. Our extensive question bank covers all test topics.",
+			"Access 500+ real, 2024 DMV-style questions—no outdated info. Our question bank is updated monthly to match the latest California handbook. \n\n\"I saw the same questions on my real test!\" — Emily, 17",
 		image: "/dmv-handbook.png",
 		imagePosition: "right"
 	},
 	{
-		id: "progress",
-		title: "Track Your Progress",
+		id: "weak-areas",
+		title: "Master Your Weak Spots",
 		description:
-			"Monitor your improvement over time and focus on areas where you need more practice. Our smart tracking system helps you identify weak spots.",
+			"Our AI pinpoints your toughest topics and builds custom quizzes to help you master them. No more guessing what to study. \n\n\"Weak Areas mode helped me finally understand right-of-way rules.\" — Alex, 18",
 		image: "/progress.png",
 		imagePosition: "left"
 	},
 	{
-		id: "guarantee",
-		title: "Pass Guarantee",
+		id: "feedback",
+		title: "Instant, Friendly Explanations",
 		description:
-			"Our users are 3x more likely to pass their test on the first attempt. We're so confident in our platform, we guarantee your success.",
-		image: "/guarantee.png",
+			"Every answer comes with a simple, clear explanation—no jargon. Learn why you got it wrong and how to get it right next time. \n\n\"The explanations made everything click for me.\" — Priya, 19",
+		image: "/feedback.png",
 		imagePosition: "right"
 	},
 	{
-		id: "feedback",
-		title: "Instant Feedback",
+		id: "mobile",
+		title: "Practice Anywhere, Anytime",
 		description:
-			"Get immediate explanations for every question to understand the correct answers. Learn from your mistakes in real-time.",
-		image: "/feedback.png",
+			"Take a full test in 7 minutes on your phone, tablet, or laptop—no app download needed. DMV.gg fits your busy schedule. \n\n\"I practiced on the bus every day!\" — Carlos, 20",
+		image: "/mobile.png",
 		imagePosition: "left"
 	}
 ]; 
