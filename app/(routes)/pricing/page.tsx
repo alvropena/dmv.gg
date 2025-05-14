@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import Footer from "@/components/landing/Footer";
 import { formatCurrency } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
 import growthbook, { trackEvent } from "@/lib/growthbook";
@@ -23,13 +22,69 @@ interface Price {
 	metadata: Record<string, string>;
 }
 
+const HARDCODED_PRICES: Price[] = [
+	{
+		id: "weekly",
+		name: "Weekly",
+		description: "Perfect for short-term test preparation",
+		unitAmount: 399, // $3.99
+		currency: "USD",
+		type: "recurring",
+		interval: "week",
+		features: [
+			"Access to all practice tests",
+			"Basic study materials",
+			"Progress tracking",
+			"Email support"
+		],
+		metadata: {
+			variation: "weekly"
+		}
+	},
+	{
+		id: "monthly",
+		name: "Monthly",
+		description: "Most popular choice for serious learners",
+		unitAmount: 999, // $9.99
+		currency: "USD",
+		type: "recurring",
+		interval: "month",
+		features: [
+			"Everything in Weekly",
+			"Priority support",
+			"Advanced analytics",
+			"Custom study plans",
+			"Mobile app access"
+		],
+		metadata: {
+			variation: "monthly"
+		}
+	},
+	{
+		id: "lifetime",
+		name: "Lifetime",
+		description: "One-time payment for unlimited access",
+		unitAmount: 3999, // $39.99
+		currency: "USD",
+		type: "one_time",
+		features: [
+			"Everything in Monthly",
+			"Lifetime access",
+			"Future updates included",
+			"Premium support",
+			"Offline access",
+			"Family sharing"
+		],
+		metadata: {
+			variation: "lifetime"
+		}
+	}
+];
+
 export default function PricingPage() {
 	const router = useRouter();
 	const { user } = useClerk();
 	const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
-	const [prices, setPrices] = useState<Price[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		let anonId: string | null = null;
@@ -46,33 +101,10 @@ export default function PricingPage() {
 			email: user?.emailAddresses[0]?.emailAddress,
 			createdAt: user?.createdAt,
 		});
+
+		// Set default selected plan to Pro (monthly)
+		setSelectedPlan(HARDCODED_PRICES[1].name);
 	}, [user]);
-
-	useEffect(() => {
-		const fetchPrices = async () => {
-			try {
-				setLoading(true);
-				const response = await fetch("/api/prices");
-				if (!response.ok) throw new Error("Failed to fetch prices");
-				const data = await response.json();
-				setPrices(data);
-
-				// Default to monthly plan if available
-				const monthlyPlan = data.find((p: Price) => p.interval === "month");
-				if (monthlyPlan) {
-					setSelectedPlan(monthlyPlan.name);
-				}
-			} catch (err) {
-				setError(
-					err instanceof Error ? err.message : "Failed to load pricing data",
-				);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		fetchPrices();
-	}, []);
 
 	const handlePlanSelect = (price: Price) => {
 		// Track the plan selection
@@ -86,35 +118,6 @@ export default function PricingPage() {
 		setSelectedPlan(price.name);
 		router.push("/sign-up");
 	};
-
-	if (loading) {
-		return (
-			<>
-				<Header />
-				<div className="container mx-auto px-4 py-4">
-					<div className="flex justify-center items-center min-h-[60vh]">
-						<Loader2 className="h-8 w-8 animate-spin text-primary" />
-					</div>
-				</div>
-				<Footer />
-			</>
-		);
-	}
-
-	if (error) {
-		return (
-			<>
-				<Header />
-				<div className="container mx-auto px-4 py-4">
-					<div className="flex flex-col items-center justify-center min-h-[60vh]">
-						<p className="text-red-500 mb-4">Error: {error}</p>
-						<Button onClick={() => window.location.reload()}>Try Again</Button>
-					</div>
-				</div>
-				<Footer />
-			</>
-		);
-	}
 
 	return (
 		<>
@@ -130,7 +133,7 @@ export default function PricingPage() {
 				</div>
 
 				<div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-					{prices.map((price) => {
+					{HARDCODED_PRICES.map((price) => {
 						const isMonthly = price.interval === "month";
 						const amount = formatCurrency(price.unitAmount || 0, price.currency);
 						const interval = price.interval
@@ -146,7 +149,7 @@ export default function PricingPage() {
 										: "hover:border-primary/50"
 								}`}
 							>
-								{isMonthly && (
+								{isMonthly && price.name === "Pro" && (
 									<div className="absolute -top-5 left-1/2 transform -translate-x-1/2">
 										<div className="bg-[#FFF25F] text-[#3F3500] text-sm px-8 py-2 rounded-full font-semibold">
 											Most popular
@@ -210,7 +213,7 @@ export default function PricingPage() {
 						materials.
 						<br />
 						Need help choosing?{" "}
-						<a href="/contact" className="underline text-white">
+						<a href="mailto:support@dmv.gg" className="underline text-white">
 							Contact us
 						</a>
 					</p>
