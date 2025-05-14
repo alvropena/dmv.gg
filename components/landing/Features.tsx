@@ -74,13 +74,13 @@ export default function Features() {
               <h2 className="text-5xl font-extrabold tracking-tighter text-[#3F3500] sm:text-5xl md:text-5xl lg:text-7xl xl:text-8xl">
                 Pass Your Test With Confidence
               </h2>
-              <p className="text-[#3F3500] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+              <p className="text-[#3F3500] md:text-2xl lg:text-3xl xl:text-4xl">
                 Our platform is designed to help you learn efficiently and pass
                 your DMV knowledge test on the first try.
               </p>
               <div className="flex gap-2 justify-center">
                 <Button
-                  className="rounded-full text-lg px-6 py-4 h-auto bg-[#3F3500] text-white hover:bg-[#3F3500]/90 hover:text-white"
+                  className="rounded-full text-lg md:text-2xl px-6 py-4 md:px-10 md:py-6 h-auto bg-[#3F3500] text-white hover:bg-[#3F3500]/90 hover:text-white"
                   onClick={handleStartPracticing}
                 >
                   Get started for free
