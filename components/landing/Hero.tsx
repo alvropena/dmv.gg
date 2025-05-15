@@ -2,7 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { ArrowDown, CreditCard, AlarmClock, Users, Star } from "lucide-react";
+import { CreditCard, AlarmClock, Users, Star } from "lucide-react";
+import { ArrowDown } from "@/components/icons/ArrowDown";
 import Image from "next/image";
 import { useEffect, useState, RefObject } from "react";
 
@@ -101,22 +102,7 @@ const ScrollIndicator = ({ atBottom, footerVisible }: { atBottom: boolean; foote
   
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-16 h-16 md:w-20 md:h-20 flex items-center justify-center z-30 pointer-events-none rounded-full bg-white/90 animate-bounce">
-      <div className="flex items-center justify-center w-full h-full">
-        <svg
-          className="w-7 h-7 md:w-8 md:h-8 text-neutral-700"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M12 3L12 21M12 21L5 14M12 21L19 14"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </div>
+      <ArrowDown />
     </div>
   );
 };
