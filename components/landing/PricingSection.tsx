@@ -2,8 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import { Header } from "@/components/Header";
-import Footer from "@/components/landing/Footer";
 import { formatCurrency } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
@@ -11,7 +9,7 @@ import growthbook, { trackEvent } from "@/lib/growthbook";
 import { v4 as uuidv4 } from 'uuid';
 import { Price, prices } from "@/data/pricing";
 
-export default function PricingPage() {
+export default function PricingSection() {
 	const router = useRouter();
 	const { user } = useClerk();
 	const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
@@ -50,13 +48,12 @@ export default function PricingPage() {
 	};
 
 	return (
-		<>
-			<Header />
+		<section id="pricing" className="w-full py-12 md:py-12 lg:py-52 bg-[#1C1F2A]">
 			<div className="container mx-auto px-4 py-4">
 				<div className="text-center mb-16">
-					<h1 className="text-5xl font-extrabold tracking-tighter text-white md:text-6xl lg:text-7xl xl:text-8xl mb-4">
+					<h2 className="text-5xl font-extrabold tracking-tighter text-white md:text-6xl lg:text-7xl xl:text-8xl mb-4">
 						Choose Your Study Plan
-					</h1>
+					</h2>
 					<p className="text-white md:text-md/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
 						Choose the plan that works best for you
 					</p>
@@ -87,7 +84,7 @@ export default function PricingPage() {
 									</div>
 								)}
 								<div>
-									<h2 className="text-2xl font-bold mb-2 text-white">{price.name}</h2>
+									<h3 className="text-2xl font-bold mb-2 text-white">{price.name}</h3>
 									<div className="flex items-baseline mb-4">
 										<span className="text-4xl font-bold text-white">{amount}</span>
 										<span className="text-white/70 ml-2">
@@ -149,7 +146,6 @@ export default function PricingPage() {
 					</p>
 				</div>
 			</div>
-			<Footer />
-		</>
+		</section>
 	);
-}
+} 

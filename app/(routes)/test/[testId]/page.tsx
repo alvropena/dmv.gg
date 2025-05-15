@@ -39,6 +39,9 @@ export default function TestPage({ params }: TestPageProps) {
 	const [isReviewMode, setIsReviewMode] = useState(false);
 	const [reviewQuestionsAnswered, setReviewQuestionsAnswered] = useState(0);
 	const mountedRef = useRef(false);
+	const [score, setScore] = useState<number | null>(null);
+	const [errors, setErrors] = useState<number | null>(null);
+	const [isPass, setIsPass] = useState<boolean | null>(null);
 
 	// Update hasAccess check to include free test case
 	const hasAccess =
@@ -366,6 +369,35 @@ export default function TestPage({ params }: TestPageProps) {
 		}
 	}, [questions, currentQuestionIndex]);
 
+	useEffect(() => {
+		if (!testId || !showCongratulations) return;
+		// Fetch the test object to get answers
+		fetch(`/api/tests/testId?testId=${testId}`)
+			.then(async (res) => {
+				if (!res.ok) throw new Error("Failed to fetch test for score");
+				const { test } = await res.json();
+				if (test && Array.isArray(test.answers)) {
+					const correct = test.answers.filter((a: any) => a.isCorrect === true).length;
+					const total = test.answers.length;
+					const errorCount = total - correct;
+					setScore(correct);
+					setErrors(errorCount);
+					setIsPass(errorCount < 6);
+				}
+			})
+			.catch(() => {
+				setScore(null);
+				setErrors(null);
+				setIsPass(null);
+			});
+	}, [testId, showCongratulations]);
+
+	// Handler for unlock all tests
+	const handleUnlockAllTests = () => {
+		// TODO: Implement unlock logic (open pricing dialog, etc)
+		alert("Unlock All Tests clicked!");
+	};
+
 	if (!isLoaded || isLoading || isLoadingQuestions) {
 		return (
 			<div className="flex items-center justify-center h-screen">
@@ -387,7 +419,24 @@ export default function TestPage({ params }: TestPageProps) {
 	}
 
 	if (showCongratulations) {
-		return <CompletionCard onReturnHome={() => router.push("/")} />;
+		// Only render CompletionCard when score is available
+		if (score !== null && errors !== null && isPass !== null) {
+			return (
+				<CompletionCard
+					onReturnHome={() => router.push("/")}
+					score={score}
+					totalQuestions={questions.length}
+					isPass={isPass}
+					onUnlockAllTests={handleUnlockAllTests}
+				/>
+			);
+		}
+		// Otherwise, show loading
+		return (
+			<div className="flex items-center justify-center h-screen">
+				<Loader2 className="h-8 w-8 animate-spin text-primary" />
+			</div>
+		);
 	}
 
 	const currentQuestion = questions[currentQuestionIndex];

@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
-type Step = "name" | "birthday" | "gender" | "ethnicity" | "language";
+type Step = "name" | "birthday" | "gender" | "ethnicity" | "language" | "startTest";
 
 interface UserProfileDialogProps {
 	isOpen: boolean;
@@ -82,7 +82,9 @@ export function UserProfileDialog({
 	const [step, setStep] = useState<Step>(
 		initialData?.firstName && initialData?.lastName
 			? initialData?.birthday
-				? "gender"
+				? initialData?.gender && initialData?.ethnicity && initialData?.language
+					? "startTest"
+					: "gender"
 				: "birthday"
 			: "name"
 	);
@@ -130,6 +132,8 @@ export function UserProfileDialog({
 			setStep("language");
 		} else if (step === "language") {
 			if (!language) return;
+			setStep("startTest");
+		} else if (step === "startTest") {
 			try {
 				setIsSubmitting(true);
 				if (!firstName.trim() || !lastName.trim() || !year || !month || !day || !gender || !ethnicity || !language) {
@@ -161,6 +165,7 @@ export function UserProfileDialog({
 		else if (step === "gender") setStep("birthday");
 		else if (step === "ethnicity") setStep("gender");
 		else if (step === "language") setStep("ethnicity");
+		else if (step === "startTest") setStep("language");
 	};
 
 	// Generate days 1-31
@@ -224,6 +229,8 @@ export function UserProfileDialog({
 				);
 			case "language":
 				return language;
+			case "startTest":
+				return true;
 			default:
 				return false;
 		}
@@ -241,6 +248,8 @@ export function UserProfileDialog({
 				return "What is your ethnicity?";
 			case "language":
 				return "What is your primary language?";
+			case "startTest":
+				return "You're ready! Take your free DMV practice test";
 			default:
 				return "";
 		}
@@ -258,6 +267,8 @@ export function UserProfileDialog({
 				return "This helps us ensure our content is inclusive.";
 			case "language":
 				return "This helps us provide better support.";
+			case "startTest":
+				return "Click below to begin your free DMV-style practice test.";
 			default:
 				return "";
 		}
@@ -406,9 +417,20 @@ export function UserProfileDialog({
 							</SelectContent>
 						</Select>
 					)}
+
+					{step === "startTest" && (
+						<div className="flex flex-col items-center gap-4 w-full">
+							<Button
+								onClick={handleNext}
+								disabled={isSubmitting}
+							>
+								{isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Start 36-question free test"}
+							</Button>
+						</div>
+					)}
 				</div>
 				<DialogFooter className="flex gap-2">
-					{step !== "birthday" && (
+					{step !== "name" && step !== "startTest" && (
 						<Button
 							variant="outline"
 							onClick={handleBack}
@@ -417,19 +439,20 @@ export function UserProfileDialog({
 							Back
 						</Button>
 					)}
-					<Button
-						onClick={handleNext}
-						disabled={!isStepComplete() || isSubmitting}
-						className="flex-1"
-					>
-						{isSubmitting ? (
-							<Loader2 className="h-4 w-4 animate-spin" />
-						) : step === "language" ? (
-							"Complete"
-						) : (
-							"Continue"
-						)}
-					</Button>
+					{step !== "startTest" && (
+						<Button
+							onClick={handleNext}
+							disabled={!isStepComplete() || isSubmitting}
+						>
+							{isSubmitting ? (
+								<Loader2 className="h-4 w-4 animate-spin" />
+							) : step === "language" ? (
+								"Continue"
+							) : (
+								"Continue"
+							)}
+						</Button>
+					)}
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>

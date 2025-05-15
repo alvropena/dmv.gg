@@ -7,6 +7,7 @@ import { Loader2 } from "lucide-react";
 import { Header } from "@/components/Header";
 import Hero from "@/components/landing/Hero";
 import Features from "@/components/landing/Features";
+import PricingSection from "@/components/landing/PricingSection";
 import Testimonials from "@/components/landing/Testimonials";
 import FAQ from "@/components/landing/FAQ";
 import CTA from "@/components/landing/CTA";
@@ -39,6 +40,7 @@ export default function RootPage() {
 			<main className="flex-1">
 				<Hero />
 				<Features />
+				<PricingSection />
 				<Testimonials />
 				<FAQ />
 				<CTA />

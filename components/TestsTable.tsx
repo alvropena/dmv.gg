@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { MoreHorizontal, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +20,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EditTestDialog } from "@/components/dialogs/EditTestDialog";
+import { ConfirmDeleteTestDialog } from "@/components/dialogs/ConfirmDeleteTestDialog";
 
 function CompletedBadge({ completed }: { completed: boolean }) {
 	if (completed) {
@@ -116,6 +117,8 @@ export function TestsTable({
 	const [totalPages, setTotalPages] = useState(1);
 	const { toast } = useToast();
 	const [selectedTest, setSelectedTest] = useState<Test | null>(null);
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+	const [testToDelete, setTestToDelete] = useState<Test | null>(null);
 
 	useEffect(() => {
 		const fetchTests = async () => {
@@ -146,6 +149,39 @@ export function TestsTable({
 	const handlePageChange = (newPage: number) => {
 		setPage(newPage);
 	};
+
+	const handleDeleteTest = useCallback((test: Test) => {
+		setTestToDelete(test);
+		setDeleteDialogOpen(true);
+	}, []);
+
+	const confirmDeleteTest = useCallback(async () => {
+		if (!testToDelete) return;
+		try {
+			setLoading(true);
+			const response = await fetch(`/api/tests/testId?testId=${testToDelete.id}`, {
+				method: "DELETE",
+			});
+			if (!response.ok) throw new Error("Failed to delete test");
+			setTests((prev) => prev.filter((t) => t.id !== testToDelete.id));
+			toast({
+				title: "Test deleted",
+				description: "The test and its related data have been deleted.",
+				variant: "default",
+			});
+		} catch (error) {
+			console.error("Error deleting test:", error);
+			toast({
+				title: "Error",
+				description: "Failed to delete test",
+				variant: "destructive",
+			});
+		} finally {
+			setLoading(false);
+			setDeleteDialogOpen(false);
+			setTestToDelete(null);
+		}
+	}, [testToDelete, toast]);
 
 	return (
 		<div className="w-full overflow-auto">
@@ -325,6 +361,17 @@ export function TestsTable({
 													<Pencil className="mr-4 h-4 w-4" />
 													Edit Test
 												</DropdownMenuItem>
+												<DropdownMenuItem
+													className="cursor-pointer text-red-600 focus:text-red-700"
+													onClick={() => handleDeleteTest(test)}
+												>
+													<span className="mr-4">
+														<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
+															<path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+														</svg>
+													</span>
+													Delete Test
+												</DropdownMenuItem>
 											</DropdownMenuContent>
 										</DropdownMenu>
 									</td>
@@ -401,6 +448,20 @@ export function TestsTable({
 				test={selectedTest}
 				open={!!selectedTest}
 				onOpenChange={(open) => !open && setSelectedTest(null)}
+			/>
+
+			<ConfirmDeleteTestDialog
+				isOpen={deleteDialogOpen}
+				onClose={() => { setDeleteDialogOpen(false); setTestToDelete(null); }}
+				onConfirm={confirmDeleteTest}
+				testInfo={testToDelete ? {
+					startedAt: typeof testToDelete.startedAt === 'string' ? testToDelete.startedAt : new Date(testToDelete.startedAt).toISOString(),
+					user: testToDelete.user ? {
+						firstName: testToDelete.user.firstName ?? '',
+						lastName: testToDelete.user.lastName ?? '',
+						email: testToDelete.user.email ?? ''
+					} : undefined
+				} : undefined}
 			/>
 		</div>
 	);
