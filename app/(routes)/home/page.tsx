@@ -12,13 +12,13 @@ import { SupportButton } from "@/components/SupportButton";
 import { PricingDialog } from "@/components/dialogs/PricingDialog";
 import { UserProfileDialog } from "@/components/dialogs/UserProfileDialog";
 import { UserWelcomeCard } from "@/components/UserWelcomeCard";
-import { IncompleteTestDialog } from "@/components/dialogs/IncompleteTestDialog";
+import { StartTestDialog } from "@/components/dialogs/StartTestDialog";
 
 export default function HomePage() {
   const [isPricingOpen, setIsPricingOpen] = useState(false);
   const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
   const [incompleteTest, setIncompleteTest] = useState<any>(null);
-  const [showIncompleteDialog, setShowIncompleteDialog] = useState(false);
+  const [showTestDialog, setShowTestDialog] = useState(false);
 
   const { isLoaded, user } = useUser();
   const { dbUser, isLoading, refreshUser } = useAuthContext();
@@ -105,18 +105,16 @@ export default function HomePage() {
           const mostRecent = data.tests[0];
           if (mostRecent.status === "in_progress") {
             setIncompleteTest(mostRecent);
-            setShowIncompleteDialog(true);
           } else {
             setIncompleteTest(null);
-            setShowIncompleteDialog(false);
           }
         } else {
           setIncompleteTest(null);
-          setShowIncompleteDialog(false);
         }
+        setShowTestDialog(true);
       } catch (e) {
         setIncompleteTest(null);
-        setShowIncompleteDialog(false);
+        setShowTestDialog(true);
       }
     }
     fetchMostRecentTest();
@@ -166,17 +164,10 @@ export default function HomePage() {
         }
         userId={user?.id}
       />
-      <IncompleteTestDialog
-        isOpen={showIncompleteDialog}
-        onClose={() => setShowIncompleteDialog(false)}
-        onGoToTest={() => {
-          if (incompleteTest) {
-            window.location.href = `/test/${incompleteTest.id}`;
-          }
-        }}
-        testInfo={
-          incompleteTest ? { startedAt: incompleteTest.startedAt } : undefined
-        }
+      <StartTestDialog
+        isOpen={showTestDialog}
+        onClose={() => setShowTestDialog(false)}
+        testInfo={incompleteTest ? { id: incompleteTest.id, startedAt: incompleteTest.startedAt } : undefined}
       />
       <SupportButton />
     </div>

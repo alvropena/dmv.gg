@@ -19,6 +19,8 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
+import { useRouter } from "next/navigation";
 
 type Step = "name" | "birthday" | "gender" | "ethnicity" | "language" | "startTest";
 
@@ -51,6 +53,8 @@ export function UserProfileDialog({
 	initialData,
 	userId,
 }: UserProfileDialogProps) {
+	const router = useRouter();
+
 	const parseBirthday = (birthday: unknown) => {
 		if (!birthday) return { day: undefined, month: undefined, year: undefined };
 		if (typeof birthday === "string") {
@@ -151,9 +155,26 @@ export function UserProfileDialog({
 					ethnicity: ethnicity === "other" ? customEthnicity : ethnicity || "",
 					language: language || "",
 				});
-				onClose();
+
+				// Create a new test and navigate to it
+				const response = await fetch("/api/tests", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ type: "NEW" }),
+				});
+				if (!response.ok) {
+					throw new Error("Failed to create test");
+				}
+				const data = await response.json();
+				if (data?.test?.id) {
+					router.push(`/test/${data.test.id}`);
+				} else {
+					throw new Error("No test ID received from server");
+				}
 			} catch (error) {
-				console.error("Error saving profile:", error);
+				console.error("Error saving profile or creating test:", error);
 			} finally {
 				setIsSubmitting(false);
 			}
@@ -274,6 +295,10 @@ export function UserProfileDialog({
 		}
 	};
 
+	const steps: Step[] = ["name", "birthday", "gender", "ethnicity", "language", "startTest"];
+	const currentStepIndex = steps.indexOf(step);
+	const progressValue = ((currentStepIndex + 1) / steps.length) * 100;
+
 	return (
 		<Dialog open={isOpen} onOpenChange={handleDialogClose}>
 			<DialogContent
@@ -284,9 +309,42 @@ export function UserProfileDialog({
 				}}
 			>
 				<DialogHeader>
+					{/* Progress bar at the top of the header, hidden on startTest step */}
+					{step !== "startTest" && (
+						<div className="mt-6 mb-4">
+							<div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+								<div
+									className="h-full bg-blue-600 transition-all duration-500 rounded-full"
+									style={{ width: `${progressValue}%` }}
+								/>
+							</div>
+						</div>
+					)}
+					{step === "startTest" && (
+						<div className="flex justify-center mb-2">
+							<svg
+								width="64"
+								height="64"
+								viewBox="0 0 64 64"
+								fill="none"
+								xmlns="http://www.w3.org/2000/svg"
+								className="mb-2"
+							>
+								<circle cx="32" cy="32" r="32" fill="#22c55e" />
+								<path
+									d="M20 34L29 43L44 26"
+									stroke="white"
+									strokeWidth="4"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+								/>
+							</svg>
+						</div>
+					)}
 					<DialogTitle>{getStepTitle()}</DialogTitle>
 					<DialogDescription>{getStepDescription()}</DialogDescription>
 				</DialogHeader>
+				{step !== "startTest" && (
 				<div className="flex flex-col">
 					{step === "name" && (
 						<div className="grid grid-cols-2 gap-2">
@@ -417,29 +475,26 @@ export function UserProfileDialog({
 							</SelectContent>
 						</Select>
 					)}
-
-					{step === "startTest" && (
-						<div className="flex flex-col items-center gap-4 w-full">
-							<Button
-								onClick={handleNext}
-								disabled={isSubmitting}
-							>
-								{isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Start 36-question free test"}
-							</Button>
 						</div>
 					)}
-				</div>
 				<DialogFooter className="flex gap-2">
-					{step !== "name" && step !== "startTest" && (
+					{step !== "name" && (
 						<Button
 							variant="outline"
 							onClick={handleBack}
 							disabled={isSubmitting}
 						>
-							Back
+							Go back
 						</Button>
 					)}
-					{step !== "startTest" && (
+					{step === "startTest" ? (
+						<Button
+							onClick={handleNext}
+							disabled={isSubmitting}
+						>
+							{isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Start 36-question free test"}
+						</Button>
+					) : (
 						<Button
 							onClick={handleNext}
 							disabled={!isStepComplete() || isSubmitting}

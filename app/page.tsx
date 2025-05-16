@@ -2,7 +2,7 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Header } from "@/components/Header";
 import Hero from "@/components/landing/Hero";
@@ -18,6 +18,18 @@ export default function RootPage() {
 	const router = useRouter();
 
 	const footerRef = useRef<HTMLDivElement>(null);
+	const featuresRef = useRef<HTMLDivElement>(null);
+	const [featuresVisible, setFeaturesVisible] = useState(false);
+
+	useEffect(() => {
+		if (!featuresRef.current) return;
+		const observer = new window.IntersectionObserver(
+			([entry]) => setFeaturesVisible(entry.intersectionRatio > 0.5),
+			{ threshold: 0.5 }
+		);
+		observer.observe(featuresRef.current);
+		return () => observer.disconnect();
+	}, []);
 
 	useEffect(() => {
 		if (isLoaded && user) {
@@ -38,8 +50,8 @@ export default function RootPage() {
 		<div className="flex flex-col min-h-screen">
 			<Header />
 			<main className="flex-1">
-				<Hero />
-				<Features />
+				<Hero hideArrow={featuresVisible} />
+				<Features ref={featuresRef} />
 				<PricingSection />
 				<Testimonials />
 				<FAQ />
