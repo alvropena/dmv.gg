@@ -367,13 +367,6 @@ export function RecentSessions({
 													<Calendar className="h-4 w-4" />
 													{formatDate(test.startedAt)}
 												</span>
-												<span className="">
-													{Math.round(
-														(getAnsweredCount(test) / test.totalQuestions) *
-															100,
-													)}
-													%
-												</span>
 											</>
 										)}
 									</div>
@@ -383,20 +376,15 @@ export function RecentSessions({
 											style={{
 												width:
 													test.status === "completed"
-														? `${test.score}%`
-														: `${Math.round(
-																(getAnsweredCount(test) / test.totalQuestions) *
-																	100,
-															)}%`,
+														? "100%"
+														: `${Math.round((getAnsweredCount(test) / test.totalQuestions) * 100)}%`,
 											}}
 										/>
 									</div>
 									{test.status !== "completed" && (
 										<div className="flex justify-between text-sm text-muted-foreground mt-1">
 											<span>{getAnsweredCount(test)} completed</span>
-											<span>
-												{test.totalQuestions - getAnsweredCount(test)} remaining
-											</span>
+											<span>{test.totalQuestions - getAnsweredCount(test)} remaining</span>
 										</div>
 									)}
 								</div>

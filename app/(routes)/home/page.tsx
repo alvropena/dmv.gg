@@ -19,6 +19,7 @@ export default function HomePage() {
   const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
   const [incompleteTest, setIncompleteTest] = useState<any>(null);
   const [showTestDialog, setShowTestDialog] = useState(false);
+  const [loadingTest, setLoadingTest] = useState(true);
 
   const { isLoaded, user } = useUser();
   const { dbUser, isLoading, refreshUser } = useAuthContext();
@@ -97,6 +98,7 @@ export default function HomePage() {
   // Fetch the user's most recent test
   useEffect(() => {
     async function fetchMostRecentTest() {
+      setLoadingTest(true);
       try {
         const res = await fetch("/api/tests");
         if (!res.ok) return;
@@ -111,9 +113,10 @@ export default function HomePage() {
         } else {
           setIncompleteTest(null);
         }
-        setShowTestDialog(true);
       } catch (e) {
         setIncompleteTest(null);
+      } finally {
+        setLoadingTest(false);
         setShowTestDialog(true);
       }
     }
@@ -165,7 +168,7 @@ export default function HomePage() {
         userId={user?.id}
       />
       <StartTestDialog
-        isOpen={showTestDialog}
+        isOpen={showTestDialog && !loadingTest}
         onClose={() => setShowTestDialog(false)}
         testInfo={incompleteTest ? { id: incompleteTest.id, startedAt: incompleteTest.startedAt } : undefined}
       />

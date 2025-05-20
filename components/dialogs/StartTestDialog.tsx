@@ -194,8 +194,8 @@ export function StartTestDialog({ isOpen, onClose, testInfo }: StartTestDialogPr
             )}
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter>
-          <div className="flex flex-col items-center justify-center gap-2 text-xs">
+        <DialogFooter className="w-full">
+          <div className="flex flex-col gap-2 text-xs w-full">
             <Button
               onClick={handleStartOrResumeTest}
               disabled={isStarting}
